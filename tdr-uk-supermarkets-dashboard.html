@@ -1,0 +1,3872 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UK supermarkets portfolio view</title>
+<style>
+:root{
+  --nav:#1A0055;--blue:#0028A1;--blue-dim:#EAEEFC;--blue-line:#C0CFFA;
+  --bg:#F4F5F7;--card:#FFFFFF;--border:#DDE3EE;
+  --txt:#0D1F3C;--txt-dim:#566B8A;--txt-bright:#001A70;
+  --green:#2E7D32;--green-bg:#E8F5E9;--green-line:#A5D6A7;
+  --amber:#B26A00;--amber-bg:#FFF8E1;--amber-line:#FFE082;
+  --red:#C62828;--red-bg:#FFEBEE;--red-line:#FFCDD2;
+  --grey:#90A4AE;--grey-bg:#F3F5F7;
+  --teal:#00695C;--purple:#6A1B9A;
+  --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);font-size:12px;line-height:1.45}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+button{font:inherit}
+
+/* HEADER */
+.hdr{background:var(--nav);min-height:58px;border-bottom:2px solid var(--blue);display:flex;align-items:center;padding:8px 20px;gap:14px;flex-wrap:wrap}
+.logo{font-family:Georgia,serif;font-size:21px;font-weight:700;color:#fff;letter-spacing:1px}
+.hdr-div{width:1px;height:30px;background:rgba(255,255,255,.25)}
+.hdr-title{font-weight:600;font-size:13px;color:rgba(255,255,255,.95);letter-spacing:.3px}
+.hdr-sub{font-size:10px;color:rgba(255,255,255,.6);margin-top:2px}
+.hdr-meta{margin-left:auto;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.6);text-align:right;line-height:1.6}
+
+/* QUESTION BAR */
+.qbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 20px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:baseline}
+.q-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1.2px;color:var(--blue);text-transform:uppercase;white-space:nowrap}
+.q-text{font-family:Georgia,serif;font-size:16px;font-weight:700;color:var(--txt-bright);line-height:1.3}
+.q-sub{font-size:10.5px;color:var(--txt-dim);line-height:1.5}
+
+/* TICKER */
+.ticker-wrap{background:#FDF5FF;border-bottom:1px solid #D8C2F0;height:28px;display:flex;align-items:center;overflow:hidden}
+.ticker-label{background:var(--nav);color:#fff;font-family:var(--mono);font-weight:700;font-size:9px;letter-spacing:2px;padding:0 12px;white-space:nowrap;height:100%;display:flex;align-items:center;flex-shrink:0}
+.ticker-track{flex:1;overflow:hidden}
+.ticker-inner{display:flex;animation:ticker 80s linear infinite;white-space:nowrap}
+.ticker-inner span{color:#2D1A4A;font-family:var(--mono);font-size:10px;padding:0 8px}
+.ticker-inner span.sep{color:#9B5FC0}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.ticker-inner{animation:none}}
+
+/* TABS */
+.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);padding:0 16px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:10px 14px;font-size:11.5px;font-weight:600;color:var(--txt-dim);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--blue);border-bottom-color:var(--blue)}
+section.page[hidden]{display:none}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:12px 16px 6px}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:11px 13px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue)}
+.kpi-card.p::before{background:var(--purple)}.kpi-card.t::before{background:var(--teal)}
+.kpi-label{font-weight:600;font-size:9px;letter-spacing:.7px;text-transform:uppercase;color:var(--txt-dim);margin-bottom:6px}
+.kpi-value{font-family:var(--mono);font-weight:600;font-size:21px;line-height:1;color:var(--txt-bright)}
+.kpi-sub{font-size:9.5px;color:var(--txt-dim);margin-top:5px}
+
+/* CONTROLS */
+.controls{display:flex;gap:8px;align-items:center;padding:4px 0 10px;flex-wrap:wrap}
+.seg{display:flex;border:1px solid var(--border);border-radius:5px;overflow:hidden;background:var(--card);flex-wrap:wrap}
+.seg button{border:none;background:var(--card);padding:6px 12px;font-size:11px;font-weight:500;color:var(--txt-dim);cursor:pointer;border-right:1px solid var(--border)}
+.seg button:last-child{border-right:none}
+.seg button.on{background:var(--blue);color:#fff}
+.ctl-note{font-size:10px;color:var(--txt-dim);margin-left:auto}
+select{font:inherit;font-size:11px;border:1px solid var(--border);border-radius:5px;padding:5px 8px;background:var(--card);color:var(--txt)}
+.search{flex:1;min-width:160px;max-width:300px;border:1px solid var(--border);border-radius:5px;padding:6px 10px;font-size:11px;font-family:var(--sans)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid var(--border);background:var(--card);border-radius:4px;padding:4px 9px;font-size:10.5px;color:var(--txt-dim);cursor:pointer}
+.chip.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn{border:1px solid var(--border);background:var(--card);border-radius:5px;padding:5px 10px;font-size:11px;color:var(--txt);cursor:pointer}
+
+/* PANELS */
+.wrap{padding:2px 16px 14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 16px 18px;align-items:start}
+.grid2>div,.feed-grid>div{min-width:0}
+.trig-grid{display:grid;grid-template-columns:1.1fr 1.6fr;gap:22px}
+.ev-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 22px}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:14px}
+.panel:last-child{margin-bottom:0}
+.ph{background:#F5F7FC;border-bottom:1px solid var(--border);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.ph-title{font-weight:600;font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:.5px}
+.ph-badge{font-family:var(--mono);font-size:9px;color:var(--txt-dim);text-align:right}
+.pb{padding:12px 14px}
+
+/* TRIGGER */
+.trig-head{font-family:Georgia,serif;font-size:17px;font-weight:700;color:var(--txt-bright);line-height:1.25}
+.trig-head b{color:var(--red)}
+.verdict{display:inline-block;margin-top:8px;font-family:var(--mono);font-weight:600;font-size:9px;letter-spacing:.5px;padding:3px 8px;border-radius:3px;background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-line)}
+.chain{margin-top:12px}
+.cstep{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}
+.cstep:last-child{border-bottom:none}
+.cnum{width:18px;height:18px;border-radius:50%;background:var(--blue);color:#fff;font-family:var(--mono);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.cstep.inf .cnum{background:#fff;color:var(--blue);border:1.5px dashed var(--blue)}
+.cstep .ct{font-weight:600;font-size:11px}
+.cstep .cs{font-size:9.5px;color:var(--txt-dim);margin-top:1px}
+.tag{font-family:var(--mono);font-weight:600;font-size:8px;padding:1px 6px;border-radius:3px;white-space:nowrap}
+.tag.stab{background:var(--blue-dim);color:var(--blue)}.tag.inf{background:#F5F5F5;color:#546E7A;border:1px dashed #B0BEC5}
+.ev-h{font-size:9px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--txt-dim);margin:12px 0 4px}
+.ev-h:first-child{margin-top:0}
+.blist{list-style:none}
+.blist li{position:relative;padding:3px 0 3px 16px;font-size:10.5px;line-height:1.45}
+.blist li::before{content:'';position:absolute;left:2px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.blist.neu li::before{background:var(--txt-dim)}.blist.gap li::before{background:var(--amber)}
+.src{font-family:var(--mono);font-size:8.5px;color:var(--txt-dim)}
+.kind{display:inline-block;font-family:var(--mono);font-size:7.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:1px 5px;border-radius:3px;margin-right:4px;vertical-align:1px;white-space:nowrap;background:#EEF1F6;color:#455A64;border:1px solid #D5DCE6}
+.kind.k-macro{background:#EDE7F6;color:var(--purple);border-color:#D1C4E9}.kind.k-sector{background:#E0F2F1;color:var(--teal);border-color:#B2DFDB}.kind.k-opinion{background:var(--blue-dim);color:var(--blue);border-color:var(--blue-line)}
+
+/* SCREEN */
+.bench{display:flex;gap:10px 18px;flex-wrap:wrap;align-items:baseline;background:var(--blue-dim);border:1px solid var(--blue-line);border-radius:5px;padding:9px 12px;margin-bottom:10px}
+.bench-main{font-size:12px;color:var(--txt-bright)}
+.bench-main b{font-family:var(--mono)}
+.bench-ctx{font-size:10px;color:var(--txt-dim);flex-basis:100%}
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tbl{width:100%;border-collapse:collapse;min-width:940px}
+.tbl th{font-weight:600;font-size:9.5px;text-transform:uppercase;letter-spacing:.3px;color:var(--txt-dim);background:#F5F7FC;padding:8px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;vertical-align:bottom}
+.tbl th small{display:block;text-transform:none;letter-spacing:0;font-weight:500;font-size:8.5px}
+.tbl td{padding:9px 8px;border-bottom:1px solid var(--border);font-size:11.5px;vertical-align:top}
+.tbl tr.row{cursor:pointer}
+.tbl tr.row:hover{background:#EEF2FA}
+.co-name{font-weight:600;color:var(--txt-bright)}
+.co-meta{font-size:9.5px;color:var(--txt-dim);margin-top:2px}
+.num{font-family:var(--mono);white-space:nowrap}
+.sub{display:block;font-family:var(--sans);font-size:9px;color:var(--txt-dim);margin-top:2px;white-space:normal;line-height:1.35}
+.sec-pill{font-family:var(--mono);font-weight:600;font-size:8.5px;padding:2px 7px;border-radius:3px;white-space:nowrap}
+.own-listed{background:var(--blue-dim);color:var(--blue)}.own-sponsor{background:#E0F2F1;color:var(--teal)}.own-family{background:#EDE7F6;color:var(--purple)}.own-mutual{background:#FFF3E0;color:#8D4E00}
+.age{font-family:var(--mono);font-size:8px;padding:1px 5px;border-radius:3px;background:var(--grey-bg);color:#455A64;border:1px solid #CFD8DC;margin-left:4px;white-space:nowrap}
+.flagx{font-family:var(--mono);font-size:8px;padding:1px 5px;border-radius:3px;background:var(--amber-bg);color:var(--amber);margin-left:4px;white-space:nowrap}
+.lt{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px;flex-shrink:0;border:1px solid rgba(0,0,0,.12)}
+.lt.green{background:var(--green)}.lt.amber{background:#F2A900}.lt.red{background:var(--red)}.lt.grey{background:#fff;border:1.5px dashed var(--grey)}
+.arr{display:inline-block;min-width:14px;font-weight:700;font-size:13px;line-height:1;color:var(--txt-bright);margin-right:5px;vertical-align:-1px}
+.lcard.up,.lcard.down,.lcard.flat{border-top-color:var(--txt-dim)}
+.lcell{min-width:118px}
+.lcell .num{font-weight:600}
+.legend-tbl{width:100%;border-collapse:collapse;margin-top:10px}
+.legend-tbl td{padding:4px 6px;font-size:9.5px;color:var(--txt-dim);vertical-align:top;border-top:1px solid var(--border)}
+.legend-tbl td:first-child{font-weight:600;color:var(--txt);white-space:nowrap}
+.foot-note{font-size:9.5px;color:var(--txt-dim);margin-top:8px;line-height:1.55}
+.empty{font-size:10.5px;color:var(--txt-dim);font-style:italic;padding:8px 0}
+
+/* OWNERSHIP BARS */
+.bar-row{padding:7px 6px;border-bottom:1px solid var(--border)}
+.bar-row:last-child{border-bottom:none}
+.bar-label{font-weight:500;font-size:11px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.bar-wrap{height:7px;background:#EEF2F7;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}
+
+/* COMPANY PAGE */
+.pagewrap{padding:0 16px 24px}
+.co-head{background:var(--nav);color:#fff;padding:16px 20px;border-radius:6px;margin-bottom:14px}
+.co-head-name{font-family:Georgia,serif;font-size:20px;font-weight:700;line-height:1.2}
+.co-head-loc{font-size:11px;color:rgba(255,255,255,.7);margin-top:3px}
+.co-badges{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.co-badge{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.5px;padding:3px 9px;border-radius:3px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.25);color:#fff}
+.lgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.lcard{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:10px 12px;border-top:4px solid var(--grey)}
+.lcard.green{border-top-color:var(--green)}.lcard.amber{border-top-color:#F2A900}.lcard.red{border-top-color:var(--red)}
+.lcard-l{font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--txt-dim);margin-bottom:5px;display:flex;align-items:center}
+.lcard-v{font-family:var(--mono);font-weight:600;font-size:18px;color:var(--txt-bright)}
+.lcard-p{font-size:9.5px;color:var(--txt);margin-top:3px}
+.lcard-n{font-size:9.5px;color:var(--txt-dim);margin-top:5px;line-height:1.45}
+.lcard-r{font-size:8.5px;color:var(--txt-dim);margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);line-height:1.45}
+.snap{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px}
+.snap-c{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:9px 10px}
+.snap-l{font-size:8.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--txt-dim);margin-bottom:4px}
+.snap-v{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--txt-bright)}
+.snap-sub{font-size:9px;color:var(--txt-dim);margin-top:2px}
+.sec-card{background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:14px}
+.sec-card-h{padding:9px 14px;border-bottom:1px solid var(--border);background:#F5F7FC;font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--blue);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.sec-card-h .hint{font-weight:500;text-transform:none;letter-spacing:0;color:var(--txt-dim);font-size:9.5px;text-align:right}
+.sec-card-b{padding:13px 14px;overflow-x:auto}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.two>div{min-width:0}
+.fin-tbl{width:100%;border-collapse:collapse}
+.fin-tbl th,.fin-tbl td{padding:6px 8px;font-size:11px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
+.fin-tbl th:first-child,.fin-tbl td:first-child{text-align:left;font-weight:500;color:var(--txt-dim);white-space:normal}
+.fin-tbl th{font-size:9.5px;text-transform:uppercase;color:var(--txt-dim);font-weight:600}
+.fin-tbl td{font-family:var(--mono)}
+.fin-tbl th.f,.fin-tbl td.f{background:#F7F9FF;color:var(--blue)}
+.fin-tbl tr.hl td{background:#FBFCFE;font-weight:600;color:var(--txt-bright)}
+.trend-up{color:var(--green)}.trend-dn{color:var(--red)}.trend-fl{color:var(--txt-dim)}
+.prof td:last-child{text-align:left;font-family:var(--sans);white-space:normal}
+.chartbox{max-width:600px}
+.legend{display:flex;gap:14px;font-size:9px;color:var(--txt-dim);margin-top:2px;justify-content:center;flex-wrap:wrap}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;vertical-align:-1px}
+.tree{font-size:11px}
+.tnode{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:5px;border:1px solid var(--border);background:var(--card);margin:3px 0}
+.tnode .nt-ico{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:#fff;font-weight:700}
+.nt-person{background:var(--purple)}.nt-fund{background:var(--teal)}.nt-company{background:var(--blue)}.nt-listed{background:#455A64}
+.tnode.entity{background:var(--nav);border-color:var(--nav)}
+.tnode.entity .nt-name{color:#fff;font-weight:700}.tnode.entity .nt-sub{color:rgba(255,255,255,.65)}.tnode.entity .nt-ico{background:#fff;color:var(--nav)}
+.nt-name{font-weight:600;color:var(--txt-bright)}
+.nt-sub{font-size:9px;color:var(--txt-dim);margin-top:1px}
+.tconn{width:2px;height:11px;background:var(--blue-line);margin-left:20px}
+.own-legend{display:flex;gap:14px;font-size:9.5px;color:var(--txt-dim);margin-bottom:10px;flex-wrap:wrap}
+.own-legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.own-head{font-size:9.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--txt-dim);margin:14px 0 6px}
+.own-head:first-child{margin-top:0}
+.note-box{background:#FBFCFE;border-left:3px solid var(--txt-dim);border-radius:0 5px 5px 0;padding:9px 12px;font-size:10.5px;line-height:1.55}
+.news-item{padding:8px 0;border-bottom:1px solid var(--border)}
+.news-item:last-child{border-bottom:none}
+.news-hl{font-size:11px;font-weight:500;line-height:1.45}
+.news-meta{font-size:9px;color:var(--txt-dim);margin-top:2px;font-family:var(--mono)}
+.src-foot{font-size:9px;color:var(--txt-dim);border-top:1px solid var(--border);padding-top:10px;margin-top:6px;line-height:1.6}
+
+/* NEWS + SOURCES */
+.feed-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;align-items:start;padding:0 16px 24px}
+.up li{display:grid;grid-template-columns:86px 1fr;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:11px;list-style:none}
+.up li:last-child{border-bottom:none}
+.up .when{font-family:var(--mono);font-weight:600;color:var(--txt-bright)}
+.src-tbl{width:100%;border-collapse:collapse}
+.src-tbl th,.src-tbl td{padding:7px 8px;border-bottom:1px solid var(--border);font-size:10.5px;text-align:left;vertical-align:top}
+.src-tbl th{font-size:9px;text-transform:uppercase;color:var(--txt-dim);font-weight:600;background:#F5F7FC;white-space:nowrap}
+.src-tbl td.n{font-family:var(--mono);text-align:right}
+.page-foot{padding:14px 16px 26px;font-size:9.5px;color:var(--txt-dim);line-height:1.6;border-top:1px solid var(--border);background:var(--card)}
+.page-foot b{color:var(--txt)}
+@media (max-width:1100px){.kpi-row{grid-template-columns:repeat(3,1fr)}.trig-grid{grid-template-columns:1fr}.lgrid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:720px){.grid2,.kpi-row,.two,.feed-grid,.ev-grid,.lgrid{grid-template-columns:1fr}.hdr-meta{margin-left:0;text-align:left}.qbar{grid-template-columns:1fr}.q-text{font-size:14px}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">MOODY'S</div>
+  <div class="hdr-div"></div>
+  <div>
+    <div class="hdr-title" id="hdrTitle"></div>
+    <div class="hdr-sub" id="hdrSub"></div>
+  </div>
+  <div class="hdr-meta" id="hdrMeta">As of 7 October 2026<br>Moody's data</div>
+</div>
+
+<div class="qbar" id="qbar"></div>
+
+<div class="ticker-wrap">
+  <div class="ticker-label">LATEST</div>
+  <div class="ticker-track"><div class="ticker-inner" id="ticker"></div></div>
+</div>
+
+<div class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-tab="overview">Overview</button>
+  <button role="tab" aria-selected="false" data-tab="company">Company</button>
+  <button role="tab" aria-selected="false" data-tab="news">News and events</button>
+  <button role="tab" aria-selected="false" data-tab="sources">Sources</button>
+</div>
+
+<section class="page" id="page-overview" role="tabpanel">
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="wrap" id="triggerWrap">
+    <div class="panel">
+      <div class="ph"><span class="ph-title" id="trigTitle"></span><span class="ph-badge" id="trigBadge"></span></div>
+      <div class="pb" id="triggerPanel"></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="panel">
+      <div class="ph"><span class="ph-title">Company screen: published metrics</span><span class="ph-badge" id="tblBadge"></span></div>
+      <div class="pb">
+        <div class="bench" id="bench"></div>
+        <div class="controls">
+          <div class="seg" id="ownSeg">
+            <button data-own="all" class="on">All owners</button>
+            <button data-own="Listed">Listed</button>
+            <button data-own="Sponsor">Sponsor or credit fund</button>
+            <button data-own="Family-owned">Family-owned</button>
+            <button data-own="Mutual">Mutual or employee-owned</button>
+          </div>
+          <input class="search" id="search" placeholder="Filter by company or owner" aria-label="Filter the screen">
+          <div class="ctl-note">Click a company for its full page.</div>
+        </div>
+        <div class="tblwrap">
+          <table class="tbl">
+            <thead><tr>
+              <th>Company</th><th>Revenue<small>latest period · basis</small></th>
+              <th>Revenue growth<small>arrow: direction, two full years</small></th><th>EBITDA margin<small>light: level, latest period</small></th>
+              <th>Margin change<small>arrow: direction on the prior year</small></th><th>Leverage<small>light: debt / EBITDA</small></th><th>Latest development</th>
+            </tr></thead>
+            <tbody id="tblBody"></tbody>
+          </table>
+        </div>
+        <table class="legend-tbl" id="legend"></table>
+        <div class="foot-note" id="screenNote"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="ph"><span class="ph-title">Ownership</span><span class="ph-badge">typical route to a deal by owner type</span></div>
+      <div class="pb" id="ownPanel"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="ph-title">This Month</span><span class="ph-badge" id="monthBadge"></span></div>
+      <div class="pb" id="monthPanel"></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-company" role="tabpanel" hidden>
+  <div class="controls" style="padding:12px 16px 10px">
+    <label style="font-size:11px;color:var(--txt-dim)">Company &nbsp;<select id="coSel"></select></label>
+    <button class="btn" id="coPrev" aria-label="Previous company">&#8592; Previous</button>
+    <button class="btn" id="coNext" aria-label="Next company">Next &#8594;</button>
+  </div>
+  <div class="pagewrap" id="coPage"></div>
+</section>
+
+<section class="page" id="page-news" role="tabpanel" hidden>
+  <div class="controls" style="padding:12px 16px 10px;gap:14px">
+    <label style="font-size:11px;color:var(--txt-dim)">Show &nbsp;<select id="feedSel"><option value="">All</option><option value="macro">Macro and sector</option></select></label>
+    <div class="chips" id="tagChips"></div>
+    <div class="ctl-note">Headlines are written as plain facts with publisher and date. A figure appears only where the source gives one.</div>
+  </div>
+  <div class="feed-grid">
+    <div class="panel"><div class="ph"><span class="ph-title">News Feed</span><span class="ph-badge" id="feedBadge"></span></div><div class="pb" id="feed"></div></div>
+    <div class="panel"><div class="ph"><span class="ph-title">Coming Up</span><span class="ph-badge">dated in sources</span></div><div class="pb"><ul class="up" id="upcoming"></ul></div></div>
+  </div>
+</section>
+
+<section class="page" id="page-sources" role="tabpanel" hidden>
+  <div class="pagewrap" style="padding-top:12px" id="sourcesPage"></div>
+</section>
+
+<div class="page-foot" id="pageFoot"></div>
+
+<script>
+/* ============================================================
+   DATA: written by build_dashboard.py from the S1, S2 and S3 outputs.
+   Do not hand-edit. Change the inputs and rebuild.
+   ============================================================ */
+const DATA = /*TDR_DATA_START*/{
+ "meta": {
+  "asOf": "2026-10-07",
+  "asOfLong": "7 October 2026",
+  "title": "UK Supermarkets: Portfolio View",
+  "pageTitle": "UK supermarkets portfolio view",
+  "subtitle": "Prepared for TDR Capital. Eleven UK grocers side by side: metrics, ownership, management, Moody's research and news. Moody's data only; news is third-party via Moody's NewsEdge. A demonstration, not an investment view.",
+  "pulled": "7 and 8 October 2026",
+  "tools": "Moody's research · Précis · Orbis · company filings · NewsEdge",
+  "monthWindow": "7 Sep to 7 Oct 2026",
+  "view": "sector",
+  "question": "",
+  "glossary": "Big Four: Tesco, Sainsbury's, Asda and Morrisons. Discounters: Aldi and Lidl. Mutual or employee-owned: Co-op (member-owned) and Waitrose (John Lewis Partnership).",
+  "selection": "Eleven UK grocers covering every ownership type: four listed (Tesco, Sainsbury's, Marks and Spencer, Ocado), two sponsor-owned (Asda, Morrisons), three family-owned (Aldi, Lidl, Iceland) and two mutual or employee-owned (Co-op, Waitrose). Seven are rated by Moody's (Tesco, Sainsbury's, Marks and Spencer, Ocado, Asda, Morrisons, Iceland), so they also have credit opinions; the other four are covered by Orbis accounts and news.",
+  "segment": "UK supermarkets (grocery retail)",
+  "ticker": [
+   "Sainsbury's agrees to sell Argos for at least £120m (SeeNews Deals, 31 Jul)",
+   "Sky News: Morrisons' owner CD&R open to a merger with a major competitor (FoodManufacture.co.uk, 7 Oct)",
+   "Tesco half-year results due 8 Oct; Sainsbury's 22 Oct (Proactive Investors)",
+   "Moody's grocery in-depth (6 Aug): scale protects margins, volumes broadly stable, price competition continuing",
+   "Moody's changes Iceland's outlook to positive; €600m notes due 2033 (27 Jul)",
+   "Lidl GB: sales up more than 10%; £600m investment, 50+ stores (MSN UK, 5 Oct; ESM, 6 Oct)",
+   "Asda: Moody's-adjusted leverage 8.6x at March, which Moody's expects to be the peak (29 May)"
+  ],
+  "kpi": {
+   "dealSignals": [
+    "Argos sale agreed",
+    "Morrisons owner open to merger"
+   ],
+   "refinancing": [
+    "Iceland €600m notes due 2033 refinance 2027 and 2028 bonds"
+   ],
+   "trigger": null
+  },
+  "trigger": {
+   "title": "Sector and macro view: UK economy and grocery",
+   "badge": "Moody's macro research · Précis · sector research · news · company statements",
+   "headline": "UK economy: real GDP growth about **1%** in 2026, real consumer spending about **1%**, unemployment **5.1%**. UK grocery: volumes broadly stable, price competition continuing, food retail sales **+2.6%** in August",
+   "verdict": "",
+   "current": "",
+   "steps": [],
+   "points": [
+    {
+     "kind": "Macro research",
+     "text": "UK inflation 3.1%; real consumer spending growth about 1.0% in 2026 and 0.7% in 2027; energy costs higher after the Strait of Hormuz closure.",
+     "src": "Moody's State of the Consumer, Europe, 29 Sep 2026"
+    },
+    {
+     "kind": "Précis (macro)",
+     "text": "Real GDP growth to slow from 1.5% in 2025 to about 1% in 2026; private consumption +0.5%; unemployment 5.1%; CPI 2.4%; policy rate 3.3% by end-2026. December 2025 vintage, before the 2026 energy shock.",
+     "src": "Moody's Précis, United Kingdom, December 2025 vintage, published 16 Jan 2026"
+    },
+    {
+     "kind": "Sector research",
+     "text": "Consumer-facing sectors broadly fine with pockets of weakness; margins squeezed where rising labour and input costs meet weak consumer confidence.",
+     "src": "Moody's Credit Conditions UK, 2 Sep 2026"
+    },
+    {
+     "kind": "Sector research",
+     "text": "Scale protects the largest grocers' margins and price competition continues; grocery volumes broadly stable over the next year; Tesco's and Sainsbury's profits broadly stable, Morrisons' margins slightly weaker, some improvement for Asda after a weak 2025; food inflation expected to rise to about 5% by early 2027 from 1.7%.",
+     "src": "Moody's UK grocery sector in-depth, 6 Aug 2026"
+    },
+    {
+     "kind": "News",
+     "text": "Food retail sales +2.6% year on year in August; shop price inflation 1.4% in September; grocery sales growth slowed in September as shopping trips fell.",
+     "src": "BRC-KPMG via Retail Gazette, 10 Sep 2026; BRC via MarketLine, 4 Oct 2026; Worldpanel via Alliance News, 15 Sep 2026"
+    },
+    {
+     "kind": "News",
+     "text": "The CMA provisionally brings Aldi and Lidl under the Groceries Market Investigation Order; Sainsbury's agrees to sell Argos for at least £120m; Morrisons' owner CD&R is reported open to a merger with a major competitor.",
+     "src": "UK government release via ForeignAffairs.co.nz, 7 Aug 2026; SeeNews Deals, 31 Jul 2026; FoodManufacture.co.uk citing Sky News, 7 Oct 2026"
+    },
+    {
+     "kind": "Company statement",
+     "text": "Tesco: shopper sentiment affected by the Middle East situation, no conflict-linked price inflation seen yet. Morrisons: cumulative cost savings near £1bn fund sharper pricing.",
+     "src": "Western Daily Press, 5 Oct 2026; Retail Times citing GlobalData, 17 Sep 2026"
+    }
+   ],
+   "evidence": {
+    "research": [
+     {
+      "kind": "Sector research",
+      "title": "Credit Conditions – UK",
+      "text": "Consumer-facing sectors broadly fine with pockets of weakness; margins squeezed where rising labour and input costs meet weak consumer confidence.",
+      "src": "Moody's, 2 Sep 2026"
+     },
+     {
+      "kind": "Sector research",
+      "title": "Grocery Retail – UK: UK supermarkets will cope with renewed inflation risks",
+      "text": "Scale protects the largest grocers' profitability; price competition continues; volumes broadly stable; food inflation expected to rise to about 5% by early 2027.",
+      "src": "Moody's, 6 Aug 2026"
+     }
+    ],
+    "macro": [
+     {
+      "kind": "Macro research",
+      "title": "State of the Consumer, Europe",
+      "text": "UK inflation 3.1%; real consumer spending growth about 1.0% in 2026 and 0.7% in 2027.",
+      "src": "Moody's, 29 Sep 2026"
+     },
+     {
+      "kind": "Précis (macro)",
+      "title": "Précis: United Kingdom, December 2025 vintage",
+      "text": "Real GDP growth about 1% in 2026 from 1.5% in 2025; private consumption +0.5%; unemployment 5.1%; CPI 2.4% in 2026 (quarterly path 2.9%, 2.4%, 2.0%, 2.1%); policy rate 3.3% by end-2026. Published before the 2026 energy shock.",
+      "src": "Moody's Précis, 16 Jan 2026"
+     }
+    ],
+    "news": [
+     {
+      "kind": "News",
+      "text": "UK retail sales +0.7% in August; food sales +2.6%, non-food −0.8%.",
+      "src": "BRC-KPMG via Retail Gazette, 10 Sep 2026"
+     },
+     {
+      "kind": "News",
+      "text": "Shop price inflation 1.4% in September; promotions held prices down.",
+      "src": "BRC via MarketLine, 4 Oct 2026"
+     },
+     {
+      "kind": "News",
+      "text": "The CMA provisionally decides that Aldi and Lidl should be subject to the Groceries Market Investigation Order.",
+      "src": "UK government release via ForeignAffairs.co.nz, 7 Aug 2026"
+     }
+    ],
+    "filings": [
+     {
+      "kind": "Company statement",
+      "text": "Tesco: shopper sentiment affected by the Middle East situation; no price inflation linked to the conflict seen yet.",
+      "src": "Western Daily Press, 5 Oct 2026"
+     },
+     {
+      "kind": "Company statement",
+      "text": "Morrisons: cumulative cost savings approaching £1bn fund sharper pricing.",
+      "src": "Retail Times citing GlobalData, 17 Sep 2026"
+     }
+    ]
+   }
+  },
+  "market": {
+   "benchmark": {
+    "label": "UK food retail sales growth (BRC-KPMG)",
+    "value": 2.6,
+    "period": "four weeks to 29 Aug 2026, year on year",
+    "period_end": "2026-08-29",
+    "source": "BRC-KPMG Retail Sales Monitor, via Retail Gazette, 10 Sep 2026",
+    "kind": "News"
+   },
+   "context": [
+    {
+     "text": "Moody's expects UK grocery volumes to remain broadly stable over the next year and price competition to continue, with scale protecting the largest grocers' margins.",
+     "src": "Moody's UK grocery sector in-depth, 6 Aug 2026",
+     "kind": "Sector research"
+    },
+    {
+     "text": "Consumer-facing sectors broadly fine with pockets of weakness.",
+     "src": "Moody's Credit Conditions UK, 2 Sep 2026",
+     "kind": "Sector research"
+    },
+    {
+     "text": "UK grocery sales growth slowed in September as shopping trips fell, while price inflation picked up.",
+     "src": "Alliance News via Morningstar, 15 Sep 2026",
+     "kind": "News"
+    }
+   ]
+  },
+  "lights": {
+   "rules": {
+    "growth": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+    "margin": "Green 6% or more · amber 3% to 6% · red below 3%",
+    "mchange": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+    "lev": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative"
+   },
+   "cfg": {
+    "revenue_growth": {
+     "band": 1.0
+    },
+    "margin": {
+     "green_min": 6.0,
+     "amber_min": 3.0
+    },
+    "margin_change": {
+     "band": 0.5
+    },
+    "leverage": {
+     "green_max": 3.0,
+     "amber_max": 5.0
+    }
+   },
+   "note": "Rules are set for this demonstration, not by Moody's; margin bands are set for grocery, where margins run from 2% to 8%. Change them in tdr-s3-synthesis.json and rebuild."
+  }
+ },
+ "companies": [
+  {
+   "id": "tesco",
+   "name": "Tesco",
+   "legal": "Tesco Plc",
+   "researchEntity": "Tesco Plc",
+   "type": "Listed",
+   "owner": "Listed. No shareholder above 25%.",
+   "ownerSrc": "Orbis ultimate owner and shareholders, pulled 7 Oct 2026",
+   "ownerFlag": "",
+   "chain": [
+    [
+     "Tesco Plc",
+     "Listed on the London Stock Exchange (TSCO); largest holders BlackRock 6.6%, Vanguard 3.0% (Orbis shareholders, pulled 7 Oct 2026)"
+    ]
+   ],
+   "hq": "Welwyn Garden City",
+   "web": "tescoplc.com",
+   "emp": "342,303",
+   "empSrc": "Orbis profile",
+   "ceo": "Ken Murphy (Group Chief Executive); CFO Imran Nawaz",
+   "ceoSrc": "Orbis directors, 7 Oct 2026",
+   "team": [
+    {
+     "name": "Ken Murphy",
+     "role": "Group Chief Executive"
+    },
+    {
+     "name": "Imran Nawaz",
+     "role": "Chief Financial Officer"
+    },
+    {
+     "name": "Gerry Murphy",
+     "role": "Chairman"
+    },
+    {
+     "name": "Ashwin Prasad",
+     "role": "Chief Executive Officer, UK"
+    },
+    {
+     "name": "Andrew Yaxley",
+     "role": "Chief Executive Officer, Booker"
+    },
+    {
+     "name": "Natasha Adams",
+     "role": "Chief Strategy and Transformation Officer"
+    }
+   ],
+   "teamSrc": "Orbis directors and managers, pulled 8 Oct 2026",
+   "beneficial": null,
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "UK's largest grocer, with the Booker wholesale business and operations in Ireland and Central Europe.",
+   "rev": 73712,
+   "revG": 5.4,
+   "ebitda": 5133,
+   "margin": 7.0,
+   "lev": 2.94,
+   "fcf": 2240.0,
+   "revTxt": "£73,712m",
+   "revSub": "",
+   "ebTxt": "£5,133m",
+   "ebSub": "7.0% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "2.94x",
+   "levSub": "Moody's-adjusted 3.0x (FY Feb-26)",
+   "fcfTxt": "£2,240m",
+   "basisCode": "Moody's format",
+   "basisShort": "As reported",
+   "basisLong": "As reported, Moody's Ratings Format",
+   "period": "FY Feb-26",
+   "periodType": "FY",
+   "finSrc": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+   "date": "Feb 2026",
+   "age": 7,
+   "stale": false,
+   "cost": "n.d.",
+   "demand": "FY Feb-26 like-for-like sales +4.3%, with growth across all segments (Moody's credit opinion, 20 May 2026)",
+   "financing": "Moody's-adjusted gross debt/EBITDA 3.0x; upgraded to Baa2 on 14 May 2026 (Moody's)",
+   "deal": "None found",
+   "changed": [
+    "Brokers trim second-quarter UK like-for-like forecasts to 1.4% to 1.7% ahead of half-year results on 8 October (Proactive Investors, 16 and 25 Sep).",
+    "Management says shopper sentiment has been affected by the Middle East situation, with no conflict-linked price inflation yet (Western Daily Press, 5 Oct)."
+   ],
+   "rated": true,
+   "opinionDate": "2026-05-20",
+   "says": [
+    "FY Feb-26 like-for-like sales +4.3%, with growth across all business segments. (Moody's credit opinion, 20 May 2026)",
+    "Half-year results due 8 October 2026; brokers expect first-half adjusted operating profit of about £1.7bn and slower second-quarter UK like-for-like growth. (Proactive Investors, 16 and 25 Sep 2026)",
+    "Management said shopper sentiment had been affected by the Middle East situation, with no price inflation linked to the conflict seen yet. (Western Daily Press, 5 Oct 2026)"
+   ],
+   "moodys": [
+    "Upgraded to Baa2 from Baa3 on 14 May 2026 on strong revenue performance and lower leverage; outlook stable.",
+    "Upgrade if Moody's-adjusted gross debt/EBITDA stays below 3.0x and RCF/net debt above 30%; downgrade if leverage rises well above 3.5x or RCF/net debt falls below 20%.",
+    "Moody's forecasts leverage broadly stable at about 2.9x in FY2027 and FY2028, with most free cash flow returned through buybacks."
+   ],
+   "gaps": [
+    "Cost of sales and hedging not pulled from filings for this run.",
+    "Debt in Moody's data includes lease liabilities."
+   ],
+   "priorities": [],
+   "prioritiesSrc": "",
+   "proj": [
+    "Revenue £74.9bn in FY2027 and £77.0bn in FY2028 (Moody's forecast, 20 May 2026)",
+    "Debt/EBITDA 2.9x in FY2027 and FY2028 (Moody's forecast, 20 May 2026)"
+   ],
+   "mgmtSrc": "Orbis directors, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+5.4%",
+     "period": "FY Feb-26 vs FY Feb-25",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "green",
+     "v": "7.0%",
+     "period": "FY Feb-26",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green 6% or more · amber 3% to 6% · red below 3%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "flat",
+     "v": "−0.3 pts",
+     "period": "FY Feb-26 vs FY Feb-25",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "7.0% against 7.3%."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "green",
+     "v": "2.94x",
+     "period": "FY Feb-26",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Moody's-adjusted gross debt/EBITDA 3.0x at FY Feb-26 (credit opinion, 20 May 2026). The company's own target range is 2.8x to 2.3x net debt/EBITDA."
+    }
+   ],
+   "latest": {
+    "text": "Half-year results due 8 Oct 2026; brokers expect first-half adjusted operating profit of about £1.7bn and slower second-quarter UK like-for-like growth.",
+    "src": "Proactive Investors, 16 and 25 Sep 2026"
+   },
+   "years": [
+    "2023",
+    "2024",
+    "2025",
+    "2026"
+   ],
+   "revS": [
+    65322,
+    68187,
+    69916,
+    73712
+   ],
+   "ebS": [
+    4175,
+    4793,
+    5104,
+    5133
+   ],
+   "marS": [
+    6.4,
+    7.0,
+    7.3,
+    7.0
+   ],
+   "levS": [
+    3.61,
+    3.1,
+    2.87,
+    2.94
+   ],
+   "seriesNote": "Moody's Ratings Format, as reported; financial years end in late February. Debt includes IFRS 16 lease liabilities.",
+   "seriesBasis": "As reported, Moody's Ratings Format",
+   "cfoS": {
+    "years": [
+     "2026"
+    ],
+    "cfo": [
+     3906.0
+    ],
+    "capex": [
+     1666.0
+    ],
+    "src": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026"
+   }
+  },
+  {
+   "id": "sainsburys",
+   "name": "Sainsbury's",
+   "legal": "J Sainsbury plc",
+   "researchEntity": "J Sainsbury plc",
+   "type": "Listed",
+   "owner": "Listed. No shareholder above 25%.",
+   "ownerSrc": "Orbis ultimate owner and shareholders, pulled 7 Oct 2026",
+   "ownerFlag": "",
+   "chain": [
+    [
+     "J Sainsbury plc",
+     "Listed on the London Stock Exchange (SBRY); largest holders Vesa Equity 10.0%, Qatar Holding 6.8%, Schroders 5.2% (Orbis shareholders, pulled 7 Oct 2026)"
+    ]
+   ],
+   "hq": "London",
+   "web": "j-sainsbury.co.uk",
+   "emp": "n.d.",
+   "empSrc": "Orbis profile lists the holding company only (91)",
+   "ceo": "Simon Roberts (CEO); CFO Blathnaid Bergin",
+   "ceoSrc": "Orbis directors, 7 Oct 2026",
+   "team": [
+    {
+     "name": "Simon Roberts",
+     "role": "Chief Executive Officer"
+    },
+    {
+     "name": "Blathnaid Bergin",
+     "role": "Chief Financial Officer"
+    },
+    {
+     "name": "Martin Scicluna",
+     "role": "Chairman"
+    },
+    {
+     "name": "Rhian Bartlett",
+     "role": "Chief Food Commercial Officer"
+    },
+    {
+     "name": "Clodagh Moriarty",
+     "role": "Chief Retail and Technology Officer"
+    },
+    {
+     "name": "Graham Biggart",
+     "role": "Managing Director, Argos"
+    }
+   ],
+   "teamSrc": "Orbis directors and managers, pulled 8 Oct 2026",
+   "beneficial": null,
+   "sites": "605 supermarkets and 866 convenience stores at Sep 2025",
+   "sitesSrc": "Moody's credit opinion, 19 Dec 2025",
+   "desc": "UK's second-largest grocer; Argos general merchandise business agreed for sale in July 2026.",
+   "rev": 33647,
+   "revG": 2.7,
+   "ebitda": 2222,
+   "margin": 6.6,
+   "lev": 2.97,
+   "fcf": 466.0,
+   "revTxt": "£33,647m",
+   "revSub": "",
+   "ebTxt": "£2,222m",
+   "ebSub": "6.6% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "2.97x",
+   "levSub": "Moody's-adjusted 3.0x (FY Feb-26)",
+   "fcfTxt": "£466m",
+   "basisCode": "Moody's format",
+   "basisShort": "As reported",
+   "basisLong": "As reported, Moody's Ratings Format",
+   "period": "FY Feb-26",
+   "periodType": "FY",
+   "finSrc": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+   "date": "Feb 2026",
+   "age": 7,
+   "stale": false,
+   "cost": "n.d.",
+   "demand": "H1 FY2025/26 retail revenue excluding fuel +4.8% (Moody's credit opinion, 19 Dec 2025)",
+   "financing": "Argos sale agreed for at least £120m, completion targeted February 2027; Moody's expects leverage about 0.1x lower (Moody's issuer comment, 31 Jul 2026)",
+   "deal": "Sale of Argos to Swift Partners agreed for at least £120m (SeeNews Deals, 31 Jul 2026)",
+   "changed": [
+    "Argos sale agreed for at least £120m, completion targeted February 2027 (SeeNews Deals, 31 Jul).",
+    "Moody's calls the sale credit positive, with leverage about 0.1x lower (Moody's issuer comment, 31 Jul).",
+    "Brokers cut second-quarter grocery sales growth forecasts to 2.7% to 3.0% (Proactive Investors, 28 Sep)."
+   ],
+   "rated": true,
+   "opinionDate": "2025-12-19",
+   "says": [
+    "Argos sale to Swift Partners agreed for at least £120m, with £70m on completion targeted for February 2027. (SeeNews Deals, 31 Jul 2026)",
+    "Brokers cut second-quarter grocery sales growth forecasts to 2.7% to 3.0% ahead of half-year results on 22 October. (Proactive Investors, 28 Sep 2026)"
+   ],
+   "moodys": [
+    "Baa3, stable. Upgrade needs Moody's-adjusted debt/EBITDA significantly below 3.0x and RCF/net debt above 30%; downgrade if debt/EBITDA stays above 3.5x or profit declines for a sustained period.",
+    "Argos sale (agreed 31 Jul 2026) is credit positive: a smaller but higher-margin group, with leverage about 0.1x lower (Moody's issuer comment, 31 Jul 2026).",
+    "Moody's forecasts leverage broadly stable at around 3.0x."
+   ],
+   "gaps": [
+    "Employee count not in the Orbis record used (holding company).",
+    "Debt in Moody's data includes lease liabilities."
+   ],
+   "priorities": [
+    "Focus on the core food business after the sale of the banking business and Argos"
+   ],
+   "prioritiesSrc": "Moody's issuer comment, 31 Jul 2026",
+   "proj": [
+    "Revenue £34.1bn in FY2026 and £35.2bn in FY2027 (Moody's forecast, 19 Dec 2025)",
+    "Debt/EBITDA 3.0x in FY2026 and 2.9x in FY2027 (Moody's forecast, 19 Dec 2025)"
+   ],
+   "mgmtSrc": "Orbis directors, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+2.7%",
+     "period": "FY Feb-26 vs FY Mar-25",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "green",
+     "v": "6.6%",
+     "period": "FY Feb-26",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green 6% or more · amber 3% to 6% · red below 3%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "flat",
+     "v": "−0.1 pts",
+     "period": "FY Feb-26 vs FY Mar-25",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "6.6% against 6.7%."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "green",
+     "v": "2.97x",
+     "period": "FY Feb-26",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Moody's-adjusted gross debt/EBITDA about 3.0x at FY Feb-26 (Moody's issuer comment, 31 Jul 2026); the company's own net leverage was 2.5x at Sep 2025, at the lower end of its 3.0x to 2.4x target range (credit opinion, 19 Dec 2025)."
+    }
+   ],
+   "latest": {
+    "text": "Argos sale agreed for at least £120m; half-year results due 22 Oct 2026.",
+    "src": "SeeNews Deals, 31 Jul 2026; Proactive Investors, 28 Sep 2026"
+   },
+   "years": [
+    "2023",
+    "2024",
+    "2025",
+    "2026"
+   ],
+   "revS": [
+    31491,
+    32238,
+    32772,
+    33647
+   ],
+   "ebS": [
+    2159,
+    2238,
+    2194,
+    2222
+   ],
+   "marS": [
+    6.9,
+    6.9,
+    6.7,
+    6.6
+   ],
+   "levS": [
+    3.31,
+    2.93,
+    3.01,
+    2.97
+   ],
+   "seriesNote": "Moody's Ratings Format, as reported; financial years end in late February or early March. Debt includes IFRS 16 lease liabilities. Group revenue includes Argos and fuel.",
+   "seriesBasis": "As reported, Moody's Ratings Format",
+   "cfoS": {
+    "years": [
+     "2026"
+    ],
+    "cfo": [
+     1317.0
+    ],
+    "capex": [
+     851.0
+    ],
+    "src": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026"
+   }
+  },
+  {
+   "id": "marks",
+   "name": "Marks and Spencer",
+   "legal": "Marks and Spencer Group P.L.C.",
+   "researchEntity": "Marks & Spencer p.l.c.",
+   "type": "Listed",
+   "owner": "Listed. No shareholder above 25%.",
+   "ownerSrc": "Orbis ultimate owner and shareholders, pulled 7 Oct 2026",
+   "ownerFlag": "",
+   "chain": [
+    [
+     "Marks and Spencer Group P.L.C.",
+     "Listed on the London Stock Exchange (MKS); largest holders BlackRock 6.2%, Artemis 5.1% (Orbis shareholders, pulled 7 Oct 2026)"
+    ]
+   ],
+   "hq": "London",
+   "web": "marksandspencer.com",
+   "emp": "64,442",
+   "empSrc": "Orbis profile",
+   "ceo": "Stuart Machin (CEO); CFO Alison Dolan",
+   "ceoSrc": "Orbis directors, 7 Oct 2026",
+   "team": [
+    {
+     "name": "Stuart Machin",
+     "role": "Chief Executive Officer"
+    },
+    {
+     "name": "Alison Dolan",
+     "role": "Chief Financial Officer"
+    },
+    {
+     "name": "Archie Norman",
+     "role": "Chairman"
+    },
+    {
+     "name": "Alex Freudmann",
+     "role": "Managing Director of Food"
+    },
+    {
+     "name": "John Lyttle",
+     "role": "Managing Director of Fashion, Home and Beauty"
+    },
+    {
+     "name": "Rachel Higham",
+     "role": "Chief Digital and Technology Officer"
+    }
+   ],
+   "teamSrc": "Orbis directors and managers, pulled 8 Oct 2026",
+   "beneficial": null,
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "Food and clothing retailer; Ocado Retail Limited consolidated as a subsidiary from 6 April 2025.",
+   "rev": 17273.6,
+   "revG": 25.0,
+   "ebitda": 1301.4,
+   "margin": 7.5,
+   "lev": 2.63,
+   "fcf": 548.9,
+   "revTxt": "£17,274m",
+   "revSub": "+25.0%; Ocado Retail consolidated from Apr 2025 (+1.9% excluding it)",
+   "ebTxt": "£1,301m",
+   "ebSub": "7.5% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "2.63x",
+   "levSub": "Moody's-adjusted 3.0x (LTM Sep-25)",
+   "fcfTxt": "£549m",
+   "basisCode": "Moody's format",
+   "basisShort": "As reported",
+   "basisLong": "As reported, Moody's Ratings Format",
+   "period": "FY Mar-26",
+   "periodType": "FY",
+   "finSrc": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+   "date": "Mar 2026",
+   "age": 6,
+   "stale": false,
+   "cost": "n.d.",
+   "demand": "FY Mar-26 food sales +7.0%; Fashion, Home and Beauty −7.7% (annual report 2026)",
+   "financing": "Moody's-adjusted debt/EBITDA 3.0x at LTM Sep-25 after consolidating Ocado Retail's leases (Moody's, 21 Nov 2025)",
+   "deal": "None found",
+   "changed": [
+    "FY Mar-26 annual report: Ocado Retail consolidated from 6 April 2025; statutory revenue +25.0%, +1.9% excluding it (annual report 2026, via Moody's filings)."
+   ],
+   "rated": true,
+   "opinionDate": "2025-11-21",
+   "says": [
+    "Statutory revenue £17,273.6m, up 25.0%, driven by the consolidation of Ocado Retail Limited (sales £3,193.4m); excluding Ocado Retail, group sales grew 1.9%. (Annual report 2026)",
+    "Food sales +7.0%; Fashion, Home and Beauty sales −7.7%; adjusted profit before tax £671.4m against £881.1m. (Annual report 2026)"
+   ],
+   "moodys": [
+    "Baa3, stable. Downgrade if Moody's-adjusted debt/EBITDA stays above 3x or interest cover falls below 4x; upgrade if leverage stays below 2x with interest cover above 5.5x.",
+    "Credit profile reflects UK concentration, execution risk on the transformation plan and the possibility that Ocado Retail needs further financial support.",
+    "Moody's forecast leverage of 3.0x in FY2026, falling to 2.2x in FY2027 and 2.1x in FY2028."
+   ],
+   "gaps": [
+    "Ocado Retail (50% owned) is consolidated from April 2025, so FY Mar-26 is not comparable with earlier years.",
+    "No Moody's document on M&S since 21 Nov 2025 found (searched 7 Oct 2026).",
+    "No usable news in the window beyond share-price items and commentary."
+   ],
+   "priorities": [],
+   "prioritiesSrc": "",
+   "proj": [
+    "Revenue £17.2bn in FY2026, £18.4bn in FY2027 and £19.1bn in FY2028 (Moody's forecast, 21 Nov 2025)",
+    "Debt/EBITDA 3.0x in FY2026, 2.2x in FY2027 and 2.1x in FY2028 (Moody's forecast, 21 Nov 2025)"
+   ],
+   "mgmtSrc": "Orbis directors, 7 Oct 2026",
+   "filings": [
+    {
+     "document": "Annual report 2026",
+     "date": "2026-03-28",
+     "text": "Statutory revenue £17,273.6m (+25.0%) with Ocado Retail consolidated; excluding it, group sales +1.9%; food sales +7.0%"
+    }
+   ],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+25.0%",
+     "period": "FY Mar-26 vs FY Mar-25",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "green",
+     "v": "7.5%",
+     "period": "FY Mar-26",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green 6% or more · amber 3% to 6% · red below 3%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "down",
+     "v": "−0.9 pts",
+     "period": "FY Mar-26 vs FY Mar-25",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "7.5% against 8.4%. FY Mar-26 consolidates Ocado Retail, a lower-margin business, for the first time."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "green",
+     "v": "2.63x",
+     "period": "FY Mar-26",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Moody's-adjusted debt/EBITDA 3.0x for the 12 months to Sep 2025, up from 2.1x at FY Mar-25 as Ocado Retail's lease liabilities were consolidated (credit opinion, 21 Nov 2025)."
+    }
+   ],
+   "latest": {
+    "text": "FY Mar-26 accounts consolidate Ocado Retail for the first time: revenue £17.3bn (+25.0%), +1.9% excluding it; food sales +7.0%.",
+    "src": "Annual report 2026, via Moody's filings"
+   },
+   "years": [
+    "2023",
+    "2025",
+    "2026"
+   ],
+   "revS": [
+    11931.3,
+    13816.8,
+    17273.6
+   ],
+   "ebS": [
+    null,
+    1161.2,
+    1301.4
+   ],
+   "marS": [
+    null,
+    8.4,
+    7.5
+   ],
+   "levS": [
+    null,
+    2.54,
+    2.63
+   ],
+   "seriesNote": "Moody's Ratings Format, as reported; no FY Mar-24 column in the data. The 2023 EBITDA equals EBITA in the data, so depreciation looks missing and 2023 EBITDA, margin and leverage are left out. FY Mar-26 revenue rose 25.0% because Ocado Retail Limited was consolidated from 6 April 2025 (sales of £3,193.4m); excluding it, group sales grew 1.9% (annual report 2026).",
+   "seriesBasis": "As reported, Moody's Ratings Format",
+   "cfoS": {
+    "years": [
+     "2026"
+    ],
+    "cfo": [
+     1176.0
+    ],
+    "capex": [
+     627.1
+    ],
+    "src": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026"
+   }
+  },
+  {
+   "id": "ocado",
+   "name": "Ocado",
+   "legal": "Ocado Group plc",
+   "researchEntity": "Ocado Group plc",
+   "type": "Listed",
+   "owner": "Listed. No shareholder above 25%.",
+   "ownerSrc": "Orbis ultimate owner and shareholders, pulled 7 Oct 2026",
+   "ownerFlag": "",
+   "chain": [
+    [
+     "Ocado Group plc",
+     "Listed on the London Stock Exchange (OCDO); largest holders The London & Amsterdam Trust Company 16.1%, Lingotto 11.6%, Apple III 10.1% (Orbis shareholders, pulled 7 Oct 2026)"
+    ]
+   ],
+   "hq": "Hatfield",
+   "web": "ocadogroup.com",
+   "emp": "21,367",
+   "empSrc": "Orbis profile",
+   "ceo": "Tim Steiner (CEO); CFO Stephen Daintith",
+   "ceoSrc": "Orbis directors, 7 Oct 2026",
+   "team": [
+    {
+     "name": "Tim Steiner",
+     "role": "Chief Executive Officer"
+    },
+    {
+     "name": "Stephen Daintith",
+     "role": "Chief Financial Officer"
+    },
+    {
+     "name": "Adam Warby",
+     "role": "Chairman"
+    },
+    {
+     "name": "James Matthews",
+     "role": "Deputy Chief Executive Officer"
+    },
+    {
+     "name": "Mark Richardson",
+     "role": "Chief Executive Officer, Intelligent Automation"
+    },
+    {
+     "name": "Neill Abrams",
+     "role": "Group General Counsel and Company Secretary"
+    }
+   ],
+   "teamSrc": "Orbis directors and managers, pulled 8 Oct 2026",
+   "beneficial": null,
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "Grocery technology and logistics group. Its UK online grocer, Ocado Retail, is a 50/50 venture with M&S and has been consolidated by M&S since April 2025.",
+   "rev": 1381.7,
+   "revG": 13.8,
+   "ebitda": 185.2,
+   "margin": 13.4,
+   "lev": 9.66,
+   "fcf": -36.6,
+   "revTxt": "£1,382m",
+   "revSub": "",
+   "ebTxt": "£185m",
+   "ebSub": "13.4% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "9.66x",
+   "levSub": "Moody's-adjusted 9.8x (FY25); 10.1x LTM May-26",
+   "fcfTxt": "−£36.6m",
+   "basisCode": "Moody's format",
+   "basisShort": "As reported",
+   "basisLong": "As reported, Moody's Ratings Format",
+   "period": "FY Nov-25",
+   "periodType": "FY",
+   "finSrc": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+   "date": "Nov 2025",
+   "age": 10,
+   "stale": false,
+   "cost": "£150m cost-reduction programme (Moody's, 17 Sep 2026)",
+   "demand": "H1 FY2026 profit before tax from continuing operations £17.1m against a £173.1m loss (dpa-AFX, 16 Jul 2026)",
+   "financing": "Moody's-adjusted gross leverage 9.8x FY2025; free cash flow expected negative near term, improving in 2027 with scheduled debt repayments (Moody's, 17 Sep 2026)",
+   "deal": "None found",
+   "changed": [
+    "H1 FY2026 profit before tax from continuing operations £17.1m against a £173.1m loss (dpa-AFX, 16 Jul).",
+    "Fulfilment centre agreement with an unnamed European retailer, live in FY2028 (Retail Technology Innovation Hub, 22 Jul).",
+    "Moody's credit opinion update: leverage 10.1x LTM May-26, expected to improve in 2027 (Moody's, 17 Sep)."
+   ],
+   "rated": true,
+   "opinionDate": "2026-09-17",
+   "says": [
+    "H1 FY2026 profit before tax from continuing operations £17.1m against a £173.1m loss a year earlier; full-year guidance unchanged, with positive cash flow expected in the second half. (dpa-AFX, 16 Jul 2026)",
+    "Agreement to build a customer fulfilment centre for an unnamed European retailer, due to go live in FY2028. (Retail Technology Innovation Hub, 22 Jul 2026)",
+    "Technology partnership with Asda for its online grocery business from 2027. (Moody's issuer comment on Bellis Finco, 29 May 2026)"
+   ],
+   "moodys": [
+    "B3, stable. Upgrade if Moody's-adjusted gross leverage falls well below 7x and (EBITDA less capex)/interest improves towards 1x; downgrade if leverage stays above 10x or free cash flow fails to improve.",
+    "Rating constrained by high leverage, limited recurring earnings against the debt burden and a capital-intensive model; free cash flow expected negative in the near term.",
+    "Moody's expects leverage to improve during 2027 as earnings grow and scheduled debt repayments reduce balances."
+   ],
+   "gaps": [
+    "Group revenue excludes Ocado Retail, which M&S consolidates; the retail business is not in these figures.",
+    "Debt in Moody's data includes lease liabilities."
+   ],
+   "priorities": [
+    "£150m cost-reduction programme",
+    "Positive cash flow in H2 FY2026 and full-year cash flow positive"
+   ],
+   "prioritiesSrc": "Moody's credit opinion, 17 Sep 2026; dpa-AFX, 16 Jul 2026",
+   "proj": [
+    "Revenue £1,395.5m in 2026 and £1,503.7m in 2027 (Moody's forecast, 17 Sep 2026)",
+    "Debt/EBITDA 10.7x in 2026 and 4.9x in 2027 (Moody's forecast, 17 Sep 2026)"
+   ],
+   "mgmtSrc": "Orbis directors, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+13.8%",
+     "period": "FY Nov-25 vs FY Dec-24",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "green",
+     "v": "13.4%",
+     "period": "FY Nov-25",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green 6% or more · amber 3% to 6% · red below 3%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "down",
+     "v": "−1.0 pts",
+     "period": "FY Nov-25 vs FY Dec-24",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "13.4% against 14.4%."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "red",
+     "v": "9.66x",
+     "period": "FY Nov-25",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Moody's-adjusted gross debt/EBITDA 9.8x at FY2025 and 10.1x for the 12 months to May 2026 (credit opinion, 17 Sep 2026)."
+    }
+   ],
+   "latest": {
+    "text": "H1 FY2026 pre-tax profit from continuing operations £17.1m; new fulfilment centre agreement with a European retailer; Moody's-adjusted leverage 10.1x at May.",
+    "src": "dpa-AFX, 16 Jul 2026; Retail Technology Innovation Hub, 22 Jul 2026; Moody's, 17 Sep 2026"
+   },
+   "years": [
+    "2022",
+    "2023",
+    "2024",
+    "2025"
+   ],
+   "revS": [
+    2516.8,
+    1122.1,
+    1214.6,
+    1381.7
+   ],
+   "ebS": [
+    -62.2,
+    156.4,
+    174.3,
+    185.2
+   ],
+   "marS": [
+    -2.5,
+    13.9,
+    14.4,
+    13.4
+   ],
+   "levS": [
+    null,
+    12.53,
+    9.74,
+    9.66
+   ],
+   "seriesNote": "Moody's Ratings Format, as reported; financial years end in late November or early December. 2022 still consolidated Ocado Retail; from 2023 revenue is technology and logistics only. 2022 EBITDA was negative, so leverage is not meaningful.",
+   "seriesBasis": "As reported, Moody's Ratings Format",
+   "cfoS": {
+    "years": [
+     "2025"
+    ],
+    "cfo": [
+     341.7
+    ],
+    "capex": [
+     378.3
+    ],
+    "src": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026"
+   }
+  },
+  {
+   "id": "asda",
+   "name": "Asda",
+   "legal": "Bellis Finco PLC (Asda)",
+   "researchEntity": "Bellis Finco PLC",
+   "type": "Sponsor-owned",
+   "owner": "TDR Capital LLP",
+   "ownerSrc": "Orbis ultimate owner, Sep 2026",
+   "ownerFlag": "",
+   "chain": [
+    [
+     "TDR Capital LLP",
+     "Orbis ultimate owner, Sep 2026"
+    ],
+    [
+     "Bellis Topco Limited",
+     "Orbis shareholders (majority owner)"
+    ],
+    [
+     "Bellis Finco PLC",
+     "Rated issuer; owned by Bellis Midco 4 Limited (Orbis shareholders)"
+    ],
+    [
+     "Asda Stores Limited",
+     "Operating company"
+    ]
+   ],
+   "hq": "Leeds",
+   "web": "asda.com",
+   "emp": "131,027",
+   "empSrc": "Orbis profile, Asda Stores Limited",
+   "ceo": "No CEO role in director data. Lists Lord Stuart Rose (Chairman) and Michael Gleeson (CFO).",
+   "ceoSrc": "Orbis directors, Asda Stores Limited, 7 Oct 2026",
+   "team": [
+    {
+     "name": "Lord Stuart Rose",
+     "role": "Chairman"
+    },
+    {
+     "name": "Michael Gleeson",
+     "role": "Chief Financial Officer"
+    },
+    {
+     "name": "Kris Comerford",
+     "role": "Chief Commercial Officer, Food"
+    },
+    {
+     "name": "David Hills",
+     "role": "Chief Customer Officer"
+    },
+    {
+     "name": "Mark Simpson",
+     "role": "Chief Transformation Officer"
+    },
+    {
+     "name": "Liz Evans",
+     "role": "Managing Director, George"
+    }
+   ],
+   "teamSrc": "Orbis directors and managers, pulled 8 Oct 2026",
+   "beneficial": {
+    "text": "Orbis lists six named individuals as beneficial owners of Bellis Finco PLC, eight levels up, including Manjit Dale, Gary Lindsay and Thomas Andrew Mitchell, each recorded above 25% direct.",
+    "src": "Orbis beneficial owners, 25% direct and total threshold, pulled 8 Oct 2026"
+   },
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "UK's third-largest grocer and second-largest independent fuel retailer (Moody's); owned by TDR Capital.",
+   "rev": 25878.0,
+   "revG": -3.6,
+   "ebitda": null,
+   "margin": 4.2,
+   "lev": 5.7,
+   "fcf": null,
+   "revTxt": "£25,878m",
+   "revSub": "",
+   "ebTxt": "about £1.1bn",
+   "ebSub": "Moody's-adjusted, calculated from a 4.2% margin",
+   "ebBasis": "Moody's-adjusted, calculated",
+   "levTxt": "5.7x",
+   "levSub": "Moody's Apr 2025 forecast for 2026; actual 8.3x at Dec-25, Apr 2026 forecast 7.9x",
+   "fcfTxt": "n.d.",
+   "basisCode": "Moody's-adjusted",
+   "basisShort": "Moody's-adjusted",
+   "basisLong": "Moody's-adjusted, from the credit opinion",
+   "period": "FY Dec-25",
+   "periodType": "FY",
+   "finSrc": "Moody's credit opinion on Bellis Finco PLC (Asda), 17 Apr 2026, key indicators (Moody's-adjusted)",
+   "date": "Dec 2025",
+   "age": 9,
+   "stale": false,
+   "cost": "n.d.",
+   "demand": "Q1 2026 like-for-like sales excluding fuel −1.3%, an improvement on −3.1% for full-year 2025 (Moody's issuer comment, 29 May 2026)",
+   "financing": "Moody's-adjusted gross leverage 8.6x at Mar 2026; a £7.9bn property portfolio is named by Moody's as an alternative source of liquidity (Moody's, 17 Apr and 29 May 2026)",
+   "deal": "None found",
+   "changed": [
+    "No Moody's document or usable news in the last 90 days (searched 7 Oct 2026). Latest Moody's comment, 29 May: Q1 like-for-like ex fuel −1.3%, leverage 8.6x at March, expected to be the peak."
+   ],
+   "rated": true,
+   "opinionDate": "2026-04-17",
+   "says": [
+    "Q1 2026: like-for-like sales excluding fuel −1.3%, EBITDA down about 17% year on year; product availability restored after Project Future. (Moody's issuer comment, 29 May 2026)",
+    "Moody's-adjusted EBITDA £1,079m in 2025, nearly £400m below 2024; company-adjusted underlying after-rent EBITDA was £1,141m in 2024. Moody's-adjusted EBITDA adds back nearly £400m a year of lease and ground rent. (Moody's rating action, 13 Apr 2026; credit opinion, 10 Apr 2025)",
+    "Partnership with Ocado Group for website, order picking and delivery technology from 2027. (MarketLine, 1 Jun 2026; Moody's, 29 May 2026)",
+    "Filed 2025 accounts of Bellis Finco PLC: revenue £25,878m, EBITDA £405.9m after one-off charges, total debt £9,519m. (Orbis Standard Format)"
+   ],
+   "moodys": [
+    "Downgraded to B2 from B1 on 13 April 2026 after revenue and earnings fell in 2025, mainly from the Project Future IT transformation; outlook stable.",
+    "Upgrade if Moody's-adjusted debt/EBITDA falls below 6.0x and (EBITDA less capex)/interest rises above 1.75x; downgrade if leverage stays well above 7x or liquidity weakens.",
+    "Moody's expects at least two years to return to 2024 revenue and EBITDA levels; leverage seen peaking at 8.6x in March 2026 and falling below 8.0x by end-2026 (issuer comment, 29 May 2026). A year earlier Moody's had forecast 5.7x for 2026 (credit opinion, 10 Apr 2025)."
+   ],
+   "gaps": [
+    "Moody's gross leverage includes lease liabilities and adds rent back to EBITDA; the company's own after-rent net leverage is lower and the figure is not in Moody's data.",
+    "Not listed, so no filings in the filings tool; trading after Q1 2026 was not found in NewsEdge on 7 Oct.",
+    "CEO role not in director data."
+   ],
+   "priorities": [],
+   "prioritiesSrc": "",
+   "proj": [
+    "Moody's forecast history: April 2025 saw 6.8x for 2025 and 5.7x for 2026; April 2026 shows 8.3x actual for 2025, 7.9x for 2026 and 6.7x for 2027 (Moody's credit opinions, 10 Apr 2025 and 17 Apr 2026)",
+    "Revenue £26,277.7m in 2026 and £26,918.0m in 2027 (Moody's forecast, 17 Apr 2026)",
+    "Debt/EBITDA 7.9x in 2026 and 6.7x in 2027 (Moody's forecast, 17 Apr 2026)",
+    "Leverage below 8.0x by end-2026 (Moody's issuer comment, 29 May 2026)"
+   ],
+   "mgmtSrc": "Orbis directors, Asda Stores Limited, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "down",
+     "v": "−3.6%",
+     "period": "FY 2025 vs FY 2024",
+     "basis": "Moody's-adjusted",
+     "src": "Moody's credit opinion on Bellis Finco PLC (Asda), 17 Apr 2026, key indicators (Moody's-adjusted)",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "amber",
+     "v": "4.2%",
+     "period": "FY Dec-25",
+     "basis": "Moody's-adjusted",
+     "src": "Moody's credit opinion on Bellis Finco PLC (Asda), 17 Apr 2026, key indicators (Moody's-adjusted)",
+     "rule": "Green 6% or more · amber 3% to 6% · red below 3%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "down",
+     "v": "−1.3 pts",
+     "period": "FY 2025 vs FY 2024",
+     "basis": "Moody's-adjusted, calculated",
+     "src": "Moody's credit opinion on Bellis Finco PLC (Asda), 17 Apr 2026, key indicators (Moody's-adjusted)",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "4.2% against 5.5%. Moody's attributes the 2025 fall in revenue and earnings mainly to the Project Future IT transformation, which hurt product availability in the second half of 2025."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "red",
+     "v": "5.7x",
+     "period": "Moody's forecast for 2026, made Apr 2025",
+     "basis": "Moody's-adjusted, forecast",
+     "src": "Moody's credit opinion on Bellis Finco PLC (Asda), 17 Apr 2026, key indicators (Moody's-adjusted)",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "5.7x is Moody's forecast for 2026 in the credit opinion of 10 Apr 2025 (6.8x for 2025). The April 2026 opinion shows 8.3x actual at Dec 2025, 8.6x at end-March 2026, 7.9x forecast for 2026 and 6.7x for 2027, after 2025 EBITDA came in nearly £400m below 2024. Moody's debt includes lease liabilities and its EBITDA adds back nearly £400m a year of lease and ground rent; the company reports on its own after-rent basis, which gives a lower ratio."
+    }
+   ],
+   "latest": {
+    "text": "Q1 2026 like-for-like sales ex fuel −1.3% and EBITDA down about 17%; Moody's-adjusted leverage 8.6x at March, which Moody's expects to be the peak; Ocado technology partnership from 2027.",
+    "src": "Moody's issuer comment, 29 May 2026"
+   },
+   "years": [
+    "2022",
+    "2023",
+    "2024",
+    "2025",
+    "2026F",
+    "2027F"
+   ],
+   "revS": [
+    24477.8,
+    25616.9,
+    26846.6,
+    25878.0,
+    26277.7,
+    26918.0
+   ],
+   "marS": [
+    4.5,
+    5.4,
+    5.5,
+    4.2,
+    4.3,
+    5.0
+   ],
+   "levS": [
+    6.7,
+    6.5,
+    5.9,
+    8.3,
+    7.9,
+    6.7
+   ],
+   "fcfDebtS": [
+    5.9,
+    4.7,
+    -0.5,
+    2.1,
+    1.0,
+    1.6
+   ],
+   "fc": [
+    false,
+    false,
+    false,
+    false,
+    true,
+    true
+   ],
+   "seriesNote": "Moody's-adjusted figures from the credit opinion of 17 Apr 2026; 2026F and 2027F are Moody's forecasts. Moody's gross debt includes IFRS 16 lease liabilities and Moody's excludes one-off charges from EBITDA. The filed accounts of Bellis Finco PLC (Orbis Standard Format) show 2025 EBITDA of £405.9m after one-off charges and total debt of £9,519m. Earlier Moody's forecasts (10 Apr 2025): 6.8x for 2025 and 5.7x for 2026, superseded by the April 2026 opinion.",
+   "seriesBasis": "Moody's-adjusted, from the credit opinion",
+   "ebFiled": {
+    "years": [
+     "2022",
+     "2023",
+     "2024",
+     "2025"
+    ],
+    "v": [
+     908.8,
+     1171.9,
+     739.5,
+     405.9
+    ]
+   }
+  },
+  {
+   "id": "morrisons",
+   "name": "Morrisons",
+   "legal": "Market Holdco 3 Limited (Morrisons)",
+   "researchEntity": "Market Holdco 3 Limited",
+   "type": "Sponsor-owned",
+   "owner": "Clayton, Dubilier & Rice",
+   "ownerSrc": "Orbis ultimate owner, Jul 2026",
+   "ownerFlag": "",
+   "chain": [
+    [
+     "Clayton, Dubilier & Rice Holdings LLC",
+     "Orbis ultimate owner, Jul 2026"
+    ],
+    [
+     "Market Topco Limited (100%)",
+     "Orbis shareholders"
+    ],
+    [
+     "Market Holdco 3 Limited",
+     "Rated entity (Moody's)"
+    ],
+    [
+     "Wm Morrison Supermarkets Limited",
+     "Operating company"
+    ]
+   ],
+   "hq": "Bradford",
+   "web": "morrisons.co.uk",
+   "emp": "104,813",
+   "empSrc": "Orbis profile, Wm Morrison Supermarkets Limited",
+   "ceo": "Ramie Baitieh (CEO); CFO Joanna Goff",
+   "ceoSrc": "Orbis directors, Wm Morrison Supermarkets Limited, 7 Oct 2026",
+   "team": [
+    {
+     "name": "Ramie Baitieh",
+     "role": "Chief Executive Officer"
+    },
+    {
+     "name": "Joanna Goff",
+     "role": "Chief Financial Officer"
+    },
+    {
+     "name": "Jonathan Burke",
+     "role": "Company Secretary"
+    }
+   ],
+   "teamSrc": "Orbis directors and managers, pulled 8 Oct 2026",
+   "beneficial": {
+    "text": "No beneficial-owner data in Orbis for Market Holdco 3 Limited.",
+    "src": "Orbis beneficial owners, 25% direct and total threshold, pulled 8 Oct 2026"
+   },
+   "sites": "about 500 supermarkets and 1,700 convenience stores",
+   "sitesSrc": "Moody's credit opinion, 17 Oct 2025",
+   "desc": "Fourth-largest of the Big Four grocers, with about 500 supermarkets and 1,700 convenience stores (Moody's).",
+   "rev": 15772,
+   "revG": -7.3,
+   "ebitda": 691,
+   "margin": 4.4,
+   "lev": 8.56,
+   "fcf": null,
+   "revTxt": "£15,772m",
+   "revSub": "−7.3%; FY Oct-24 included the petrol forecourts sold in Apr 2024",
+   "ebTxt": "£691m",
+   "ebSub": "4.4% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "8.56x",
+   "levSub": "Moody's-adjusted 8.1x (LTM Jul-25)",
+   "fcfTxt": "n.d.",
+   "basisCode": "filed",
+   "basisShort": "As reported",
+   "basisLong": "As reported, filed accounts (Orbis Standard Format)",
+   "period": "FY Oct-25",
+   "periodType": "FY",
+   "finSrc": "Orbis Standard Format, as reported (filed accounts of Market Bidco Limited), pulled 7 Oct 2026",
+   "date": "Oct 2025",
+   "age": 11,
+   "stale": false,
+   "cost": "Cumulative cost savings since FY2023 approaching £1bn (Retail Gazette, 16 Sep 2026)",
+   "demand": "Q3 FY2026 like-for-like sales +3.2%, the 15th consecutive quarter of growth (Retail Gazette and MSN, 16 to 18 Sep 2026)",
+   "financing": "Funded debt down 12% since April 2024; next maturities about £530m in Nov 2027 and £750m in Oct 2028 (Moody's, 7 Jul 2025 and 17 Oct 2025)",
+   "deal": "Sky News reports owner CD&R remains open to a merger with a major competitor (FoodManufacture.co.uk, 7 Oct 2026)",
+   "changed": [
+    "Q3 FY2026 like-for-like sales +3.2%, cost savings near £1bn (Retail Gazette, 16 Sep).",
+    "Sky News reports CD&R open to a merger with a major competitor (FoodManufacture.co.uk, 7 Oct).",
+    "Price pledge on fresh products and a cheaper meal deal (The Independent, 23 Aug; The Grocer, 29 Sep)."
+   ],
+   "rated": true,
+   "opinionDate": "2025-10-17",
+   "says": [
+    "Q3 FY2026 (13 weeks to 26 Jul 2026): like-for-like sales +3.2%, the strongest in over a year; cumulative cost savings approaching £1bn. (Retail Gazette, 16 Sep 2026; Retail Times citing GlobalData, 17 Sep 2026)",
+    "Filed FY Oct-25 accounts (Market Bidco Limited): revenue £15,772m, EBITDA £691m, total debt £5,913m. (Orbis Standard Format)",
+    "Sky News reports that owner CD&R remains open to a merger with a major competitor. (FoodManufacture.co.uk, 7 Oct 2026)"
+   ],
+   "moodys": [
+    "B2 corporate family rating, stable. Upgrade if Moody's-adjusted debt/EBITDA falls well below 6x with a policy to reduce it further; downgrade if it stays above 7x or free cash flow stays negative.",
+    "Moody's-adjusted leverage 8.1x and (EBITDA less capex)/interest 0.8x for the 12 months to July 2025; free cash flow negative by £68m.",
+    "Moody's projects leverage towards 6.5x by the end of FY2026 and 6x by FY2027, with free cash flow turning positive."
+   ],
+   "gaps": [
+    "No Moody's document since 17 Oct 2025 found (searched 7 Oct 2026); the opinion is 12 months old.",
+    "Filed EBITDA swings with disposal gains, so the margin change is not available on the filed basis.",
+    "Revenue before and after the April 2024 forecourt sale is not comparable."
+   ],
+   "priorities": [
+    "Cost savings target of £1bn by the end of 2026"
+   ],
+   "prioritiesSrc": "Moody's rating action, 7 Jul 2025",
+   "proj": [
+    "Revenue £15.8bn in FY2025, £16.2bn in FY2026 and £16.6bn in FY2027 (Moody's forecast, 17 Oct 2025)",
+    "Debt/EBITDA 7.6x in FY2025, 6.4x in FY2026 and 6.0x in FY2027 (Moody's forecast, 17 Oct 2025)"
+   ],
+   "mgmtSrc": "Orbis directors, Wm Morrison Supermarkets Limited, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "down",
+     "v": "−7.3%",
+     "period": "FY Oct-25 vs FY Oct-24",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (filed accounts of Market Bidco Limited), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "amber",
+     "v": "4.4%",
+     "period": "FY Oct-25",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (filed accounts of Market Bidco Limited), pulled 7 Oct 2026",
+     "rule": "Green 6% or more · amber 3% to 6% · red below 3%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "grey",
+     "v": "n.d.",
+     "period": "",
+     "basis": "",
+     "src": "Orbis Standard Format, as reported (filed accounts of Market Bidco Limited), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "The filed EBITDA for FY Oct-24 (£3,203m) includes the gain on the sale of the petrol forecourts, so there is no comparable prior-year margin in the filed accounts. Moody's-adjusted margins: 5.4% FY Oct-24, 4.7% for the 12 months to Jul 2025."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "red",
+     "v": "8.56x",
+     "period": "FY Oct-25",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (filed accounts of Market Bidco Limited), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Filed debt £5,913m against EBITDA £691m (8.56x) at FY Oct-25. Moody's-adjusted gross debt/EBITDA 8.1x for the 12 months to July 2025, projected towards 6.5x by end FY2026 (credit opinion, 17 Oct 2025)."
+    }
+   ],
+   "latest": {
+    "text": "Q3 like-for-like sales +3.2% with cost savings near £1bn; Sky News reports owner CD&R open to a merger with a major competitor.",
+    "src": "Retail Gazette, 16 Sep 2026; FoodManufacture.co.uk citing Sky News, 7 Oct 2026"
+   },
+   "years": [
+    "2022",
+    "2023",
+    "2024",
+    "LTM Jul-25",
+    "2025F",
+    "2026F",
+    "2027F"
+   ],
+   "revS": [
+    18500,
+    14700,
+    15300,
+    15700,
+    15800,
+    16200,
+    16600
+   ],
+   "marS": [
+    4.5,
+    4.6,
+    5.4,
+    4.7,
+    4.8,
+    5.6,
+    5.8
+   ],
+   "levS": [
+    8.8,
+    10.8,
+    7.4,
+    8.1,
+    7.6,
+    6.4,
+    6.0
+   ],
+   "fcfDebtS": [
+    -3.0,
+    -0.1,
+    0.1,
+    -1.1,
+    0.1,
+    1.6,
+    0.9
+   ],
+   "fc": [
+    false,
+    false,
+    false,
+    false,
+    true,
+    true,
+    true
+   ],
+   "seriesNote": "Moody's-adjusted figures from the credit opinion of 17 Oct 2025, in £bn rounded to £0.1bn; 2025F to 2027F are Moody's forecasts. Financial years end in late October. The petrol forecourts were sold in April 2024, so revenue before and after is not comparable. The summary row uses the filed FY Oct-25 accounts of Market Bidco Limited, which are newer than the opinion.",
+   "seriesBasis": "Moody's-adjusted, from the credit opinion",
+   "ebFiled": {
+    "years": [
+     "2023",
+     "2024",
+     "2025"
+    ],
+    "v": [
+     85.0,
+     3203.0,
+     691.0
+    ]
+   }
+  },
+  {
+   "id": "aldi",
+   "name": "Aldi",
+   "legal": "Aldi Stores Limited",
+   "researchEntity": "Aldi Stores Limited",
+   "type": "Family-owned",
+   "owner": "Siepmann-Stiftung (the Albrecht family foundation), via Aldi Sud KG",
+   "ownerSrc": "Orbis ultimate owner, Aug 2026",
+   "ownerFlag": "",
+   "chain": [
+    [
+     "Siepmann-Stiftung (family foundation)",
+     "Orbis ultimate owner, Aug 2026"
+    ],
+    [
+     "Aldi Sud Kommanditgesellschaft (100%)",
+     "Orbis shareholders"
+    ],
+    [
+     "Aldi Stores Limited",
+     "Operating company"
+    ]
+   ],
+   "hq": "Atherstone",
+   "web": "aldi.co.uk",
+   "emp": "50,655",
+   "empSrc": "Orbis profile",
+   "ceo": "Giles Hurley (Chief Executive Officer, UK and Ireland)",
+   "ceoSrc": "Orbis directors, 7 Oct 2026",
+   "team": [
+    {
+     "name": "Giles Hurley",
+     "role": "Chief Executive Officer, UK and Ireland"
+    },
+    {
+     "name": "Julie Ashfield",
+     "role": "Managing Director of Buying"
+    },
+    {
+     "name": "Ruth Kelly",
+     "role": "Director"
+    },
+    {
+     "name": "Hayleigh Lupino",
+     "role": "Director"
+    },
+    {
+     "name": "Jonathan Morshead",
+     "role": "Director"
+    },
+    {
+     "name": "Daniel Ronald",
+     "role": "Director"
+    }
+   ],
+   "teamSrc": "Orbis directors and managers, pulled 8 Oct 2026",
+   "beneficial": {
+    "text": "No beneficial-owner data in Orbis for Aldi Stores Limited; the ultimate owner is the Siepmann-Stiftung.",
+    "src": "Orbis beneficial owners, 25% direct and total threshold, pulled 8 Oct 2026"
+   },
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "UK and Ireland arm of the Aldi Sud discount grocer.",
+   "rev": 19032.7,
+   "revG": 5.0,
+   "ebitda": 708.7,
+   "margin": 3.7,
+   "lev": 0.76,
+   "fcf": null,
+   "revTxt": "£19,033m",
+   "revSub": "",
+   "ebTxt": "£709m",
+   "ebSub": "3.7% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "0.76x",
+   "levSub": "",
+   "fcfTxt": "n.d.",
+   "basisCode": "Moody's format",
+   "basisShort": "As reported",
+   "basisLong": "As reported, Moody's Ratings Format",
+   "period": "FY Dec-25",
+   "periodType": "FY",
+   "finSrc": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+   "date": "Dec 2025",
+   "age": 9,
+   "stale": false,
+   "cost": "n.d.",
+   "demand": "2025 sales +5% to £19bn; operating profit −0.6% to £432.9m (MarketLine citing GlobalData, 6 Oct 2026)",
+   "financing": "n.d.",
+   "deal": "None found",
+   "changed": [
+    "2025 sales +5% to £19bn, operating profit −0.6% to £432.9m (MarketLine citing GlobalData, 6 Oct).",
+    "CMA provisionally brings Aldi under the Groceries Market Investigation Order (7 Aug).",
+    "Unit prices fell steadily from Q4 2025 (The Grocer, 25 Jul)."
+   ],
+   "rated": false,
+   "opinionDate": "",
+   "says": [
+    "2025 sales across the UK and Ireland +5% to £19bn, while operating profit fell 0.6% to £432.9m. (MarketLine citing GlobalData, 6 Oct 2026)",
+    "Unit prices fell steadily from Q4 2025, the only one of the six largest grocers where they did (Worldpanel data). (The Grocer, 25 Jul 2026)"
+   ],
+   "moodys": [],
+   "gaps": [
+    "Not rated by Moody's; no Moody's research.",
+    "The Aldi news pull failed twice on 7 Oct; the kept items came from topic searches and other pulls."
+   ],
+   "priorities": [],
+   "prioritiesSrc": "",
+   "proj": [],
+   "mgmtSrc": "Orbis directors, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+5.0%",
+     "period": "FY Dec-25 vs FY Dec-24",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "amber",
+     "v": "3.7%",
+     "period": "FY Dec-25",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green 6% or more · amber 3% to 6% · red below 3%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "flat",
+     "v": "−0.2 pts",
+     "period": "FY Dec-25 vs FY Dec-24",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "3.7% against 3.9%."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "green",
+     "v": "0.76x",
+     "period": "FY Dec-25",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": ""
+    }
+   ],
+   "latest": {
+    "text": "2025 sales +5% to £19bn while operating profit fell 0.6% to £432.9m; unit prices fell steadily from late 2025.",
+    "src": "MarketLine citing GlobalData, 6 Oct 2026; The Grocer, 25 Jul 2026"
+   },
+   "years": [
+    "2022",
+    "2023",
+    "2024",
+    "2025"
+   ],
+   "revS": [
+    15473.4,
+    17887.9,
+    18124.9,
+    19032.7
+   ],
+   "ebS": [
+    408.1,
+    808.8,
+    706.4,
+    708.7
+   ],
+   "marS": [
+    2.6,
+    4.5,
+    3.9,
+    3.7
+   ],
+   "levS": [
+    2.36,
+    1.14,
+    1.12,
+    0.76
+   ],
+   "seriesNote": "Aldi Stores Limited (UK and Ireland), Moody's Ratings Format, as reported; calendar years.",
+   "seriesBasis": "As reported, Moody's Ratings Format"
+  },
+  {
+   "id": "lidl",
+   "name": "Lidl",
+   "legal": "Lidl Great Britain Limited",
+   "researchEntity": "Lidl Great Britain Limited",
+   "type": "Family-owned",
+   "owner": "The Schwarz family, via D. Schwarz Beteiligungs-KG and Lidl Stiftung & Co. KG",
+   "ownerSrc": "Orbis ultimate owner, Aug 2026",
+   "ownerFlag": "Orbis only",
+   "chain": [
+    [
+     "D. Schwarz Beteiligungs-KG",
+     "Orbis ultimate owner, Aug 2026"
+    ],
+    [
+     "Lidl Stiftung & Co. KG",
+     "Orbis shareholders (100% total)"
+    ],
+    [
+     "Lidl U.K. GmbH (100% direct)",
+     "Orbis shareholders"
+    ],
+    [
+     "Lidl Great Britain Limited",
+     "Operating company"
+    ]
+   ],
+   "hq": "Surbiton",
+   "web": "lidl.co.uk",
+   "emp": "34,697",
+   "empSrc": "Orbis profile",
+   "ceo": "No CEO role in director data. Lists Ryan McDonnell and six other directors without a CEO role.",
+   "ceoSrc": "Orbis directors, 7 Oct 2026",
+   "team": [
+    {
+     "name": "Ryan McDonnell",
+     "role": "Director"
+    },
+    {
+     "name": "Richard Bourns",
+     "role": "Director"
+    },
+    {
+     "name": "Roberto Eretta",
+     "role": "Director"
+    },
+    {
+     "name": "Fernando Figueras Hoffmann",
+     "role": "Director"
+    },
+    {
+     "name": "Stephanie Rogers",
+     "role": "Director"
+    },
+    {
+     "name": "Richard Taylor",
+     "role": "Director"
+    }
+   ],
+   "teamSrc": "Orbis directors and managers, pulled 8 Oct 2026",
+   "beneficial": {
+    "text": "Orbis lists Dieter Schwarz as general partner, eleven levels up, and three individuals (Hermann-Josef Hoffmann, Gerald Reger, Armin Sohler) at 33.05% direct, fourteen to fifteen levels up.",
+    "src": "Orbis beneficial owners, 25% direct and total threshold, pulled 8 Oct 2026"
+   },
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "Great Britain arm of the Schwarz Group's Lidl discount grocer.",
+   "rev": 11733.0,
+   "revG": 7.9,
+   "ebitda": 527.2,
+   "margin": 4.5,
+   "lev": 5.92,
+   "fcf": null,
+   "revTxt": "£11,733m",
+   "revSub": "",
+   "ebTxt": "£527m",
+   "ebSub": "4.5% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "5.92x",
+   "levSub": "",
+   "fcfTxt": "n.d.",
+   "basisCode": "filed",
+   "basisShort": "As reported",
+   "basisLong": "As reported, filed accounts (Orbis Standard Format)",
+   "period": "FY Feb-25",
+   "periodType": "FY",
+   "finSrc": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+   "date": "Feb 2025",
+   "age": 19,
+   "stale": true,
+   "cost": "n.d.",
+   "demand": "Sales up more than 10% over the past year (MSN UK, 5 Oct 2026)",
+   "financing": "n.d.",
+   "deal": "None found",
+   "changed": [
+    "Sales up more than 10% over the past year (MSN UK, 5 Oct).",
+    "£600m investment and more than 50 new stores this financial year (European Supermarket Magazine, 6 Oct).",
+    "CMA provisionally brings Lidl under the Groceries Market Investigation Order (7 Aug)."
+   ],
+   "rated": false,
+   "opinionDate": "",
+   "says": [
+    "Sales up more than 10% over the past year, with an influx of new customers. (MSN UK, 5 Oct 2026)",
+    "More than 50 new stores in the current financial year as part of a £600m investment. (European Supermarket Magazine, 6 Oct 2026)"
+   ],
+   "moodys": [],
+   "gaps": [
+    "Accounts 19 months old; FY Feb-26 not yet in Moody's.",
+    "Not rated by Moody's; no Moody's research.",
+    "Top owner from Orbis only."
+   ],
+   "priorities": [
+    "More than 50 new stores in the current financial year; £600m investment"
+   ],
+   "prioritiesSrc": "European Supermarket Magazine, 6 Oct 2026",
+   "proj": [],
+   "mgmtSrc": "Orbis directors, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+7.9%",
+     "period": "FY Feb-25 vs FY Feb-24",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "amber",
+     "v": "4.5%",
+     "period": "FY Feb-25",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+     "rule": "Green 6% or more · amber 3% to 6% · red below 3%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "up",
+     "v": "+0.7 pts",
+     "period": "FY Feb-25 vs FY Feb-24",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "4.5% against 3.8%."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "red",
+     "v": "5.92x",
+     "period": "FY Feb-25",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": ""
+    }
+   ],
+   "latest": {
+    "text": "Sales up more than 10% over the past year; £600m investment with more than 50 new stores planned this financial year.",
+    "src": "MSN UK, 5 Oct 2026; European Supermarket Magazine, 6 Oct 2026"
+   },
+   "years": [
+    "2022",
+    "2023",
+    "2024",
+    "2025"
+   ],
+   "revS": [
+    7829.3,
+    9300.7,
+    10874.7,
+    11733.0
+   ],
+   "ebS": [
+    241.9,
+    206.2,
+    414.0,
+    527.2
+   ],
+   "marS": [
+    3.1,
+    2.2,
+    3.8,
+    4.5
+   ],
+   "levS": [
+    13.64,
+    17.95,
+    7.92,
+    5.92
+   ],
+   "seriesNote": "Lidl Great Britain Limited, Orbis Standard Format, filed; financial years end in February. The FY Feb-26 accounts are not yet in Moody's. Debt includes lease liabilities. No EBITA line, so the EBITDA check cannot be applied.",
+   "seriesBasis": "As reported, filed accounts (Orbis Standard Format)"
+  },
+  {
+   "id": "iceland",
+   "name": "Iceland",
+   "legal": "Iceland VLNCo Limited (Iceland Foods)",
+   "researchEntity": "Iceland VLNCo Limited",
+   "type": "Family-owned",
+   "owner": "Founder Sir Malcolm Walker (51%) and CEO Tarsem Dhaliwal (49%) and their families",
+   "ownerSrc": "Moody's rating action, 27 Jul 2026; Orbis ultimate owner WD FF Limited, May 2026",
+   "ownerFlag": "",
+   "chain": [
+    [
+     "Walker and Dhaliwal families (51% and 49%)",
+     "Moody's rating action, 27 Jul 2026"
+    ],
+    [
+     "WD FF Limited",
+     "Orbis ultimate owner, May 2026"
+    ],
+    [
+     "Iceland VLNCo Limited",
+     "Rated entity (Moody's)"
+    ],
+    [
+     "Iceland Foods Limited",
+     "Operating company"
+    ]
+   ],
+   "hq": "Deeside",
+   "web": "iceland.co.uk",
+   "emp": "26,830",
+   "empSrc": "Orbis profile, Iceland Foods Limited",
+   "ceo": "Tarsem Dhaliwal (CEO, per Moody's); director data lists Tarsem Dhaliwal, Sir Malcolm Walker and Richard Walker without roles",
+   "ceoSrc": "Moody's rating action, 27 Jul 2026; Orbis directors, 7 Oct 2026",
+   "team": [
+    {
+     "name": "Tarsem Dhaliwal",
+     "role": "Director (Chief Executive Officer per Moody's, 27 Jul 2026)"
+    },
+    {
+     "name": "Sir Malcolm Walker",
+     "role": "Director (founder per Moody's)"
+    },
+    {
+     "name": "Richard Walker",
+     "role": "Director"
+    },
+    {
+     "name": "Paul Dhaliwal",
+     "role": "Director"
+    },
+    {
+     "name": "Richard Ewen",
+     "role": "Director"
+    }
+   ],
+   "teamSrc": "Orbis directors and managers, pulled 8 Oct 2026",
+   "beneficial": {
+    "text": "No beneficial-owner data in Orbis for Iceland Foods Limited; Moody's names the Walker and Dhaliwal families (51% and 49%).",
+    "src": "Orbis beneficial owners, 25% direct and total threshold, pulled 8 Oct 2026"
+   },
+   "sites": "970 stores at Mar 2026: 758 Iceland and 212 The Food Warehouse",
+   "sitesSrc": "Moody's rating action, 27 Jul 2026",
+   "desc": "Frozen and chilled food retailer, the UK's second-largest frozen food retailer (Moody's).",
+   "rev": 4400,
+   "revG": 3.9,
+   "ebitda": null,
+   "margin": 6.8,
+   "lev": 4.8,
+   "fcf": null,
+   "revTxt": "£4.4bn",
+   "revSub": "+3.9%; rounded to £0.1bn in the opinion",
+   "ebTxt": "£311m",
+   "ebSub": "Company-reported EBITDA before rent (Moody's, 27 Jul 2026); Moody's-adjusted margin 6.8%",
+   "ebBasis": "Company, before rent",
+   "levTxt": "4.8x",
+   "levSub": "Moody's-adjusted gross; net 4.3x pro forma",
+   "fcfTxt": "n.d.",
+   "basisCode": "Moody's-adjusted",
+   "basisShort": "Moody's-adjusted",
+   "basisLong": "Moody's-adjusted, from the credit opinion",
+   "period": "FY Mar-26",
+   "periodType": "FY",
+   "finSrc": "Moody's credit opinion on Iceland VLNCo Limited, 3 Aug 2026, key indicators (Moody's-adjusted)",
+   "date": "Mar 2026",
+   "age": 6,
+   "stale": false,
+   "cost": "Capital spending to fall by nearly £50m in FY2027 after the Warrington distribution centre and the IGC manufacturing facility (Moody's, 27 Jul 2026)",
+   "demand": "FY Mar-26 sales +3.9%, with grocery volume growth ahead of the market (Moody's rating action, 27 Jul 2026)",
+   "financing": "€600m notes due 2033 issued to refinance the 2027 and 2028 bonds; cash £153m at June 2026 (Moody's, 27 Jul 2026)",
+   "deal": "None found",
+   "changed": [
+    "Moody's outlook changed to positive; €600m notes due 2033 issued to refinance 2027 and 2028 bonds (Moody's, 27 Jul and 3 Aug).",
+    "Kendal store closing 19 September after a nearby Food Warehouse opening (Westmorland Gazette, 20 Aug)."
+   ],
+   "rated": true,
+   "opinionDate": "2026-08-03",
+   "says": [
+    "FY Mar-26 revenue just under £4.4bn, up 3.9%; company-reported EBITDA before rent £311m. (Moody's rating action, 27 Jul 2026)",
+    "Management targets net leverage (company definition) below 4.0x over the next 12 to 24 months, with no dividends or debt-funded acquisitions assumed. (Moody's, 27 Jul 2026)"
+   ],
+   "moodys": [
+    "B2, outlook changed to positive on 27 July 2026 on consistent sales growth and gradual deleveraging; new €600m notes due 2033 refinance the 2027 and 2028 bonds.",
+    "Upgrade if Moody's-adjusted debt/EBITDA stays below 4.0x with (EBITDA less capex)/interest around 1.8x; downgrade if leverage rises above 5.0x or free cash flow turns negative.",
+    "Moody's projects leverage of about 4.5x over the next 12 to 18 months."
+   ],
+   "gaps": [
+    "Revenue is rounded to £0.1bn in the Moody's table.",
+    "Filed accounts of Iceland Foods Limited stop at FY Mar-25 and treat rent differently.",
+    "Only one usable news item in the window."
+   ],
+   "priorities": [
+    "Deleveraging towards net leverage below 4.0x",
+    "Food Warehouse store openings and home delivery"
+   ],
+   "prioritiesSrc": "Moody's rating action, 27 Jul 2026",
+   "proj": [
+    "Revenue £4.5bn in FY2027 and £4.6bn in FY2028 (Moody's forecast, 3 Aug 2026)",
+    "Debt/EBITDA 4.9x in FY2027 and 4.7x in FY2028 (Moody's forecast, 3 Aug 2026)"
+   ],
+   "mgmtSrc": "Moody's rating action, 27 Jul 2026; Orbis directors, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+3.9%",
+     "period": "FY Mar-26 vs FY Mar-25 (sales growth stated by Moody's)",
+     "basis": "Moody's-adjusted",
+     "src": "Moody's credit opinion on Iceland VLNCo Limited, 3 Aug 2026, key indicators (Moody's-adjusted)",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "green",
+     "v": "6.8%",
+     "period": "FY Mar-26",
+     "basis": "Moody's-adjusted",
+     "src": "Moody's credit opinion on Iceland VLNCo Limited, 3 Aug 2026, key indicators (Moody's-adjusted)",
+     "rule": "Green 6% or more · amber 3% to 6% · red below 3%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "flat",
+     "v": "−0.2 pts",
+     "period": "FY Mar-26 vs FY Mar-25",
+     "basis": "Moody's-adjusted, calculated",
+     "src": "Moody's credit opinion on Iceland VLNCo Limited, 3 Aug 2026, key indicators (Moody's-adjusted)",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "6.8% against 7.0%. Moody's attributes the slight decline to higher National Insurance contributions, fuel and logistics costs."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "amber",
+     "v": "4.8x",
+     "period": "FY Mar-26",
+     "basis": "Moody's-adjusted",
+     "src": "Moody's credit opinion on Iceland VLNCo Limited, 3 Aug 2026, key indicators (Moody's-adjusted)",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Moody's-adjusted gross debt/EBITDA 4.8x at March 2026, down from 6.4x in 2023; net 4.3x pro forma for the 2026 refinancing (Moody's rating action, 27 Jul 2026)."
+    }
+   ],
+   "latest": {
+    "text": "Moody's changed the outlook to positive on 27 Jul 2026; €600m notes due 2033 refinance the 2027 and 2028 bonds; FY Mar-26 sales +3.9%.",
+    "src": "Moody's rating action, 27 Jul 2026"
+   },
+   "years": [
+    "FY2023",
+    "FY2024",
+    "FY2025",
+    "FY2026",
+    "LTM Jun-26",
+    "FY2027F",
+    "FY2028F"
+   ],
+   "revS": [
+    3900,
+    4200,
+    4200,
+    4400,
+    4400,
+    4500,
+    4600
+   ],
+   "marS": [
+    6.2,
+    7.1,
+    7.0,
+    6.8,
+    7.0,
+    6.6,
+    6.7
+   ],
+   "levS": [
+    6.4,
+    5.0,
+    4.9,
+    4.8,
+    4.7,
+    4.9,
+    4.7
+   ],
+   "fcfDebtS": [
+    0.3,
+    3.3,
+    0.5,
+    2.7,
+    1.4,
+    1.6,
+    3.1
+   ],
+   "fc": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    true
+   ],
+   "seriesNote": "Moody's-adjusted figures from the credit opinion of 3 Aug 2026; revenue is rounded to £0.1bn in the opinion; FY2027F and FY2028F are Moody's forecasts. Financial years end in late March. The filed accounts of Iceland Foods Limited (Orbis Standard Format, FY Mar-25) show revenue £4,117.5m and EBITDA £128.5m after rent, so they are not comparable with the Moody's-adjusted figures.",
+   "seriesBasis": "Moody's-adjusted, from the credit opinion"
+  },
+  {
+   "id": "coop",
+   "name": "Co-op",
+   "legal": "Co-Operative Group Limited",
+   "researchEntity": "Co-Operative Group Limited",
+   "type": "Mutual or employee-owned",
+   "owner": "Member-owned co-operative society",
+   "ownerSrc": "Registered society; Orbis holds no shareholder data (pulled 7 Oct 2026)",
+   "ownerFlag": "Orbis holds no shareholder or director data",
+   "chain": [
+    [
+     "Co-op members",
+     "Member-owned society; no shareholder data in Orbis"
+    ],
+    [
+     "Co-Operative Group Limited",
+     "Group, registered society"
+    ]
+   ],
+   "hq": "Manchester",
+   "web": "co-operative.coop",
+   "emp": "54,855",
+   "empSrc": "Orbis profile",
+   "ceo": "n.d.",
+   "ceoSrc": "No director data in Orbis (registered society), checked 7 and 8 Oct 2026",
+   "team": [],
+   "teamSrc": "",
+   "beneficial": {
+    "text": "No beneficial-owner data in Orbis; member-owned society.",
+    "src": "Orbis beneficial owners, 25% direct and total threshold, pulled 8 Oct 2026"
+   },
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "Member-owned group: convenience food stores plus funeral care, insurance and legal services. The group accounts cover all of them.",
+   "rev": 11025,
+   "revG": -2.3,
+   "ebitda": 426,
+   "margin": 3.9,
+   "lev": 3.75,
+   "fcf": null,
+   "revTxt": "£11,025m",
+   "revSub": "",
+   "ebTxt": "£426m",
+   "ebSub": "3.9% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "3.75x",
+   "levSub": "",
+   "fcfTxt": "n.d.",
+   "basisCode": "Moody's format",
+   "basisShort": "As reported",
+   "basisLong": "As reported, Moody's Ratings Format",
+   "period": "FY Jan-26",
+   "periodType": "FY",
+   "finSrc": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+   "date": "Jan 2026",
+   "age": 9,
+   "stale": false,
+   "cost": "£200m cost-cutting plan with job cuts (MSN UK, 24 Sep 2026)",
+   "demand": "H1 2026 sales growth reported in challenging markets (Yorkshire Post, 23 Sep 2026)",
+   "financing": "n.d.",
+   "deal": "None found",
+   "changed": [
+    "H1 2026 sales growth; insurance profit +20%; cyber attack costs still being absorbed (Yorkshire Post and Insurance Business, 23 Sep).",
+    "£200m cost-cutting plan with job cuts (MSN UK, 24 Sep)."
+   ],
+   "rated": false,
+   "opinionDate": "",
+   "says": [
+    "H1 2026: sales growth in challenging markets, with insurance profit up 20%; the cost of the 2025 cyber attack is still being absorbed. (Yorkshire Post and Insurance Business, 23 Sep 2026)",
+    "£200m cost-cutting plan announced, including job cuts. (MSN UK, 24 Sep 2026)"
+   ],
+   "moodys": [],
+   "gaps": [
+    "Group accounts include non-food businesses; food is not separated in Moody's data.",
+    "No shareholder or director data in Orbis (registered society).",
+    "Not rated by Moody's; no Moody's research."
+   ],
+   "priorities": [
+    "£200m cost-cutting programme"
+   ],
+   "prioritiesSrc": "MSN UK, 24 Sep 2026",
+   "proj": [],
+   "mgmtSrc": "No director data in Orbis (registered society), checked 7 and 8 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "down",
+     "v": "−2.3%",
+     "period": "FY Jan-26 vs FY Jan-25",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "amber",
+     "v": "3.9%",
+     "period": "FY Jan-26",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green 6% or more · amber 3% to 6% · red below 3%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "down",
+     "v": "−1.6 pts",
+     "period": "FY Jan-26 vs FY Jan-25",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "3.9% against 5.5%. FY Jan-26 followed the April 2025 cyber attack, whose cost the group is still absorbing (Insurance Business, 23 Sep 2026)."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "amber",
+     "v": "3.75x",
+     "period": "FY Jan-26",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": ""
+    }
+   ],
+   "latest": {
+    "text": "H1 2026 sales growth with insurance profit up 20%; £200m cost-cutting plan with job cuts announced.",
+    "src": "Yorkshire Post, 23 Sep 2026; MSN UK, 24 Sep 2026"
+   },
+   "years": [
+    "2022",
+    "2024",
+    "2025",
+    "2026"
+   ],
+   "revS": [
+    11484,
+    11262,
+    11279,
+    11025
+   ],
+   "ebS": [
+    901,
+    541,
+    624,
+    426
+   ],
+   "marS": [
+    7.8,
+    4.8,
+    5.5,
+    3.9
+   ],
+   "levS": [
+    2.32,
+    3.55,
+    2.69,
+    3.75
+   ],
+   "seriesNote": "Co-operative Group Limited, Moody's Ratings Format, as reported; group accounts include funeral care, insurance and legal services as well as food. Years end in early January; no 2023 column in the data.",
+   "seriesBasis": "As reported, Moody's Ratings Format"
+  },
+  {
+   "id": "waitrose",
+   "name": "Waitrose",
+   "legal": "Waitrose Limited",
+   "researchEntity": "Waitrose Limited",
+   "type": "Mutual or employee-owned",
+   "owner": "John Lewis Partnership, held in trust for its employees",
+   "ownerSrc": "Orbis shareholders (John Lewis plc 100%); Orbis ultimate owner lists the Partnership's chairman, Jul 2026",
+   "ownerFlag": "Orbis names an individual (the chairman) as ultimate owner",
+   "chain": [
+    [
+     "John Lewis Partnership plc (employee-owned)",
+     "Orbis ultimate owner, Jul 2026, listed as chairman Jason Tarry"
+    ],
+    [
+     "John Lewis plc (100%)",
+     "Orbis shareholders"
+    ],
+    [
+     "Waitrose Limited",
+     "Operating company"
+    ]
+   ],
+   "hq": "London",
+   "web": "waitrose.co.uk",
+   "emp": "44,900",
+   "empSrc": "Orbis profile",
+   "ceo": "James Bailey (Executive Director; Managing Director of Waitrose per the Partnership's director data)",
+   "ceoSrc": "Orbis directors, 7 Oct 2026",
+   "team": [
+    {
+     "name": "James Bailey",
+     "role": "Executive Director"
+    },
+    {
+     "name": "Jason Tarry",
+     "role": "Director (chairman of the John Lewis Partnership per Orbis)"
+    },
+    {
+     "name": "Berangere Michel",
+     "role": "Executive Director of Finance, Partnership"
+    },
+    {
+     "name": "Nina Bhatia",
+     "role": "Executive Director of Strategy and Commercial Development"
+    },
+    {
+     "name": "Rita Clifton",
+     "role": "Deputy Chairman, Partnership Board"
+    }
+   ],
+   "teamSrc": "Orbis directors and managers, pulled 8 Oct 2026",
+   "beneficial": {
+    "text": "Orbis records Jason Tarry, the Partnership's chairman, as 100% beneficial owner four levels up; the Partnership is held in trust for its employees.",
+    "src": "Orbis beneficial owners, 25% direct and total threshold, pulled 8 Oct 2026"
+   },
+   "sites": "about 320 stores",
+   "sitesSrc": "The Grocer, 7 Sep 2026",
+   "desc": "Supermarket arm of the employee-owned John Lewis Partnership.",
+   "rev": 7767,
+   "revG": 6.9,
+   "ebitda": 418,
+   "margin": 5.4,
+   "lev": 4.1,
+   "fcf": null,
+   "revTxt": "£7,767m",
+   "revSub": "",
+   "ebTxt": "£418m",
+   "ebSub": "5.4% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "4.1x",
+   "levSub": "Parent JLP 3.27x (FY Jan-26)",
+   "fcfTxt": "n.d.",
+   "basisCode": "filed",
+   "basisShort": "As reported",
+   "basisLong": "As reported, filed accounts (Orbis Standard Format)",
+   "period": "FY Jan-26",
+   "periodType": "FY",
+   "finSrc": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+   "date": "Jan 2026",
+   "age": 8,
+   "stale": false,
+   "cost": "£20m invested in price cuts on more than 370 everyday products (John Lewis Partnership release via Contify, 18 Sep 2026)",
+   "demand": "Good sales momentum at Waitrose in H1 2026/27 reported by the Partnership (The Grocer, 10 Sep 2026)",
+   "financing": "n.d.",
+   "deal": "None found",
+   "changed": [
+    "£20m of price cuts on more than 370 products (John Lewis Partnership release via Contify, 18 Sep).",
+    "Parent JLP's H1 underlying losses more than doubled; Waitrose sales momentum continued (The Grocer, 10 Sep).",
+    "6,000 seasonal roles across 320 stores (The Grocer, 7 Sep)."
+   ],
+   "rated": false,
+   "opinionDate": "",
+   "says": [
+    "£20m invested in cutting prices on more than 370 everyday products. (John Lewis Partnership release via Contify Retail News, 18 Sep 2026)",
+    "John Lewis Partnership H1 2026/27: underlying losses more than doubled; Waitrose sales momentum partly offset weaker demand at John Lewis. (The Grocer, 10 Sep 2026)"
+   ],
+   "moodys": [],
+   "gaps": [
+    "Waitrose Limited is a subsidiary; the Partnership's group accounts include John Lewis department stores.",
+    "Not rated by Moody's; no Moody's research.",
+    "Orbis lists the Partnership's chairman as ultimate owner."
+   ],
+   "priorities": [],
+   "prioritiesSrc": "",
+   "proj": [],
+   "mgmtSrc": "Orbis directors, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+6.9%",
+     "period": "FY Jan-26 vs FY Jan-25",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "amber",
+     "v": "5.4%",
+     "period": "FY Jan-26",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+     "rule": "Green 6% or more · amber 3% to 6% · red below 3%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "down",
+     "v": "−0.9 pts",
+     "period": "FY Jan-26 vs FY Jan-25",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "5.4% against 6.3%."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "amber",
+     "v": "4.1x",
+     "period": "FY Jan-26",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Waitrose Limited debt £1,715m against EBITDA £418m (4.10x). John Lewis Partnership plc group: debt £2,207m, 3.27x EBITDA, FY Jan-26 (Moody's Ratings Format, as reported)."
+    }
+   ],
+   "latest": {
+    "text": "£20m of price cuts on 370 products; parent JLP's H1 underlying losses more than doubled while Waitrose sales momentum continued.",
+    "src": "Contify Retail News, 18 Sep 2026; The Grocer, 10 Sep 2026"
+   },
+   "years": [
+    "2022",
+    "2023",
+    "2024",
+    "2025",
+    "2026"
+   ],
+   "revS": [
+    6815.2,
+    6578.4,
+    6950.8,
+    7267,
+    7767
+   ],
+   "ebS": [
+    250.2,
+    224.4,
+    365.4,
+    455,
+    418
+   ],
+   "marS": [
+    3.7,
+    3.4,
+    5.3,
+    6.3,
+    5.4
+   ],
+   "levS": [
+    8.76,
+    10.1,
+    5.58,
+    3.92,
+    4.1
+   ],
+   "seriesNote": "Waitrose Limited, Orbis Standard Format, filed; years end in late January. No EBITA line, so the EBITDA check cannot be applied. The parent, John Lewis Partnership plc (department stores and Waitrose): FY Jan-26 revenue £11,723m, EBITDA £675m, debt/EBITDA 3.27x (Moody's Ratings Format, as reported).",
+   "seriesBasis": "As reported, filed accounts (Orbis Standard Format)"
+  }
+ ],
+ "month": [
+  {
+   "co": "Tesco",
+   "t": "Half-year results due 8 October; brokers expect first-half adjusted operating profit of about £1.7bn.",
+   "s": "Proactive Investors, 16 and 25 Sep"
+  },
+  {
+   "co": "Morrisons",
+   "t": "Owner CD&R reported open to a merger with a major competitor; Q3 like-for-like sales +3.2%.",
+   "s": "FoodManufacture.co.uk citing Sky News, 7 Oct; Retail Gazette, 16 Sep"
+  },
+  {
+   "co": "Lidl",
+   "t": "Sales up more than 10%; more than 50 new stores and a £600m investment this financial year.",
+   "s": "MSN UK, 5 Oct; European Supermarket Magazine, 6 Oct"
+  },
+  {
+   "co": "Co-op",
+   "t": "£200m cost-cutting plan with job cuts after half-year results.",
+   "s": "MSN UK, 24 Sep"
+  },
+  {
+   "co": "Sector",
+   "t": "Shop price inflation 1.4% in September; food retail sales +2.6% in August.",
+   "s": "BRC via MarketLine, 4 Oct; BRC-KPMG via Retail Gazette, 10 Sep"
+  }
+ ],
+ "feed": [
+  {
+   "d": "2026-10-07",
+   "p": "FoodManufacture.co.uk",
+   "co": "morrisons",
+   "h": "Sky News reports that Morrisons' owner Clayton, Dubilier & Rice remains open to a merger with a major competitor, with Asda expected to take part should talks reopen; Morrisons' debt is estimated at £7.5bn.",
+   "tag": "Deal",
+   "m": "Ownership",
+   "n": ""
+  },
+  {
+   "d": "2026-10-06",
+   "p": "MarketLine",
+   "co": "aldi",
+   "h": "Aldi's 2025 sales across the UK and Ireland rose 5% to £19bn while operating profit fell 0.6% to £432.9m, according to GlobalData.",
+   "tag": "Results",
+   "m": "Sales, profit",
+   "n": "£19bn; £432.9m"
+  },
+  {
+   "d": "2026-10-06",
+   "p": "European Supermarket Magazine",
+   "co": "lidl",
+   "h": "Lidl GB plans more than 50 new stores in its current financial year as part of a £600m investment.",
+   "tag": "Sites",
+   "m": "Investment",
+   "n": "£600m; 50+ stores"
+  },
+  {
+   "d": "2026-10-05",
+   "p": "Western Daily Press",
+   "co": "tesco",
+   "h": "Tesco management says shopper sentiment has been affected by the Middle East situation, with no conflict-linked price inflation seen yet; analysts expect half-year results to show improving growth.",
+   "tag": "Results",
+   "m": "Outlook",
+   "n": ""
+  },
+  {
+   "d": "2026-10-05",
+   "p": "MSN UK",
+   "co": "lidl",
+   "h": "Lidl UK reports sales growth of more than 10% over the past year, with demand for its Deluxe range and new customers.",
+   "tag": "Results",
+   "m": "Sales",
+   "n": "+10%"
+  },
+  {
+   "d": "2026-10-04",
+   "p": "MarketLine",
+   "co": "macro",
+   "h": "UK shop price inflation was 1.4% in September as food promotions held prices down.",
+   "tag": "Costs",
+   "m": "Food prices",
+   "n": "1.4%"
+  },
+  {
+   "d": "2026-09-29",
+   "p": "Moody's (macro research)",
+   "co": "macro",
+   "h": "State of the Consumer: UK inflation at 3.1%; real consumer spending growth about 1.0% in 2026 and 0.7% in 2027 as energy costs rise.",
+   "tag": "Demand",
+   "m": "Consumer demand",
+   "n": "1.0% / 0.7%"
+  },
+  {
+   "d": "2026-09-29",
+   "p": "Grocer",
+   "co": "morrisons",
+   "h": "Morrisons cuts the price of its lunchtime meal deal by 10p and widens its food-to-go range.",
+   "tag": "Other",
+   "m": "Pricing",
+   "n": "10p"
+  },
+  {
+   "d": "2026-09-28",
+   "p": "Proactive Investors United Kingdom",
+   "co": "sainsburys",
+   "h": "Deutsche Bank and Citi cut their second-quarter grocery sales growth forecasts for Sainsbury's to 2.7% and 3.0% ahead of half-year results on 22 October.",
+   "tag": "Results",
+   "m": "Sales forecast",
+   "n": "2.7% to 3.0%"
+  },
+  {
+   "d": "2026-09-25",
+   "p": "Proactive Investors United Kingdom",
+   "co": "tesco",
+   "h": "Deutsche Bank expects Tesco's first-half adjusted operating profit of £1.725bn, up 3%, and cuts its second-quarter UK like-for-like sales forecast to 1.7%.",
+   "tag": "Results",
+   "m": "Profit forecast",
+   "n": "£1.725bn"
+  },
+  {
+   "d": "2026-09-24",
+   "p": "MSN UK",
+   "co": "coop",
+   "h": "Co-op announces job cuts as part of a £200m cost-cutting plan.",
+   "tag": "Costs",
+   "m": "Cost plan",
+   "n": "£200m"
+  },
+  {
+   "d": "2026-09-23",
+   "p": "Yorkshire Post",
+   "co": "coop",
+   "h": "Co-op reports half-year sales growth in challenging markets and calls 2026 a year of two halves.",
+   "tag": "Results",
+   "m": "Sales",
+   "n": ""
+  },
+  {
+   "d": "2026-09-23",
+   "p": "Insurance Business",
+   "co": "coop",
+   "h": "Co-op's insurance profit rose 20% in the first half while the bill for last year's cyber attack still weighs on the group.",
+   "tag": "Results",
+   "m": "Profit",
+   "n": "+20% insurance profit"
+  },
+  {
+   "d": "2026-09-18",
+   "p": "Contify Retail News",
+   "co": "waitrose",
+   "h": "Waitrose invests £20m to cut prices on more than 370 everyday products (John Lewis Partnership release).",
+   "tag": "Costs",
+   "m": "Pricing",
+   "n": "£20m; 370 products"
+  },
+  {
+   "d": "2026-09-17",
+   "p": "Retail Times",
+   "co": "morrisons",
+   "h": "Morrisons' like-for-like sales growth accelerated to 3.2% in the 13 weeks to 26 July 2026, its strongest in over a year, with cost savings funding sharper pricing (GlobalData).",
+   "tag": "Results",
+   "m": "Sales",
+   "n": "+3.2% like-for-like"
+  },
+  {
+   "d": "2026-09-16",
+   "p": "Proactive Investors United Kingdom",
+   "co": "tesco",
+   "h": "Tesco publishes half-year results on 8 October; Citi forecasts second-quarter UK like-for-like sales growth of 1.4%.",
+   "tag": "Results",
+   "m": "Results date",
+   "n": ""
+  },
+  {
+   "d": "2026-09-16",
+   "p": "Retail Gazette",
+   "co": "morrisons",
+   "h": "Morrisons reports Q3 like-for-like sales +3.2% with sales and volumes ahead of the market; cumulative cost savings near £1bn.",
+   "tag": "Results",
+   "m": "Sales, costs",
+   "n": "£1bn"
+  },
+  {
+   "d": "2026-09-15",
+   "p": "Morningstar (Alliance News)",
+   "co": "macro",
+   "h": "UK grocery price inflation picked up in recent weeks while sales growth slowed as shopping trips fell (Worldpanel).",
+   "tag": "Costs",
+   "m": "Grocery prices",
+   "n": ""
+  },
+  {
+   "d": "2026-09-15",
+   "p": "Worldpanel, via Farmers Journal",
+   "co": "macro",
+   "h": "UK grocery prices edged up in the four weeks to 6 September.",
+   "tag": "Costs",
+   "m": "Food prices",
+   "n": ""
+  },
+  {
+   "d": "2026-09-10",
+   "p": "Retail Gazette",
+   "co": "macro",
+   "h": "UK retail sales rose 0.7% in August; food sales +2.6% and non-food −0.8% (BRC-KPMG).",
+   "tag": "Demand",
+   "m": "Sector sales",
+   "n": "+2.6% food"
+  },
+  {
+   "d": "2026-09-10",
+   "p": "Grocer",
+   "co": "waitrose",
+   "h": "John Lewis Partnership's underlying first-half losses more than doubled; Waitrose sales momentum partly offset weaker demand at John Lewis.",
+   "tag": "Results",
+   "m": "Parent results",
+   "n": ""
+  },
+  {
+   "d": "2026-09-09",
+   "p": "The Sacramento Bee",
+   "co": "macro",
+   "h": "Industry expects UK food price inflation to rise above 6% next year.",
+   "tag": "Costs",
+   "m": "Food prices",
+   "n": "above 6%"
+  },
+  {
+   "d": "2026-09-07",
+   "p": "Grocer",
+   "co": "waitrose",
+   "h": "Waitrose recruits 6,000 seasonal roles across its 320 stores as part of the Partnership's 10,400-role Christmas drive.",
+   "tag": "Other",
+   "m": "Hiring",
+   "n": "6,000 roles"
+  },
+  {
+   "d": "2026-08-23",
+   "p": "The Independent (Online)",
+   "co": "morrisons",
+   "h": "Morrisons commits to a price pledge on fresh products and staples against its larger rivals.",
+   "tag": "Other",
+   "m": "Pricing",
+   "n": ""
+  },
+  {
+   "d": "2026-08-21",
+   "p": "Oxford Mail",
+   "co": "aldi",
+   "h": "Aldi plans a £9m first store in Henley after a public consultation.",
+   "tag": "Sites",
+   "m": "Sites",
+   "n": "£9m"
+  },
+  {
+   "d": "2026-08-20",
+   "p": "The Westmorland Gazette",
+   "co": "iceland",
+   "h": "Iceland Foods confirms its Kendal town-centre store will close on 19 September 2026; several closures have followed Food Warehouse openings nearby.",
+   "tag": "Sites",
+   "m": "Store closure",
+   "n": ""
+  },
+  {
+   "d": "2026-08-07",
+   "p": "UK government release via ForeignAffairs.co.nz",
+   "co": "macro",
+   "h": "The CMA provisionally decides that Aldi and Lidl should be subject to the Groceries Market Investigation Order rules that already apply to the largest chains.",
+   "tag": "Other",
+   "m": "Regulation",
+   "n": ""
+  },
+  {
+   "d": "2026-08-07",
+   "p": "ForeignAffairs.co.nz (UK government source)",
+   "co": "aldi",
+   "h": "The CMA provisionally decides that Aldi and Lidl should be subject to the Groceries Market Investigation Order rules that already apply to the largest chains.",
+   "tag": "Other",
+   "m": "Regulation",
+   "n": ""
+  },
+  {
+   "d": "2026-08-07",
+   "p": "ForeignAffairs.co.nz (UK government source)",
+   "co": "lidl",
+   "h": "The CMA provisionally decides that Aldi, Lidl GB and Lidl NI should be subject to the Groceries Market Investigation Order rules.",
+   "tag": "Other",
+   "m": "Regulation",
+   "n": ""
+  },
+  {
+   "d": "2026-08-06",
+   "p": "Moody's (sector research)",
+   "co": "macro",
+   "h": "UK grocery sector in-depth: food inflation to about 5% by early 2027; supermarkets will cope, with scale protecting margins; grocery volumes broadly stable.",
+   "tag": "Costs",
+   "m": "Food prices, volumes",
+   "n": "~5%"
+  },
+  {
+   "d": "2026-07-31",
+   "p": "SeeNews Deals",
+   "co": "sainsburys",
+   "h": "Sainsbury's agrees to sell Argos to Swift Partners for at least £120m, with £70m on completion targeted for February 2027.",
+   "tag": "Deal",
+   "m": "Disposal",
+   "n": "£120m"
+  },
+  {
+   "d": "2026-07-25",
+   "p": "Grocer",
+   "co": "aldi",
+   "h": "Aldi is the only one of the six largest UK grocers where average unit prices fell in Q2 2026, according to Worldpanel data seen by The Grocer.",
+   "tag": "Costs",
+   "m": "Pricing",
+   "n": ""
+  },
+  {
+   "d": "2026-07-22",
+   "p": "Retail Technology Innovation Hub",
+   "co": "ocado",
+   "h": "Ocado agrees to build an automated customer fulfilment centre for an unnamed European retailer, due to go live in FY2028.",
+   "tag": "Other",
+   "m": "Contract",
+   "n": ""
+  },
+  {
+   "d": "2026-07-16",
+   "p": "dpa-AFX International ProFeed",
+   "co": "ocado",
+   "h": "Ocado reports H1 FY2026 profit before tax from continuing operations of £17.1m against a £173.1m loss; full-year guidance unchanged.",
+   "tag": "Results",
+   "m": "Profit",
+   "n": "£17.1m"
+  },
+  {
+   "d": "2026-07-16",
+   "p": "Morningstar",
+   "co": "ocado",
+   "h": "Ocado reaffirms its cash flow guidance for the second half; earnings in the half included termination fees.",
+   "tag": "Results",
+   "m": "Cash flow guidance",
+   "n": ""
+  },
+  {
+   "d": "2026-01-16",
+   "p": "Moody's Précis (macro)",
+   "co": "macro",
+   "h": "Précis United Kingdom, December 2025 vintage: real GDP growth about 1% in 2026, private consumption +0.5%, unemployment 5.1%, CPI 2.4%; published before the 2026 energy shock.",
+   "tag": "Demand",
+   "m": "Macro forecast",
+   "n": "~1% GDP"
+  }
+ ],
+ "kept": [
+  [
+   "Tesco",
+   3,
+   20,
+   "Share-price items (Ad Hoc News, Stockpulse, AktienSensor) and commentary (Kalkine, Erste) dropped; one item moved in from the Sainsbury's pull."
+  ],
+  [
+   "Sainsbury's",
+   2,
+   20,
+   "Share-price and broker-rating items dropped; two Tesco items and a Lidl item were moved to those companies."
+  ],
+  [
+   "Marks and Spencer",
+   0,
+   20,
+   "Only share-price items (Ad Hoc News, Stockpulse) and commentary (Kalkine) came back; nothing kept."
+  ],
+  [
+   "Ocado",
+   3,
+   20,
+   "Share-price items (Ticker Report, Watchlist News, DefenseWorld, MarketBeat) dropped."
+  ],
+  [
+   "Asda",
+   0,
+   17,
+   "Entity and topic pulls returned mis-tagged items only (a Co-op cost plan, Ocado results); Asda's Q1 update (29 May) and Ocado partnership (1 Jun) fall outside the 90-day window and its half-year results were not found."
+  ],
+  [
+   "Morrisons",
+   5,
+   28,
+   "The entity pull returned share-price items only; the kept items came from a topic search and from the Tesco and M&S pulls."
+  ],
+  [
+   "Aldi",
+   4,
+   29,
+   "Two entity pulls failed on the server; the third returned planning and trademark notices. Kept items came from topic searches and the Lidl pull."
+  ],
+  [
+   "Lidl",
+   3,
+   21,
+   "Planning notices and unrelated legal items dropped; one item moved in from the Sainsbury's pull."
+  ],
+  [
+   "Iceland",
+   1,
+   20,
+   "Property auction, hygiene-rating and legal items dropped."
+  ],
+  [
+   "Co-op",
+   3,
+   21,
+   "Items about other co-operatives (a bicycle retailer), legal cases and unrelated companies dropped; one item moved in from the Asda pull."
+  ],
+  [
+   "Waitrose",
+   3,
+   20,
+   "Items about John Lewis department stores, plastic bags and unrelated retailers dropped."
+  ]
+ ],
+ "upcoming": [
+  {
+   "when": "8 Oct 2026",
+   "what": "Tesco half-year results.",
+   "src": "Proactive Investors, 16 Sep 2026"
+  },
+  {
+   "when": "22 Oct 2026",
+   "what": "Sainsbury's half-year results.",
+   "src": "Proactive Investors, 28 Sep 2026"
+  },
+  {
+   "when": "Feb 2027",
+   "what": "Argos sale to Swift Partners targeted to complete; £70m on completion.",
+   "src": "SeeNews Deals, 31 Jul 2026"
+  },
+  {
+   "when": "2027",
+   "what": "Asda's online grocery partnership with Ocado due to begin.",
+   "src": "Moody's issuer comment, 29 May 2026"
+  },
+  {
+   "when": "2027",
+   "what": "Ocado scheduled debt repayments; Moody's expects leverage to improve.",
+   "src": "Moody's credit opinion, 17 Sep 2026"
+  },
+  {
+   "when": "Nov 2027",
+   "what": "Morrisons: about £530m of senior secured notes mature.",
+   "src": "Moody's rating action, 7 Jul 2025"
+  },
+  {
+   "when": "Oct 2028",
+   "what": "Morrisons: £750m of notes mature.",
+   "src": "Moody's rating action, 7 Jul 2025"
+  },
+  {
+   "when": "2033",
+   "what": "Iceland's new €600m notes mature; they refinance the 2027 and 2028 bonds.",
+   "src": "Moody's rating action, 27 Jul 2026"
+  }
+ ],
+ "sources": {
+  "research": [
+   {
+    "kind": "Sector research",
+    "title": "Credit Conditions – UK",
+    "text": "Consumer-facing sectors broadly fine with pockets of weakness; margins squeezed where rising labour and input costs meet weak consumer confidence.",
+    "src": "Moody's, 2 Sep 2026"
+   },
+   {
+    "kind": "Sector research",
+    "title": "Grocery Retail – UK: UK supermarkets will cope with renewed inflation risks",
+    "text": "Scale protects the largest grocers' profitability; price competition continues; volumes broadly stable; food inflation expected to rise to about 5% by early 2027.",
+    "src": "Moody's, 6 Aug 2026"
+   },
+   {
+    "kind": "Macro research",
+    "title": "State of the Consumer, Europe",
+    "text": "UK inflation 3.1%; real consumer spending growth about 1.0% in 2026 and 0.7% in 2027.",
+    "src": "Moody's, 29 Sep 2026"
+   },
+   {
+    "kind": "Précis (macro)",
+    "title": "Précis: United Kingdom, December 2025 vintage",
+    "text": "Real GDP growth about 1% in 2026 from 1.5% in 2025; private consumption +0.5%; unemployment 5.1%; CPI 2.4% in 2026 (quarterly path 2.9%, 2.4%, 2.0%, 2.1%); policy rate 3.3% by end-2026. Published before the 2026 energy shock.",
+    "src": "Moody's Précis, 16 Jan 2026"
+   },
+   {
+    "kind": "News",
+    "title": "Market context",
+    "text": "UK food retail sales growth (BRC-KPMG) +2.6%, four weeks to 29 Aug 2026, year on year.",
+    "src": "BRC-KPMG Retail Sales Monitor, via Retail Gazette, 10 Sep 2026"
+   },
+   {
+    "kind": "Credit opinion (rated issuer)",
+    "title": "Tesco Plc (Tesco) credit opinion",
+    "text": "Moody's-adjusted figures, Moody's forecasts and the factors Moody's says could lead to an upgrade or downgrade.",
+    "src": "Moody's, 20 May 2026"
+   },
+   {
+    "kind": "Credit opinion (rated issuer)",
+    "title": "J Sainsbury plc (Sainsbury's) credit opinion",
+    "text": "Moody's-adjusted figures, Moody's forecasts and the factors Moody's says could lead to an upgrade or downgrade.",
+    "src": "Moody's, 19 Dec 2025"
+   },
+   {
+    "kind": "Credit opinion (rated issuer)",
+    "title": "Marks & Spencer p.l.c. (Marks and Spencer) credit opinion",
+    "text": "Moody's-adjusted figures, Moody's forecasts and the factors Moody's says could lead to an upgrade or downgrade.",
+    "src": "Moody's, 21 Nov 2025"
+   },
+   {
+    "kind": "Credit opinion (rated issuer)",
+    "title": "Ocado Group plc (Ocado) credit opinion",
+    "text": "Moody's-adjusted figures, Moody's forecasts and the factors Moody's says could lead to an upgrade or downgrade.",
+    "src": "Moody's, 17 Sep 2026"
+   },
+   {
+    "kind": "Credit opinion (rated issuer)",
+    "title": "Bellis Finco PLC (Asda) credit opinion",
+    "text": "Moody's-adjusted figures, Moody's forecasts and the factors Moody's says could lead to an upgrade or downgrade.",
+    "src": "Moody's, 17 Apr 2026"
+   },
+   {
+    "kind": "Credit opinion (rated issuer)",
+    "title": "Market Holdco 3 Limited (Morrisons) credit opinion",
+    "text": "Moody's-adjusted figures, Moody's forecasts and the factors Moody's says could lead to an upgrade or downgrade.",
+    "src": "Moody's, 17 Oct 2025"
+   },
+   {
+    "kind": "Credit opinion (rated issuer)",
+    "title": "Iceland VLNCo Limited (Iceland) credit opinion",
+    "text": "Moody's-adjusted figures, Moody's forecasts and the factors Moody's says could lead to an upgrade or downgrade.",
+    "src": "Moody's, 3 Aug 2026"
+   }
+  ],
+  "company": [
+   {
+    "name": "Tesco",
+    "fin": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+    "period": "FY Feb-26",
+    "basis": "As reported, Moody's Ratings Format",
+    "own": "Orbis ultimate owner and shareholders, pulled 7 Oct 2026",
+    "mgmt": "Orbis directors, 7 Oct 2026",
+    "cash": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026",
+    "split": ""
+   },
+   {
+    "name": "Sainsbury's",
+    "fin": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+    "period": "FY Feb-26",
+    "basis": "As reported, Moody's Ratings Format",
+    "own": "Orbis ultimate owner and shareholders, pulled 7 Oct 2026",
+    "mgmt": "Orbis directors, 7 Oct 2026",
+    "cash": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026",
+    "split": ""
+   },
+   {
+    "name": "Marks and Spencer",
+    "fin": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+    "period": "FY Mar-26",
+    "basis": "As reported, Moody's Ratings Format",
+    "own": "Orbis ultimate owner and shareholders, pulled 7 Oct 2026",
+    "mgmt": "Orbis directors, 7 Oct 2026",
+    "cash": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026",
+    "split": ""
+   },
+   {
+    "name": "Ocado",
+    "fin": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+    "period": "FY Nov-25",
+    "basis": "As reported, Moody's Ratings Format",
+    "own": "Orbis ultimate owner and shareholders, pulled 7 Oct 2026",
+    "mgmt": "Orbis directors, 7 Oct 2026",
+    "cash": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026",
+    "split": ""
+   },
+   {
+    "name": "Asda",
+    "fin": "Moody's credit opinion on Bellis Finco PLC (Asda), 17 Apr 2026, key indicators (Moody's-adjusted)",
+    "period": "FY Dec-25",
+    "basis": "Moody's-adjusted, from the credit opinion",
+    "own": "Orbis ultimate owner, Sep 2026",
+    "mgmt": "Orbis directors, Asda Stores Limited, 7 Oct 2026",
+    "cash": "",
+    "split": ""
+   },
+   {
+    "name": "Morrisons",
+    "fin": "Orbis Standard Format, as reported (filed accounts of Market Bidco Limited), pulled 7 Oct 2026",
+    "period": "FY Oct-25",
+    "basis": "As reported, filed accounts (Orbis Standard Format)",
+    "own": "Orbis ultimate owner, Jul 2026",
+    "mgmt": "Orbis directors, Wm Morrison Supermarkets Limited, 7 Oct 2026",
+    "cash": "",
+    "split": ""
+   },
+   {
+    "name": "Aldi",
+    "fin": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+    "period": "FY Dec-25",
+    "basis": "As reported, Moody's Ratings Format",
+    "own": "Orbis ultimate owner, Aug 2026",
+    "mgmt": "Orbis directors, 7 Oct 2026",
+    "cash": "",
+    "split": ""
+   },
+   {
+    "name": "Lidl",
+    "fin": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+    "period": "FY Feb-25",
+    "basis": "As reported, filed accounts (Orbis Standard Format)",
+    "own": "Orbis ultimate owner, Aug 2026",
+    "mgmt": "Orbis directors, 7 Oct 2026",
+    "cash": "",
+    "split": ""
+   },
+   {
+    "name": "Iceland",
+    "fin": "Moody's credit opinion on Iceland VLNCo Limited, 3 Aug 2026, key indicators (Moody's-adjusted)",
+    "period": "FY Mar-26",
+    "basis": "Moody's-adjusted, from the credit opinion",
+    "own": "Moody's rating action, 27 Jul 2026; Orbis ultimate owner WD FF Limited, May 2026",
+    "mgmt": "Moody's rating action, 27 Jul 2026; Orbis directors, 7 Oct 2026",
+    "cash": "",
+    "split": ""
+   },
+   {
+    "name": "Co-op",
+    "fin": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+    "period": "FY Jan-26",
+    "basis": "As reported, Moody's Ratings Format",
+    "own": "Registered society; Orbis holds no shareholder data (pulled 7 Oct 2026)",
+    "mgmt": "No director data in Orbis (registered society), checked 7 and 8 Oct 2026",
+    "cash": "",
+    "split": ""
+   },
+   {
+    "name": "Waitrose",
+    "fin": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+    "period": "FY Jan-26",
+    "basis": "As reported, filed accounts (Orbis Standard Format)",
+    "own": "Orbis shareholders (John Lewis plc 100%); Orbis ultimate owner lists the Partnership's chairman, Jul 2026",
+    "mgmt": "Orbis directors, 7 Oct 2026",
+    "cash": "",
+    "split": ""
+   }
+  ],
+  "filings": [
+   {
+    "co": "Macro trigger",
+    "kind": "Company statement",
+    "text": "Tesco: shopper sentiment affected by the Middle East situation; no price inflation linked to the conflict seen yet.",
+    "src": "Western Daily Press, 5 Oct 2026"
+   },
+   {
+    "co": "Macro trigger",
+    "kind": "Company statement",
+    "text": "Morrisons: cumulative cost savings approaching £1bn fund sharper pricing.",
+    "src": "Retail Times citing GlobalData, 17 Sep 2026"
+   },
+   {
+    "co": "Marks and Spencer",
+    "kind": "Company filing",
+    "text": "Statutory revenue £17,273.6m (+25.0%) with Ocado Retail consolidated; excluding it, group sales +1.9%; food sales +7.0%",
+    "src": "Annual report 2026, 28 Mar 2026"
+   }
+  ],
+  "kept": [
+   [
+    "Tesco",
+    3,
+    20,
+    "Share-price items (Ad Hoc News, Stockpulse, AktienSensor) and commentary (Kalkine, Erste) dropped; one item moved in from the Sainsbury's pull."
+   ],
+   [
+    "Sainsbury's",
+    2,
+    20,
+    "Share-price and broker-rating items dropped; two Tesco items and a Lidl item were moved to those companies."
+   ],
+   [
+    "Marks and Spencer",
+    0,
+    20,
+    "Only share-price items (Ad Hoc News, Stockpulse) and commentary (Kalkine) came back; nothing kept."
+   ],
+   [
+    "Ocado",
+    3,
+    20,
+    "Share-price items (Ticker Report, Watchlist News, DefenseWorld, MarketBeat) dropped."
+   ],
+   [
+    "Asda",
+    0,
+    17,
+    "Entity and topic pulls returned mis-tagged items only (a Co-op cost plan, Ocado results); Asda's Q1 update (29 May) and Ocado partnership (1 Jun) fall outside the 90-day window and its half-year results were not found."
+   ],
+   [
+    "Morrisons",
+    5,
+    28,
+    "The entity pull returned share-price items only; the kept items came from a topic search and from the Tesco and M&S pulls."
+   ],
+   [
+    "Aldi",
+    4,
+    29,
+    "Two entity pulls failed on the server; the third returned planning and trademark notices. Kept items came from topic searches and the Lidl pull."
+   ],
+   [
+    "Lidl",
+    3,
+    21,
+    "Planning notices and unrelated legal items dropped; one item moved in from the Sainsbury's pull."
+   ],
+   [
+    "Iceland",
+    1,
+    20,
+    "Property auction, hygiene-rating and legal items dropped."
+   ],
+   [
+    "Co-op",
+    3,
+    21,
+    "Items about other co-operatives (a bicycle retailer), legal cases and unrelated companies dropped; one item moved in from the Asda pull."
+   ],
+   [
+    "Waitrose",
+    3,
+    20,
+    "Items about John Lewis department stores, plastic bags and unrelated retailers dropped."
+   ]
+  ],
+  "s1kept": {
+   "kept": 6,
+   "fetched": 50,
+   "note": "UK stories only; share-price items and non-UK stories dropped; the Moody's research and Précis items are listed in the feed as research."
+  }
+ }
+}/*TDR_DATA_END*/;
+const META=DATA.meta||{}, CO=DATA.companies||[], MONTH=DATA.month||[], FEED=DATA.feed||[], KEPT=DATA.kept||[], UPCOMING=DATA.upcoming||[], SRC=DATA.sources||{};
+
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const by=id=>CO.find(c=>c.id===id);
+const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmtM=v=>v==null?"n.d.":(Math.abs(v)>=1000?"£"+(v/1000).toFixed(2).replace(/\.?0+$/,"")+"bn":"£"+(Math.abs(v)>=100?Math.round(v):v.toFixed(1))+"m");
+const fmtP=v=>v==null?"n.d.":v.toFixed(1)+"%";
+const OWN_GROUP=c=>c.type==="Listed"?"Listed":(c.type==="Family-owned"?"Family-owned":(c.type==="Mutual or employee-owned"?"Mutual":"Sponsor"));
+const OWN_CLS={"Listed":"own-listed","Sponsor":"own-sponsor","Family-owned":"own-family","Mutual":"own-mutual"};
+const KIND_CLS=k=>/Macro|Précis/.test(k)?"k-macro":(/Sector/.test(k)?"k-sector":(/opinion/.test(k)?"k-opinion":""));
+const kindChip=k=>k?`<span class="kind ${KIND_CLS(k)}">${esc(k)}</span>`:"";
+const ARROW={up:"\u2191",down:"\u2193",flat:"\u2192"};
+const light=c=>ARROW[c]?`<span class="arr" role="img" aria-label="${esc(c)}">${ARROW[c]}</span>`:`<span class="lt ${esc(c)}" role="img" aria-label="${esc(c)}"></span>`;
+const md=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+const andList=a=>a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1];
+function fmtDate(d){const [y,m,dd]=d.split("-");return `${+dd} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m-1]} ${y}`;}
+let state={own:"all",q:"",tag:"all"};
+
+/* ---------- header, question, ticker ---------- */
+function renderHeader(){
+  if(META.pageTitle) document.title=META.pageTitle;
+  $("#hdrTitle").textContent=META.title||"";
+  $("#hdrSub").textContent=META.subtitle||"";
+  $("#hdrMeta").innerHTML=`As of ${esc(META.asOfLong)}<br>${esc(META.tools||"")}`;
+  $("#monthBadge").textContent=META.monthWindow||"";
+  $("#qbar").innerHTML=META.question?`<div class="q-label">Starting question</div><div class="q-text">${esc(META.question)}</div>
+    ${META.glossary?`<div></div><div class="q-sub">${esc(META.glossary)}</div>`:""}
+    ${META.selection?`<div></div><div class="q-sub"><b>How the names were chosen:</b> ${esc(META.selection)}</div>`:""}`
+    :(META.selection?`<div class="q-label">Names in the screen</div><div class="q-sub">${esc(META.selection)}${META.glossary?" "+esc(META.glossary):""}</div>`:"");
+  if(!META.question&&!META.selection) $("#qbar").style.display="none";
+  const items=META.ticker||[];
+  if(!items.length){$(".ticker-wrap").style.display="none";return;}
+  $("#ticker").innerHTML=items.concat(items).map(s=>`<span>${esc(s)}</span><span class="sep">•</span>`).join("");
+}
+
+/* ---------- KPI ---------- */
+function renderKPIs(){
+  if(META.view==="sector"){$("#kpiRow").style.display="none";return;}
+  const listed=CO.filter(c=>c.type==="Listed").length, fam=CO.filter(c=>c.type==="Family-owned").length, mut=CO.filter(c=>c.type==="Mutual or employee-owned").length, spon=CO.length-listed-fam-mut;
+  const stale=CO.filter(c=>c.stale), rated=CO.filter(c=>c.rated), K=META.kpi||{};
+  const deals=K.dealSignals||[], refis=K.refinancing||[];
+  const cards=[
+    {c:"",l:"Names in screen",v:CO.length,s:`${listed} listed · ${spon} sponsor or credit-fund owned · ${fam} family-owned${mut?` · ${mut} mutual or employee-owned`:""}`},
+    {c:"",l:"Deal signals in the news",v:deals.length,s:deals.length?deals.join(" · "):"None found in the sources"},
+    {c:"",l:"Refinancing inside 12 months",v:refis.length,s:refis.length?refis.join(" · "):"None found in the sources"},
+    K.trigger?{c:"",l:K.trigger.label,v:K.trigger.value,s:K.trigger.sub}:null,
+    {c:"t",l:"Rated by Moody's",v:rated.length,s:rated.length?rated.map(c=>c.name).join(", ")+": credit opinions with Moody's-adjusted figures":"None of the names is rated"},
+    {c:"p",l:"Accounts older than 12 months",v:stale.length,s:stale.length?stale.map(c=>`${c.name} (${c.age} mo)`).join(", "):"None"}
+  ].filter(Boolean);
+  $("#kpiRow").innerHTML=cards.map(k=>`<div class="kpi-card ${k.c}"><div class="kpi-label">${esc(k.l)}</div><div class="kpi-value">${esc(k.v)}</div><div class="kpi-sub">${esc(k.s)}</div></div>`).join("");
+}
+
+/* ---------- macro trigger ---------- */
+function renderTrigger(){
+  const T=META.trigger;
+  if(!T){$("#triggerWrap").style.display="none";return;}
+  $("#trigTitle").textContent=T.title||"";
+  $("#trigBadge").textContent=T.badge||"";
+  const steps=T.steps||[], ev=T.evidence||{};
+  const tag=s=>s==="SOURCED"?'<span class="tag stab">SOURCED</span>':`<span class="tag inf">${esc(s||"INFERRED")}</span>`;
+  const box=(h,arr)=>arr&&arr.length?`<div><div class="ev-h">${esc(h)}</div><ul class="blist neu">${arr.map(x=>`<li>${kindChip(x.kind)}${x.title?`<b>${esc(x.title)}.</b> `:""}${esc(x.text)} <span class="src">${esc(x.src)}</span></li>`).join("")}</ul></div>`:"";
+  $("#triggerPanel").innerHTML=`<div class="trig-grid"><div>
+    <div class="trig-head">${md(T.headline)}</div>
+    ${T.verdict?`<span class="verdict">${esc(T.verdict)}</span>`:""}
+    ${T.current?`<div style="font-size:10px;color:var(--txt-dim);margin-top:6px">${esc(T.current)}</div>`:""}
+    ${steps.length?`<div class="chain">${steps.map((x,i)=>`<div class="cstep ${x.status!=="SOURCED"?'inf':''}"><div class="cnum">${i+1}</div><div><div class="ct">${esc(x.t)} ${tag(x.status)}</div><div class="cs">${esc(x.s)}</div></div></div>`).join("")}</div>`:""}
+    ${(T.points||[]).length?`<ul class="blist neu" style="margin-top:12px">${T.points.map(x=>`<li>${kindChip(x.kind)}${esc(x.text)} <span class="src">${esc(x.src)}</span></li>`).join("")}</ul>`:""}
+    </div><div class="ev-grid">${box("Moody's research",ev.research)}${box("Macro",ev.macro)}${box("News",ev.news)}${box("Company filings and statements",ev.filings)}</div></div>`;
+}
+
+/* ---------- company screen ---------- */
+function benchHTML(){
+  const M=META.market||{}, b=M.benchmark;
+  if(!b){$("#bench").style.display="none";return "";}
+  const v=(b.value>=0?"+":"−")+Math.abs(b.value).toFixed(1)+"%";
+  return `<div class="bench-main">Market context: ${esc(b.label)} <b>${v}</b>, ${esc(b.period)}</div>
+    <div class="src">${kindChip(b.kind)}${esc(b.source)}</div>
+    ${(M.context||[]).length?`<div class="bench-ctx">Other market signals: ${(M.context||[]).map(x=>`${esc(x.text)} <span class="src">(${esc(x.src)})</span>`).join(" · ")}</div>`:""}`;
+}
+function lcell(L){
+  const title=`${L.label}: ${L.v}. ${L.period?L.period+". ":""}${L.basis?L.basis+". ":""}${L.note?L.note+" ":""}Rule: ${L.rule}.${L.src?" Source: "+L.src+".":""}`;
+  return `<td class="lcell" title="${esc(title)}">${light(L.c)}<span class="num">${esc(L.v)}</span><span class="sub">${esc([L.period,L.basis].filter(Boolean).join(" · "))}</span></td>`;
+}
+function visible(){const q=state.q.trim().toLowerCase();return CO.filter(c=>(state.own==="all"||OWN_GROUP(c)===state.own)&&(!q||[c.name,c.owner,c.desc,c.type].join(" ").toLowerCase().includes(q)));}
+function renderScreen(){
+  $("#bench").innerHTML=benchHTML();
+  const rows=visible();
+  $("#tblBadge").textContent=`${rows.length} of ${CO.length} names · as of ${META.asOfLong||""}`;
+  $("#tblBody").innerHTML=rows.map(c=>{
+    const L=Object.fromEntries(c.lights.map(x=>[x.k,x]));
+    const lt=c.latest||{};
+    return `<tr class="row" data-open="${c.id}" tabindex="0">
+      <td><div class="co-name">${esc(c.name)}${c.stale?`<span class="age">accounts ${c.age} mo old</span>`:""}</div>
+        <div class="co-meta"><span class="sec-pill ${OWN_CLS[OWN_GROUP(c)]}">${esc(c.type)}</span> ${esc(c.owner)}</div></td>
+      <td class="num">${esc(c.revTxt)}<span class="sub">${esc(c.period)} · ${esc(c.basisShort)}</span></td>
+      ${lcell(L.growth)}${lcell(L.margin)}${lcell(L.mchange)}${lcell(L.lev)}
+      <td style="font-size:10.5px;min-width:200px">${esc(lt.text||"")}<span class="sub">${esc(lt.src||"")}</span></td></tr>`;}).join("")||`<tr><td colspan="7" class="empty" style="padding:18px">No names match the current filters.</td></tr>`;
+  $("#tblBody").querySelectorAll("tr.row").forEach(tr=>{tr.addEventListener("click",()=>openCompany(tr.dataset.open));tr.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openCompany(tr.dataset.open);}});});
+  const R=(META.lights||{}).rules||{};
+  $("#legend").innerHTML=`<tr><td>${light("up")}${light("down")}${light("flat")}</td><td>Arrows show direction against the prior year, with no colour: up, down, or flat within the band stated below. Direction is a fact; it needs no threshold beyond the flat band.</td></tr>
+    <tr><td>${light("green")}${light("amber")}${light("red")}${light("grey")}</td><td>Lights apply a fixed threshold to one published level. Grey means no figure. Hover over any indicator for the figure, period, basis, rule and source.</td></tr>
+    <tr><td>Revenue growth</td><td>${esc(R.growth)}</td></tr><tr><td>EBITDA margin</td><td>${esc(R.margin)}</td></tr>
+    <tr><td>Margin change</td><td>${esc(R.mchange)}</td></tr><tr><td>Leverage</td><td>Debt divided by EBITDA: roughly how many years of EBITDA the debt represents. ${esc(R.lev)}</td></tr>`;
+  $("#screenNote").innerHTML=`${esc((META.lights||{}).note||"")} Arrows and lights describe published numbers; they are not a rating, a Moody's view or an investment view. "As reported" figures follow each company's own accounts: listed groups report under IFRS 16, with leases in debt and EBITDA, while private companies' filed accounts may follow UK GAAP, with rent in costs. "Moody's-adjusted" figures come from Moody's credit opinions on rated issuers. Periods differ by name and are shown on every figure.`;
+}
+
+/* ---------- ownership and this month ---------- */
+function renderOwn(){
+  const groups=[{k:"Listed",l:"Listed",route:"Take-private",col:"--blue"},{k:"Sponsor",l:"Sponsor or credit-fund owned",route:"Secondary sale or refinancing",col:"--teal"},{k:"Family-owned",l:"Family-owned",route:"Succession or primary deal",col:"--purple"},{k:"Mutual",l:"Mutual or employee-owned",route:"Asset or partnership deals",col:"--amber"}];
+  const rows=groups.map(g=>{const co=CO.filter(c=>OWN_GROUP(c)===g.k);return {...g,n:co.length,rev:co.reduce((a,c)=>a+(c.rev||0),0),names:co.map(c=>c.name).join(", ")};}).filter(r=>r.n>0);
+  const max=Math.max(1,...rows.map(r=>r.rev));
+  $("#ownPanel").innerHTML=rows.map(r=>`<div class="bar-row">
+    <div class="bar-label"><span>${esc(r.l)} <span style="color:var(--txt-dim);font-weight:400">· ${r.n} names · ${fmtM(r.rev)} revenue</span></span><span class="tag stab">${esc(r.route.toUpperCase())}</span></div>
+    <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(r.rev/max*100)}%;background:var(${r.col})"></div></div>
+    <div style="font-size:9.5px;color:var(--txt-dim);margin-top:4px">${esc(r.names)}</div></div>`).join("")+
+    `<div style="font-size:9px;color:var(--txt-dim);margin-top:8px">Revenue is each name's latest period, so periods differ (see the screen). The route is the usual deal type for that owner type, not a view on any company.</div>`;
+}
+function renderMonth(){
+  $("#monthPanel").innerHTML=MONTH.map(m=>`<div class="news-item"><div class="news-hl"><b>${esc(m.co)}</b> ${esc(m.t)}</div><div class="news-meta">${esc(m.s)}</div></div>`).join("")||`<div class="empty">Nothing dated this month in the sources.</div>`;
+}
+
+/* ---------- company page ---------- */
+function finChart(c){
+  const idx=c.revS.map((v,i)=>v!=null?i:null).filter(i=>i!==null);
+  if(idx.length<2) return "";
+  const W=440,H=160,pad={l:40,r:40,t:14,b:24};
+  const years=idx.map(i=>c.years[i]), rev=idx.map(i=>c.revS[i]), fc=idx.map(i=>c.fc?c.fc[i]:false);
+  const eb=c.ebS?idx.map(i=>c.ebS[i]):null, mar=idx.map(i=>c.marS?c.marS[i]:null);
+  const ebVals=eb?eb.filter(v=>v!=null):[];
+  const vMax=Math.max(...rev)*1.1, vMin=Math.min(0,...ebVals), bw=(W-pad.l-pad.r)/years.length;
+  const xC=i=>pad.l+bw*i+bw/2, yRev=v=>pad.t+(1-(v-vMin)/(vMax-vMin))*(H-pad.t-pad.b);
+  const marVals=mar.filter(v=>v!=null); const mMax=marVals.length?Math.max(...marVals,1)*1.25:1; const mMin=marVals.length?Math.min(0,...marVals):0;
+  const yMar=v=>pad.t+(1-(v-mMin)/(mMax-mMin))*(H-pad.t-pad.b);
+  let svg=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" role="img" aria-label="Revenue, EBITDA and margin by year">`;
+  if(vMin<0) svg+=`<line x1="${pad.l}" y1="${yRev(0)}" x2="${W-pad.r}" y2="${yRev(0)}" stroke="#9AA5B8" stroke-width="1"/>`;
+  years.forEach((y,i)=>{const cx=xC(i),w=bw*(eb?0.3:0.45);
+    const dash=fc[i]?`fill-opacity="0.25" stroke="${cssv('--blue')}" stroke-dasharray="3 2"`:"";
+    const xr=eb?cx-w-1:cx-w/2;
+    svg+=`<rect x="${xr}" y="${yRev(rev[i])}" width="${w}" height="${yRev(0)-yRev(rev[i])}" fill="${cssv('--blue-line')}" ${dash}><title>${esc(y)} revenue ${fmtM(rev[i])}${fc[i]?' (Moody\'s forecast)':''}</title></rect>`;
+    if(eb&&eb[i]!=null){const h=Math.abs(yRev(0)-yRev(eb[i]));const yy=eb[i]>=0?yRev(eb[i]):yRev(0);
+      svg+=`<rect x="${cx+1}" y="${yy}" width="${w}" height="${h}" fill="${eb[i]>=0?cssv('--blue'):cssv('--red')}"><title>${esc(y)} EBITDA ${fmtM(eb[i])}</title></rect>`;}
+    svg+=`<text x="${cx}" y="${H-pad.b+12}" font-size="8" fill="#566B8A" text-anchor="middle">${esc(y)}</text>`;});
+  if(marVals.length>=2){
+    const pts=mar.map((v,i)=>v!=null?{x:xC(i),y:yMar(v),f:fc[i]}:null).filter(Boolean);
+    for(let k=1;k<pts.length;k++){svg+=`<line x1="${pts[k-1].x}" y1="${pts[k-1].y}" x2="${pts[k].x}" y2="${pts[k].y}" stroke="${cssv('--green')}" stroke-width="2" ${pts[k].f?'stroke-dasharray="5 3"':''}/>`;}
+    mar.forEach((v,i)=>{if(v==null)return;svg+=`<circle cx="${xC(i)}" cy="${yMar(v)}" r="2.6" fill="${fc[i]?'#fff':cssv('--green')}" stroke="${cssv('--green')}" stroke-width="1.5"><title>${esc(years[i])} EBITDA margin ${fmtP(v)}${fc[i]?' (Moody\'s forecast)':''}</title></circle>`;});
+    svg+=`<text x="${W-pad.r+6}" y="${yMar(marVals[marVals.length-1])+3}" font-size="8" fill="${cssv('--green')}">${fmtP(marVals[marVals.length-1])}</text>`;
+  }
+  svg+=`</svg>`;
+  const legend=`<div class="legend"><span><i style="background:var(--blue-line)"></i> Revenue</span>${eb?`<span><i style="background:var(--blue)"></i> EBITDA</span>`:""}${marVals.length>=2?`<span><i style="width:14px;height:2px;background:var(--green);border-radius:0;vertical-align:3px"></i> EBITDA margin</span>`:""}${c.fc?`<span><i style="background:#fff;border:1px dashed var(--blue)"></i> Moody's forecast</span>`:""}</div>`;
+  return `<div class="chartbox">${svg}${legend}</div>`;
+}
+function finTable(c){
+  const idx=c.revS.map((v,i)=>v!=null?i:null).filter(i=>i!==null);
+  const fcls=i=>(c.fc&&c.fc[i])?' class="f"':'';
+  const cell=(v,f)=>v==null?"n.d.":f(v);
+  let html=`<table class="fin-tbl"><thead><tr><th>£m · ${esc(c.seriesBasis)}</th>${idx.map(i=>`<th${fcls(i)}>${esc(c.years[i])}</th>`).join("")}</tr></thead><tbody>`;
+  const row=(label,arr,f,hl)=>{ if(!arr||arr.every(v=>v==null)) return ""; return `<tr${hl?' class="hl"':''}><td>${esc(label)}</td>${idx.map(i=>`<td${fcls(i)}>${cell(arr[i],f)}</td>`).join("")}</tr>`; };
+  html+=row("Revenue",c.revS,v=>Math.abs(v)>=100?Math.round(v):v.toFixed(1),true);
+  if(c.ebS) html+=row("EBITDA",c.ebS,v=>Math.abs(v)>=100?Math.round(v):v.toFixed(1));
+  html+=row("EBITDA margin",c.marS,v=>v.toFixed(1)+"%");
+  html+=row("Debt / EBITDA",c.levS,v=>v.toFixed(2)+"x");
+  html+=row("EBIT / interest",c.icS,v=>v.toFixed(1)+"x");
+  if(c.fcfDebtS) html+=row("FCF / debt",c.fcfDebtS,v=>v.toFixed(1)+"%");
+  if(c.unitsS) html+=row("Restaurants, systemwide",c.unitsS,v=>String(v));
+  const g=idx.map((i,k)=>k===0?null:(c.revS[i]/c.revS[idx[k-1]]-1)*100);
+  html+=`<tr><td>Revenue change, calculated</td>${g.map((v,k)=>{const f=(c.fc&&c.fc[idx[k]])?' f':'';return v===null?`<td class="trend-fl${f}">n/a</td>`:`<td class="${v>=0?'trend-up':'trend-dn'}${f}">${v>=0?'+':''}${v.toFixed(1)}%</td>`;}).join("")}</tr>`;
+  html+=`</tbody></table>`;
+  if(c.ebFiled) html+=`<table class="fin-tbl" style="margin-top:8px"><thead><tr><th>£m · As reported, filed accounts</th>${c.ebFiled.years.map(y=>`<th>${esc(y)}</th>`).join("")}</tr></thead><tbody><tr><td>EBITDA</td>${c.ebFiled.v.map(v=>`<td>${v.toFixed(1)}</td>`).join("")}</tr></tbody></table>`;
+  if(c.seriesNote) html+=`<div style="font-size:9.5px;color:var(--txt-dim);margin-top:7px">${esc(c.seriesNote)}</div>`;
+  return html;
+}
+function cashTable(c){
+  if(!c.cfoS) return "";
+  let html=`<table class="fin-tbl"><thead><tr><th>£m · As reported</th>${c.cfoS.years.map(y=>`<th>FY ${esc(y)}</th>`).join("")}${c.capexGuide?`<th class="f">${esc(c.capexGuide.label)}</th>`:""}</tr></thead><tbody>`;
+  html+=`<tr><td>Cash from operations</td>${c.cfoS.cfo.map(v=>`<td>${v.toFixed(1)}</td>`).join("")}${c.capexGuide?'<td class="f">n/a</td>':""}</tr>`;
+  html+=`<tr><td>Capex (PP&amp;E and intangibles)</td>${c.cfoS.capex.map(v=>`<td>${v.toFixed(1)}</td>`).join("")}${c.capexGuide?`<td class="f">~${c.capexGuide.v}</td>`:""}</tr>`;
+  html+=`<tr class="hl"><td>Free cash flow, calculated</td>${c.cfoS.cfo.map((v,i)=>`<td>${(v-c.cfoS.capex[i]).toFixed(1)}</td>`).join("")}${c.capexGuide?'<td class="f">n/a</td>':""}</tr>`;
+  html+=`</tbody></table><div style="font-size:9.5px;color:var(--txt-dim);margin-top:7px">Source: ${esc(c.cfoS.src)}. Free cash flow is cash from operations less capex, calculated here.${c.capexGuide?` The ${esc(c.capexGuide.label)} column is company guidance (${esc(c.capexGuide.src)}), not a Moody's figure.`:""}</div>`;
+  return html;
+}
+const NT=l=>/listed/i.test(l)?"nt-listed":(/family|reimann|perlman|individual|members|employee|partnership|stiftung|foundation/i.test(l)?"nt-person":(/fund|capital|partners|apollo|bridgepoint|glendon|cyrus|bain/i.test(l)?"nt-fund":"nt-company"));
+function ownershipSection(c){
+  let html=`<div class="own-legend"><span><i style="background:var(--purple)"></i>Person or family</span><span><i style="background:var(--teal)"></i>Fund or sponsor</span><span><i style="background:var(--blue)"></i>Company</span><span><i style="background:#455A64"></i>Listed</span></div><div class="tree">`;
+  c.chain.forEach((o,i)=>{const last=i===c.chain.length-1;const cls=last?"":NT(o[0]);
+    html+=`<div class="tnode ${last?'entity':''}"><div class="nt-ico ${cls}">${last?"C":(cls==="nt-person"?"P":cls==="nt-fund"?"F":cls==="nt-listed"?"L":"C")}</div><div><div class="nt-name">${esc(o[0])}</div><div class="nt-sub">${esc(o[1])}</div></div></div>`;
+    if(!last) html+=`<div class="tconn"></div>`;});
+  html+=`</div><div class="src" style="margin-top:6px">${esc(c.ownerSrc)}</div>`;
+  if(c.beneficial&&c.beneficial.text) html+=`<div class="note-box" style="margin-top:10px"><b>Beneficial owners.</b> ${esc(c.beneficial.text)} <span class="src">${esc(c.beneficial.src||"")}</span></div>`;
+  if(c.ownerFlag) html+=`<div class="note-box" style="margin-top:10px"><b>${esc(c.ownerFlag)}.</b> ${esc(c.gaps.find(g=>/owner|Orbis|SPV|stake|bidco/i.test(g))||"")}</div>`;
+  return html;
+}
+function lightCards(c){
+  return `<div class="lgrid">${c.lights.map(L=>`<div class="lcard ${esc(L.c)}">
+    <div class="lcard-l">${light(L.c)}${esc(L.label)}</div>
+    <div class="lcard-v">${esc(L.v)}</div>
+    <div class="lcard-p">${esc([L.period,L.basis].filter(Boolean).join(" · "))}</div>
+    ${L.note?`<div class="lcard-n">${esc(L.note)}</div>`:""}
+    ${L.src?`<div class="lcard-n src">${esc(L.src)}</div>`:""}
+    <div class="lcard-r">Rule: ${esc(L.rule)}</div></div>`).join("")}</div>`;
+}
+function newsFor(c){return FEED.filter(f=>f.co===c.id).sort((a,b)=>b.d.localeCompare(a.d));}
+function buildCompany(c){
+  const g=OWN_GROUP(c);
+  const per=`${c.period} · ${c.basisShort}`;
+  const snaps=[
+    {l:"Revenue",v:c.revTxt,s:c.revSub||per},
+    {l:"EBITDA",v:c.ebTxt,s:c.ebBasis?`${c.ebBasis}`:`${per}`},
+    {l:"Debt / EBITDA",v:c.levTxt,s:c.levSub||per},
+    c.fcf!=null?{l:"Free cash flow",v:c.fcfTxt,s:`FY ${c.cfoS?c.cfoS.years[c.cfoS.years.length-1]:""} · calculated`}:null,
+    c.emp&&c.emp!=="n.d."?{l:"Employees",v:c.emp,s:(c.empSrc||"").split(";")[0]}:null
+  ].filter(Boolean);
+  const news=newsFor(c);
+  const split=c.split&&c.split.items?`<tr><td>Revenue split</td><td>${c.split.items.map(x=>`${esc(x.label)} ${x.share.toFixed(1)}%`).join(" · ")} <span class="src">${esc(c.split.period)}; ${esc(c.split.source)}</span></td></tr>`:"";
+  const proj=(c.proj||[]).map(p=>`<li>${esc(p)}</li>`).join("");
+  return `<div class="co-head"><div class="co-head-name">${esc(c.name)}</div><div class="co-head-loc">${esc(c.legal)} · ${esc(c.hq)}</div>
+      <div class="co-badges"><span class="co-badge">${esc(c.type.toUpperCase())}</span><span class="co-badge">${c.rated?"RATED BY MOODY'S":"NOT RATED BY MOODY'S"}</span><span class="co-badge">LATEST: ${esc(c.period.toUpperCase())}</span><span class="co-badge">${esc(c.basisShort.toUpperCase())}</span>${c.stale?`<span class="co-badge">ACCOUNTS ${c.age} MONTHS OLD</span>`:""}</div></div>
+
+    ${lightCards(c)}
+    <div class="snap">${snaps.map(s=>`<div class="snap-c"><div class="snap-l">${esc(s.l)}</div><div class="snap-v">${esc(s.v)}</div><div class="snap-sub">${esc(s.s)}</div></div>`).join("")}</div>
+
+    <div class="two">
+      <div class="sec-card"><div class="sec-card-h">What Changed in the Last 90 Days <span class="hint">sourced facts</span></div><div class="sec-card-b"><ul class="blist">${c.changed.map(x=>`<li>${esc(x)}</li>`).join("")||"<li>Nothing found in the sources.</li>"}</ul></div></div>
+      <div class="sec-card"><div class="sec-card-h">Deal and Financing Facts <span class="hint">sourced facts</span></div><div class="sec-card-b"><ul class="blist neu">
+        <li><b>Deal signal:</b> ${esc(c.deal)}</li><li><b>Financing:</b> ${esc(c.financing)}</li>${c.cost!=="n.d."?`<li><b>Cost protection:</b> ${esc(c.cost)}</li>`:""}${c.demand!=="n.d."?`<li><b>Demand:</b> ${esc(c.demand)}</li>`:""}</ul></div></div>
+    </div>
+
+    <div class="sec-card"><div class="sec-card-h">Company Profile <span class="hint">Moody's Orbis · filings</span></div><div class="sec-card-b">
+      <table class="fin-tbl prof"><tbody>
+        <tr><td>Description</td><td>${esc(c.desc)}</td></tr>
+        <tr><td>Ownership</td><td><span class="sec-pill ${OWN_CLS[g]}">${esc(c.type)}</span> &nbsp;${esc(c.owner)} <span class="src">${esc(c.ownerSrc)}</span></td></tr>
+        ${c.web?`<tr><td>Website</td><td>${esc(c.web)}</td></tr>`:""}
+        ${c.emp&&c.emp!=="n.d."?`<tr><td>Employees</td><td>${esc(c.emp)} <span class="src">${esc(c.empSrc)}</span></td></tr>`:""}
+        ${c.ceo&&c.ceo!=="n.d."?`<tr><td>Management</td><td>${esc(c.ceo)} <span class="src">${esc(c.ceoSrc)}</span></td></tr>`:""}
+        ${(c.team||[]).length?`<tr><td>Board and management</td><td>${c.team.map(t=>`${esc(t.name)}, ${esc(t.role)}`).join(" · ")} <span class="src">${esc(c.teamSrc||"")}</span></td></tr>`:""}
+        ${c.sites&&c.sites!=="n.d."?`<tr><td>Sites</td><td>${esc(c.sites)} <span class="src">${esc(c.sitesSrc)}</span></td></tr>`:""}
+        ${split}
+      </tbody></table></div></div>
+
+    ${(c.revS||[]).some(v=>v!=null)?`<div class="sec-card"><div class="sec-card-h">Historic Financials <span class="hint">${esc(c.seriesBasis)}${c.fc?" · Moody's forecasts shaded":""}</span></div><div class="sec-card-b">${finChart(c)}<div style="margin-top:10px">${finTable(c)}</div></div></div>`:""}
+    ${c.cfoS?`<div class="sec-card"><div class="sec-card-h">Cash Flow <span class="hint">listed names</span></div><div class="sec-card-b">${cashTable(c)}</div></div>`:""}
+
+    <div class="sec-card"><div class="sec-card-h">Ownership Chain <span class="hint">Moody's Orbis · Moody's research where it names owners</span></div><div class="sec-card-b">${ownershipSection(c)}</div></div>
+
+    ${c.rated?`<div class="sec-card"><div class="sec-card-h">Moody's Credit Opinion <span class="hint">${kindChip("Credit opinion (rated issuer)")} ${esc(c.researchEntity)}, ${esc(c.opinionDate?fmtDate(c.opinionDate):"")}</span></div><div class="sec-card-b">
+      <ul class="blist neu">${(c.moodys||[]).map(m=>`<li>${esc(m)}</li>`).join("")}</ul>
+      ${proj?`<div class="own-head">Forecasts and guidance, as published</div><ul class="blist">${proj}</ul>`:""}</div></div>`:""}
+
+    <div class="sec-card"><div class="sec-card-h">Company Statements and Data Gaps <span class="hint">from the sources above</span></div><div class="sec-card-b"><div class="two">
+      <div><div class="own-head" style="margin-top:0">What the company and sources say</div><ul class="blist">${c.says.map(s=>`<li>${esc(s)}</li>`).join("")||"<li>Nothing beyond the accounts.</li>"}</ul>
+        ${!c.rated&&proj?`<div class="own-head">Guidance, as published</div><ul class="blist">${proj}</ul>`:""}
+        ${c.priorities.length?`<div class="own-head">Stated priorities</div><ul class="blist">${c.priorities.map(s=>`<li>${esc(s)}</li>`).join("")}</ul><div class="src">${esc(c.prioritiesSrc||"")}</div>`:""}</div>
+      <div><div class="own-head" style="margin-top:0">Data gaps to check</div><ul class="blist gap">${c.gaps.map(s=>`<li>${esc(s)}</li>`).join("")}</ul>${!c.rated?`<div class="src" style="margin-top:6px">Not rated by Moody's, so there is no credit opinion. Figures come from Orbis${c.type==="Listed"?", filings":""} and news.</div>`:""}</div>
+    </div></div></div>
+
+    ${news.length?`<div class="sec-card"><div class="sec-card-h">Recent News <span class="hint">Moody's NewsEdge, third-party, filtered</span></div><div class="sec-card-b">${news.map(n=>`<div class="news-item"><div class="news-hl">${esc(n.h)}</div><div class="news-meta">${fmtDate(n.d)} · ${esc(n.p)} · ${esc(n.tag)}${n.n?" · figure in source: "+esc(n.n):""}</div></div>`).join("")}</div></div>`:""}
+
+    <div class="src-foot">Financials: ${esc(c.finSrc)}. Ownership: ${esc(c.ownerSrc)}. Pulled ${esc(META.pulled)}. "n.d." means no data returned. Items marked inference are our reasoning, not Moody's.</div>`;
+}
+function renderCompany(){ const c=by($("#coSel").value)||CO[0]; if(!c) return; $("#coPage").innerHTML=buildCompany(c); }
+function openCompany(id){ $("#coSel").value=id; renderCompany(); showTab("company"); window.scrollTo(0,0); }
+function stepCompany(d){ const i=CO.findIndex(c=>c.id===$("#coSel").value); const n=CO[(i+d+CO.length)%CO.length]; openCompany(n.id); }
+
+/* ---------- news and events ---------- */
+const TAGS=["all","Results","Deal","Costs","Demand","Sites","Other"];
+function renderChips(){
+  $("#tagChips").innerHTML=TAGS.map(t=>`<button class="chip ${state.tag===t?'on':''}" data-tag="${t}">${t==="all"?"All topics":t}</button>`).join("");
+  $("#tagChips").querySelectorAll("button").forEach(b=>b.onclick=()=>{state.tag=b.dataset.tag;renderChips();renderFeed();});
+}
+function renderFeed(){
+  const v=$("#feedSel").value;
+  const items=FEED.filter(f=>(!v||f.co===v)&&(state.tag==="all"||f.tag===state.tag)).sort((a,b)=>b.d.localeCompare(a.d));
+  const nameOf=id=>id==="macro"?"Macro and sector":((by(id)||{}).name||id);
+  $("#feedBadge").textContent=`${items.length} items`;
+  $("#feed").innerHTML=items.length?items.map(f=>`<div class="news-item"><div class="news-hl"><b>${esc(nameOf(f.co))}</b> · ${esc(f.h)}</div><div class="news-meta">${fmtDate(f.d)} · ${esc(f.p)} · ${esc(f.tag)}${f.m?" · "+esc(f.m):""}${f.n?" · figure in source: "+esc(f.n):""}</div></div>`).join(""):`<div class="empty">No items match these filters.</div>`;
+}
+function renderUpcoming(){ $("#upcoming").innerHTML=UPCOMING.map(u=>`<li><span class="when">${esc(u.when)}</span><span>${esc(u.what)} <span class="src">${esc(u.src)}</span></span></li>`).join(""); }
+
+/* ---------- sources ---------- */
+function renderSources(){
+  const r=SRC.research||[], co=SRC.company||[], fl=SRC.filings||[], k=SRC.kept||[];
+  const card=(t,h,b)=>`<div class="sec-card"><div class="sec-card-h">${t} <span class="hint">${h}</span></div><div class="sec-card-b">${b}</div></div>`;
+  let html=card(META.question?"The Question and the Names":"The Names","set in Stage 1",`<div class="note-box">${META.question?`<b>${esc(META.question)}</b><br>`:""}${esc(META.glossary||"")}<br><br><b>How the names were chosen:</b> ${esc(META.selection||"")}</div>`);
+  html+=card("Moody's Research Used","macro research · sector research · credit opinions on rated issuers",`<table class="src-tbl"><thead><tr><th>Type</th><th>Document</th><th>What it is used for</th><th>Date</th></tr></thead><tbody>${r.map(x=>`<tr><td>${kindChip(x.kind)}</td><td>${esc(x.title||"")}</td><td>${esc(x.text)}</td><td class="src">${esc(x.src)}</td></tr>`).join("")}</tbody></table>`);
+  html+=card("Moody's Company Data","Orbis and Moody's Ratings Format, one line per company",`<table class="src-tbl"><thead><tr><th>Company</th><th>Financials</th><th>Latest period · basis</th><th>Ownership</th><th>Management</th></tr></thead><tbody>${co.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.fin)}${x.cash?`<span class="sub">Cash flow: ${esc(x.cash)}</span>`:""}${x.split?`<span class="sub">Revenue split: ${esc(x.split)}</span>`:""}</td><td>${esc(x.period)}<span class="sub">${esc(x.basis)}</span></td><td style="font-size:9.5px">${esc(x.own)}</td><td style="font-size:9.5px">${esc(x.mgmt)}</td></tr>`).join("")}</tbody></table>`);
+  html+=card("Company Filings and Statements","annual and interim reports, results calls, trading updates",`<table class="src-tbl"><thead><tr><th>Company</th><th>What it says</th><th>Document</th></tr></thead><tbody>${fl.map(x=>`<tr><td><b>${esc(x.co)}</b></td><td>${esc(x.text)}</td><td class="src">${esc(x.src)}</td></tr>`).join("")}</tbody></table>`);
+  const s1=SRC.s1kept;
+  html+=card("News: Kept out of Fetched","Moody's NewsEdge, third-party, filtered by hand",`<table class="src-tbl"><thead><tr><th>Pull</th><th style="text-align:right">Kept</th><th style="text-align:right">Fetched</th><th>Note</th></tr></thead><tbody>${s1?`<tr><td><b>Macro and sector</b></td><td class="n">${s1.kept}</td><td class="n">${s1.fetched}</td><td style="font-size:9.5px;color:var(--txt-dim)">${esc(s1.note||"")}</td></tr>`:""}${k.map(x=>`<tr><td><b>${esc(x[0])}</b></td><td class="n">${x[1]}</td><td class="n">${x[2]}</td><td style="font-size:9.5px;color:var(--txt-dim)">${esc(x[3])}</td></tr>`).join("")}</tbody></table><div class="foot-note">Dropped: share-price bots, commentary-only pieces, stories about other companies with similar names, and stories whose subject is outside the screen.</div>`);
+  $("#sourcesPage").innerHTML=html;
+}
+
+/* ---------- footer, tabs, init ---------- */
+function renderFoot(){
+  $("#pageFoot").innerHTML=`<b>Moody's data only.</b> Moody's research (macro and sector research, and credit opinions on the two rated names), Moody's Orbis company data (profiles, ownership, directors, filed accounts), Moody's Ratings Format financials, company filings and results calls via Moody's, and third-party news via Moody's NewsEdge. No web search. Snapshot pulled ${esc(META.pulled)}; the same workflow can be rerun at any time to refresh it. <b>Labels:</b> "As reported" means the company's own accounts; "Moody's-adjusted" means Moody's analytical adjustments in a credit opinion; "calculated" means worked out here from the figures shown; "inference" means our reasoning. The traffic lights apply stated thresholds to published figures and are not a rating or a view. A demonstration of the data, not investment advice.`;
+}
+function showTab(name){document.querySelectorAll('[role="tab"]').forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===name));["overview","company","news","sources"].forEach(t=>{$("#page-"+t).hidden=t!==name;});}
+document.querySelectorAll('[role="tab"]').forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+document.querySelectorAll("#ownSeg button").forEach(b=>b.onclick=()=>{state.own=b.dataset.own;document.querySelectorAll("#ownSeg button").forEach(x=>x.classList.toggle("on",x===b));renderScreen();});
+$("#search").addEventListener("input",e=>{state.q=e.target.value;renderScreen();});
+$("#coSel").innerHTML=CO.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
+$("#coSel").addEventListener("change",renderCompany);
+$("#coPrev").addEventListener("click",()=>stepCompany(-1)); $("#coNext").addEventListener("click",()=>stepCompany(1));
+$("#feedSel").innerHTML+=CO.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join(""); $("#feedSel").addEventListener("change",renderFeed);
+
+renderHeader();renderKPIs();renderTrigger();renderScreen();renderOwn();renderMonth();renderCompany();renderChips();renderFeed();renderUpcoming();renderSources();renderFoot();
+if(META.view==="sector"){const t=$("#triggerWrap");t.nextElementSibling.insertAdjacentElement("afterend",t);}
+</script>
+</body>
+</html>

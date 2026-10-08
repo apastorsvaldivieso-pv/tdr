@@ -1,0 +1,3426 @@
+<!DOCTYPE html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>UK QSR and casual dining screen</title>
+<style>
+:root{
+  --nav:#1A0055;--blue:#0028A1;--blue-dim:#EAEEFC;--blue-line:#C0CFFA;
+  --bg:#F4F5F7;--card:#FFFFFF;--border:#DDE3EE;
+  --txt:#0D1F3C;--txt-dim:#566B8A;--txt-bright:#001A70;
+  --green:#2E7D32;--green-bg:#E8F5E9;--green-line:#A5D6A7;
+  --amber:#B26A00;--amber-bg:#FFF8E1;--amber-line:#FFE082;
+  --red:#C62828;--red-bg:#FFEBEE;--red-line:#FFCDD2;
+  --grey:#90A4AE;--grey-bg:#F3F5F7;
+  --teal:#00695C;--purple:#6A1B9A;
+  --mono:'SFMono-Regular',Consolas,'Liberation Mono',Menlo,monospace;
+  --sans:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;
+  color-scheme:light;
+  box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*,*::before,*::after{box-sizing:inherit;margin:0;padding:0}
+body{font-family:var(--sans);background:var(--bg);color:var(--txt);font-size:12px;line-height:1.45}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+button{font:inherit}
+
+/* HEADER */
+.hdr{background:var(--nav);min-height:58px;border-bottom:2px solid var(--blue);display:flex;align-items:center;padding:8px 20px;gap:14px;flex-wrap:wrap}
+.logo{font-family:Georgia,serif;font-size:21px;font-weight:700;color:#fff;letter-spacing:1px}
+.hdr-div{width:1px;height:30px;background:rgba(255,255,255,.25)}
+.hdr-title{font-weight:600;font-size:13px;color:rgba(255,255,255,.95);letter-spacing:.3px}
+.hdr-sub{font-size:10px;color:rgba(255,255,255,.6);margin-top:2px}
+.hdr-meta{margin-left:auto;font-family:var(--mono);font-size:10px;color:rgba(255,255,255,.6);text-align:right;line-height:1.6}
+
+/* QUESTION BAR */
+.qbar{background:var(--card);border-bottom:1px solid var(--border);padding:12px 20px;display:grid;grid-template-columns:auto 1fr;gap:4px 14px;align-items:baseline}
+.q-label{font-family:var(--mono);font-size:9px;font-weight:700;letter-spacing:1.2px;color:var(--blue);text-transform:uppercase;white-space:nowrap}
+.q-text{font-family:Georgia,serif;font-size:16px;font-weight:700;color:var(--txt-bright);line-height:1.3}
+.q-sub{font-size:10.5px;color:var(--txt-dim);line-height:1.5}
+
+/* TICKER */
+.ticker-wrap{background:#FDF5FF;border-bottom:1px solid #D8C2F0;height:28px;display:flex;align-items:center;overflow:hidden}
+.ticker-label{background:var(--nav);color:#fff;font-family:var(--mono);font-weight:700;font-size:9px;letter-spacing:2px;padding:0 12px;white-space:nowrap;height:100%;display:flex;align-items:center;flex-shrink:0}
+.ticker-track{flex:1;overflow:hidden}
+.ticker-inner{display:flex;animation:ticker 80s linear infinite;white-space:nowrap}
+.ticker-inner span{color:#2D1A4A;font-family:var(--mono);font-size:10px;padding:0 8px}
+.ticker-inner span.sep{color:#9B5FC0}
+@keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
+@media (prefers-reduced-motion:reduce){.ticker-inner{animation:none}}
+
+/* TABS */
+.tabs{display:flex;background:var(--card);border-bottom:1px solid var(--border);padding:0 16px;overflow-x:auto}
+.tabs button{border:0;background:none;padding:10px 14px;font-size:11.5px;font-weight:600;color:var(--txt-dim);border-bottom:3px solid transparent;cursor:pointer;white-space:nowrap}
+.tabs button[aria-selected="true"]{color:var(--blue);border-bottom-color:var(--blue)}
+section.page[hidden]{display:none}
+
+/* KPI */
+.kpi-row{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;padding:12px 16px 6px}
+.kpi-card{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:11px 13px;position:relative;overflow:hidden}
+.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--blue)}
+.kpi-card.p::before{background:var(--purple)}.kpi-card.t::before{background:var(--teal)}
+.kpi-label{font-weight:600;font-size:9px;letter-spacing:.7px;text-transform:uppercase;color:var(--txt-dim);margin-bottom:6px}
+.kpi-value{font-family:var(--mono);font-weight:600;font-size:21px;line-height:1;color:var(--txt-bright)}
+.kpi-sub{font-size:9.5px;color:var(--txt-dim);margin-top:5px}
+
+/* CONTROLS */
+.controls{display:flex;gap:8px;align-items:center;padding:4px 0 10px;flex-wrap:wrap}
+.seg{display:flex;border:1px solid var(--border);border-radius:5px;overflow:hidden;background:var(--card);flex-wrap:wrap}
+.seg button{border:none;background:var(--card);padding:6px 12px;font-size:11px;font-weight:500;color:var(--txt-dim);cursor:pointer;border-right:1px solid var(--border)}
+.seg button:last-child{border-right:none}
+.seg button.on{background:var(--blue);color:#fff}
+.ctl-note{font-size:10px;color:var(--txt-dim);margin-left:auto}
+select{font:inherit;font-size:11px;border:1px solid var(--border);border-radius:5px;padding:5px 8px;background:var(--card);color:var(--txt)}
+.search{flex:1;min-width:160px;max-width:300px;border:1px solid var(--border);border-radius:5px;padding:6px 10px;font-size:11px;font-family:var(--sans)}
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.chip{border:1px solid var(--border);background:var(--card);border-radius:4px;padding:4px 9px;font-size:10.5px;color:var(--txt-dim);cursor:pointer}
+.chip.on{background:var(--blue);color:#fff;border-color:var(--blue)}
+.btn{border:1px solid var(--border);background:var(--card);border-radius:5px;padding:5px 10px;font-size:11px;color:var(--txt);cursor:pointer}
+
+/* PANELS */
+.wrap{padding:2px 16px 14px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;padding:0 16px 18px;align-items:start}
+.grid2>div,.feed-grid>div{min-width:0}
+.trig-grid{display:grid;grid-template-columns:1.1fr 1.6fr;gap:22px}
+.ev-grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 22px}
+.panel{background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:14px}
+.panel:last-child{margin-bottom:0}
+.ph{background:#F5F7FC;border-bottom:1px solid var(--border);padding:9px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.ph-title{font-weight:600;font-size:11px;color:var(--blue);text-transform:uppercase;letter-spacing:.5px}
+.ph-badge{font-family:var(--mono);font-size:9px;color:var(--txt-dim);text-align:right}
+.pb{padding:12px 14px}
+
+/* TRIGGER */
+.trig-head{font-family:Georgia,serif;font-size:17px;font-weight:700;color:var(--txt-bright);line-height:1.25}
+.trig-head b{color:var(--red)}
+.verdict{display:inline-block;margin-top:8px;font-family:var(--mono);font-weight:600;font-size:9px;letter-spacing:.5px;padding:3px 8px;border-radius:3px;background:var(--blue-dim);color:var(--blue);border:1px solid var(--blue-line)}
+.chain{margin-top:12px}
+.cstep{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid var(--border)}
+.cstep:last-child{border-bottom:none}
+.cnum{width:18px;height:18px;border-radius:50%;background:var(--blue);color:#fff;font-family:var(--mono);font-size:9px;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px}
+.cstep.inf .cnum{background:#fff;color:var(--blue);border:1.5px dashed var(--blue)}
+.cstep .ct{font-weight:600;font-size:11px}
+.cstep .cs{font-size:9.5px;color:var(--txt-dim);margin-top:1px}
+.tag{font-family:var(--mono);font-weight:600;font-size:8px;padding:1px 6px;border-radius:3px;white-space:nowrap}
+.tag.stab{background:var(--blue-dim);color:var(--blue)}.tag.inf{background:#F5F5F5;color:#546E7A;border:1px dashed #B0BEC5}
+.ev-h{font-size:9px;font-weight:600;letter-spacing:.6px;text-transform:uppercase;color:var(--txt-dim);margin:12px 0 4px}
+.ev-h:first-child{margin-top:0}
+.blist{list-style:none}
+.blist li{position:relative;padding:3px 0 3px 16px;font-size:10.5px;line-height:1.45}
+.blist li::before{content:'';position:absolute;left:2px;top:9px;width:6px;height:6px;border-radius:50%;background:var(--blue)}
+.blist.neu li::before{background:var(--txt-dim)}.blist.gap li::before{background:var(--amber)}
+.src{font-family:var(--mono);font-size:8.5px;color:var(--txt-dim)}
+.kind{display:inline-block;font-family:var(--mono);font-size:7.5px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;padding:1px 5px;border-radius:3px;margin-right:4px;vertical-align:1px;white-space:nowrap;background:#EEF1F6;color:#455A64;border:1px solid #D5DCE6}
+.kind.k-macro{background:#EDE7F6;color:var(--purple);border-color:#D1C4E9}.kind.k-sector{background:#E0F2F1;color:var(--teal);border-color:#B2DFDB}.kind.k-opinion{background:var(--blue-dim);color:var(--blue);border-color:var(--blue-line)}
+
+/* SCREEN */
+.bench{display:flex;gap:10px 18px;flex-wrap:wrap;align-items:baseline;background:var(--blue-dim);border:1px solid var(--blue-line);border-radius:5px;padding:9px 12px;margin-bottom:10px}
+.bench-main{font-size:12px;color:var(--txt-bright)}
+.bench-main b{font-family:var(--mono)}
+.bench-ctx{font-size:10px;color:var(--txt-dim);flex-basis:100%}
+.tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch}
+.tbl{width:100%;border-collapse:collapse;min-width:940px}
+.tbl th{font-weight:600;font-size:9.5px;text-transform:uppercase;letter-spacing:.3px;color:var(--txt-dim);background:#F5F7FC;padding:8px;text-align:left;border-bottom:1px solid var(--border);white-space:nowrap;vertical-align:bottom}
+.tbl th small{display:block;text-transform:none;letter-spacing:0;font-weight:500;font-size:8.5px}
+.tbl td{padding:9px 8px;border-bottom:1px solid var(--border);font-size:11.5px;vertical-align:top}
+.tbl tr.row{cursor:pointer}
+.tbl tr.row:hover{background:#EEF2FA}
+.co-name{font-weight:600;color:var(--txt-bright)}
+.co-meta{font-size:9.5px;color:var(--txt-dim);margin-top:2px}
+.num{font-family:var(--mono);white-space:nowrap}
+.sub{display:block;font-family:var(--sans);font-size:9px;color:var(--txt-dim);margin-top:2px;white-space:normal;line-height:1.35}
+.sec-pill{font-family:var(--mono);font-weight:600;font-size:8.5px;padding:2px 7px;border-radius:3px;white-space:nowrap}
+.own-listed{background:var(--blue-dim);color:var(--blue)}.own-sponsor{background:#E0F2F1;color:var(--teal)}.own-family{background:#EDE7F6;color:var(--purple)}
+.age{font-family:var(--mono);font-size:8px;padding:1px 5px;border-radius:3px;background:var(--grey-bg);color:#455A64;border:1px solid #CFD8DC;margin-left:4px;white-space:nowrap}
+.flagx{font-family:var(--mono);font-size:8px;padding:1px 5px;border-radius:3px;background:var(--amber-bg);color:var(--amber);margin-left:4px;white-space:nowrap}
+.lt{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:-1px;flex-shrink:0;border:1px solid rgba(0,0,0,.12)}
+.lt.green{background:var(--green)}.lt.amber{background:#F2A900}.lt.red{background:var(--red)}.lt.grey{background:#fff;border:1.5px dashed var(--grey)}
+.arr{display:inline-block;min-width:14px;font-weight:700;font-size:13px;line-height:1;color:var(--txt-bright);margin-right:5px;vertical-align:-1px}
+.lcard.up,.lcard.down,.lcard.flat{border-top-color:var(--txt-dim)}
+.lcell{min-width:118px}
+.lcell .num{font-weight:600}
+.legend-tbl{width:100%;border-collapse:collapse;margin-top:10px}
+.legend-tbl td{padding:4px 6px;font-size:9.5px;color:var(--txt-dim);vertical-align:top;border-top:1px solid var(--border)}
+.legend-tbl td:first-child{font-weight:600;color:var(--txt);white-space:nowrap}
+.foot-note{font-size:9.5px;color:var(--txt-dim);margin-top:8px;line-height:1.55}
+.empty{font-size:10.5px;color:var(--txt-dim);font-style:italic;padding:8px 0}
+
+/* OWNERSHIP BARS */
+.bar-row{padding:7px 6px;border-bottom:1px solid var(--border)}
+.bar-row:last-child{border-bottom:none}
+.bar-label{font-weight:500;font-size:11px;margin-bottom:4px;display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.bar-wrap{height:7px;background:#EEF2F7;border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px}
+
+/* COMPANY PAGE */
+.pagewrap{padding:0 16px 24px}
+.co-head{background:var(--nav);color:#fff;padding:16px 20px;border-radius:6px;margin-bottom:14px}
+.co-head-name{font-family:Georgia,serif;font-size:20px;font-weight:700;line-height:1.2}
+.co-head-loc{font-size:11px;color:rgba(255,255,255,.7);margin-top:3px}
+.co-badges{display:flex;gap:7px;margin-top:12px;flex-wrap:wrap}
+.co-badge{font-family:var(--mono);font-size:9px;font-weight:600;letter-spacing:.5px;padding:3px 9px;border-radius:3px;background:rgba(255,255,255,.13);border:1px solid rgba(255,255,255,.25);color:#fff}
+.lgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.lcard{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:10px 12px;border-top:4px solid var(--grey)}
+.lcard.green{border-top-color:var(--green)}.lcard.amber{border-top-color:#F2A900}.lcard.red{border-top-color:var(--red)}
+.lcard-l{font-size:9px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--txt-dim);margin-bottom:5px;display:flex;align-items:center}
+.lcard-v{font-family:var(--mono);font-weight:600;font-size:18px;color:var(--txt-bright)}
+.lcard-p{font-size:9.5px;color:var(--txt);margin-top:3px}
+.lcard-n{font-size:9.5px;color:var(--txt-dim);margin-top:5px;line-height:1.45}
+.lcard-r{font-size:8.5px;color:var(--txt-dim);margin-top:6px;padding-top:6px;border-top:1px dashed var(--border);line-height:1.45}
+.snap{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin-bottom:14px}
+.snap-c{background:var(--card);border:1px solid var(--border);border-radius:6px;padding:9px 10px}
+.snap-l{font-size:8.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--txt-dim);margin-bottom:4px}
+.snap-v{font-family:var(--mono);font-weight:600;font-size:15px;color:var(--txt-bright)}
+.snap-sub{font-size:9px;color:var(--txt-dim);margin-top:2px}
+.sec-card{background:var(--card);border:1px solid var(--border);border-radius:6px;margin-bottom:14px}
+.sec-card-h{padding:9px 14px;border-bottom:1px solid var(--border);background:#F5F7FC;font-weight:600;font-size:10.5px;text-transform:uppercase;letter-spacing:.5px;color:var(--blue);display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap}
+.sec-card-h .hint{font-weight:500;text-transform:none;letter-spacing:0;color:var(--txt-dim);font-size:9.5px;text-align:right}
+.sec-card-b{padding:13px 14px;overflow-x:auto}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.two>div{min-width:0}
+.fin-tbl{width:100%;border-collapse:collapse}
+.fin-tbl th,.fin-tbl td{padding:6px 8px;font-size:11px;border-bottom:1px solid var(--border);text-align:right;white-space:nowrap}
+.fin-tbl th:first-child,.fin-tbl td:first-child{text-align:left;font-weight:500;color:var(--txt-dim);white-space:normal}
+.fin-tbl th{font-size:9.5px;text-transform:uppercase;color:var(--txt-dim);font-weight:600}
+.fin-tbl td{font-family:var(--mono)}
+.fin-tbl th.f,.fin-tbl td.f{background:#F7F9FF;color:var(--blue)}
+.fin-tbl tr.hl td{background:#FBFCFE;font-weight:600;color:var(--txt-bright)}
+.trend-up{color:var(--green)}.trend-dn{color:var(--red)}.trend-fl{color:var(--txt-dim)}
+.prof td:last-child{text-align:left;font-family:var(--sans);white-space:normal}
+.chartbox{max-width:600px}
+.legend{display:flex;gap:14px;font-size:9px;color:var(--txt-dim);margin-top:2px;justify-content:center;flex-wrap:wrap}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:2px;vertical-align:-1px}
+.tree{font-size:11px}
+.tnode{display:flex;align-items:center;gap:8px;padding:6px 9px;border-radius:5px;border:1px solid var(--border);background:var(--card);margin:3px 0}
+.tnode .nt-ico{width:22px;height:22px;border-radius:5px;display:flex;align-items:center;justify-content:center;font-size:11px;flex-shrink:0;color:#fff;font-weight:700}
+.nt-person{background:var(--purple)}.nt-fund{background:var(--teal)}.nt-company{background:var(--blue)}.nt-listed{background:#455A64}
+.tnode.entity{background:var(--nav);border-color:var(--nav)}
+.tnode.entity .nt-name{color:#fff;font-weight:700}.tnode.entity .nt-sub{color:rgba(255,255,255,.65)}.tnode.entity .nt-ico{background:#fff;color:var(--nav)}
+.nt-name{font-weight:600;color:var(--txt-bright)}
+.nt-sub{font-size:9px;color:var(--txt-dim);margin-top:1px}
+.tconn{width:2px;height:11px;background:var(--blue-line);margin-left:20px}
+.own-legend{display:flex;gap:14px;font-size:9.5px;color:var(--txt-dim);margin-bottom:10px;flex-wrap:wrap}
+.own-legend i{display:inline-block;width:9px;height:9px;border-radius:2px;margin-right:4px;vertical-align:-1px}
+.own-head{font-size:9.5px;font-weight:600;letter-spacing:.5px;text-transform:uppercase;color:var(--txt-dim);margin:14px 0 6px}
+.own-head:first-child{margin-top:0}
+.note-box{background:#FBFCFE;border-left:3px solid var(--txt-dim);border-radius:0 5px 5px 0;padding:9px 12px;font-size:10.5px;line-height:1.55}
+.news-item{padding:8px 0;border-bottom:1px solid var(--border)}
+.news-item:last-child{border-bottom:none}
+.news-hl{font-size:11px;font-weight:500;line-height:1.45}
+.news-meta{font-size:9px;color:var(--txt-dim);margin-top:2px;font-family:var(--mono)}
+.src-foot{font-size:9px;color:var(--txt-dim);border-top:1px solid var(--border);padding-top:10px;margin-top:6px;line-height:1.6}
+
+/* NEWS + SOURCES */
+.feed-grid{display:grid;grid-template-columns:2fr 1fr;gap:14px;align-items:start;padding:0 16px 24px}
+.up li{display:grid;grid-template-columns:86px 1fr;gap:10px;padding:7px 0;border-bottom:1px solid var(--border);font-size:11px;list-style:none}
+.up li:last-child{border-bottom:none}
+.up .when{font-family:var(--mono);font-weight:600;color:var(--txt-bright)}
+.src-tbl{width:100%;border-collapse:collapse}
+.src-tbl th,.src-tbl td{padding:7px 8px;border-bottom:1px solid var(--border);font-size:10.5px;text-align:left;vertical-align:top}
+.src-tbl th{font-size:9px;text-transform:uppercase;color:var(--txt-dim);font-weight:600;background:#F5F7FC;white-space:nowrap}
+.src-tbl td.n{font-family:var(--mono);text-align:right}
+.page-foot{padding:14px 16px 26px;font-size:9.5px;color:var(--txt-dim);line-height:1.6;border-top:1px solid var(--border);background:var(--card)}
+.page-foot b{color:var(--txt)}
+@media (max-width:1100px){.kpi-row{grid-template-columns:repeat(3,1fr)}.trig-grid{grid-template-columns:1fr}.lgrid{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:720px){.grid2,.kpi-row,.two,.feed-grid,.ev-grid,.lgrid{grid-template-columns:1fr}.hdr-meta{margin-left:0;text-align:left}.qbar{grid-template-columns:1fr}.q-text{font-size:14px}}
+</style>
+</head>
+<body>
+
+<div class="hdr">
+  <div class="logo">MOODY'S</div>
+  <div class="hdr-div"></div>
+  <div>
+    <div class="hdr-title" id="hdrTitle"></div>
+    <div class="hdr-sub" id="hdrSub"></div>
+  </div>
+  <div class="hdr-meta" id="hdrMeta">As of 7 October 2026<br>Moody's data</div>
+</div>
+
+<div class="qbar" id="qbar"></div>
+
+<div class="ticker-wrap">
+  <div class="ticker-label">LATEST</div>
+  <div class="ticker-track"><div class="ticker-inner" id="ticker"></div></div>
+</div>
+
+<div class="tabs" role="tablist">
+  <button role="tab" aria-selected="true" data-tab="overview">Overview</button>
+  <button role="tab" aria-selected="false" data-tab="company">Company</button>
+  <button role="tab" aria-selected="false" data-tab="news">News and events</button>
+  <button role="tab" aria-selected="false" data-tab="sources">Sources</button>
+</div>
+
+<section class="page" id="page-overview" role="tabpanel">
+  <div class="kpi-row" id="kpiRow"></div>
+
+  <div class="wrap" id="triggerWrap">
+    <div class="panel">
+      <div class="ph"><span class="ph-title" id="trigTitle"></span><span class="ph-badge" id="trigBadge"></span></div>
+      <div class="pb" id="triggerPanel"></div>
+    </div>
+  </div>
+
+  <div class="wrap">
+    <div class="panel">
+      <div class="ph"><span class="ph-title">Company screen: published metrics</span><span class="ph-badge" id="tblBadge"></span></div>
+      <div class="pb">
+        <div class="bench" id="bench"></div>
+        <div class="controls">
+          <div class="seg" id="ownSeg">
+            <button data-own="all" class="on">All owners</button>
+            <button data-own="Listed">Listed</button>
+            <button data-own="Sponsor">Sponsor or credit fund</button>
+            <button data-own="Family-owned">Family-owned</button>
+          </div>
+          <input class="search" id="search" placeholder="Filter by company or owner" aria-label="Filter the screen">
+          <div class="ctl-note">Click a company for its full page.</div>
+        </div>
+        <div class="tblwrap">
+          <table class="tbl">
+            <thead><tr>
+              <th>Company</th><th>Revenue<small>latest period · basis</small></th>
+              <th>Revenue growth<small>arrow: direction, two full years</small></th><th>EBITDA margin<small>light: level, latest period</small></th>
+              <th>Margin change<small>arrow: direction on the prior year</small></th><th>Leverage<small>light: debt / EBITDA</small></th><th>Latest development</th>
+            </tr></thead>
+            <tbody id="tblBody"></tbody>
+          </table>
+        </div>
+        <table class="legend-tbl" id="legend"></table>
+        <div class="foot-note" id="screenNote"></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="panel">
+      <div class="ph"><span class="ph-title">Ownership</span><span class="ph-badge">typical route to a deal by owner type</span></div>
+      <div class="pb" id="ownPanel"></div>
+    </div>
+    <div class="panel">
+      <div class="ph"><span class="ph-title">This Month</span><span class="ph-badge" id="monthBadge"></span></div>
+      <div class="pb" id="monthPanel"></div>
+    </div>
+  </div>
+</section>
+
+<section class="page" id="page-company" role="tabpanel" hidden>
+  <div class="controls" style="padding:12px 16px 10px">
+    <label style="font-size:11px;color:var(--txt-dim)">Company &nbsp;<select id="coSel"></select></label>
+    <button class="btn" id="coPrev" aria-label="Previous company">&#8592; Previous</button>
+    <button class="btn" id="coNext" aria-label="Next company">Next &#8594;</button>
+  </div>
+  <div class="pagewrap" id="coPage"></div>
+</section>
+
+<section class="page" id="page-news" role="tabpanel" hidden>
+  <div class="controls" style="padding:12px 16px 10px;gap:14px">
+    <label style="font-size:11px;color:var(--txt-dim)">Show &nbsp;<select id="feedSel"><option value="">All</option><option value="macro">Macro and sector</option></select></label>
+    <div class="chips" id="tagChips"></div>
+    <div class="ctl-note">Headlines are written as plain facts with publisher and date. A figure appears only where the source gives one.</div>
+  </div>
+  <div class="feed-grid">
+    <div class="panel"><div class="ph"><span class="ph-title">News Feed</span><span class="ph-badge" id="feedBadge"></span></div><div class="pb" id="feed"></div></div>
+    <div class="panel"><div class="ph"><span class="ph-title">Coming Up</span><span class="ph-badge">dated in sources</span></div><div class="pb"><ul class="up" id="upcoming"></ul></div></div>
+  </div>
+</section>
+
+<section class="page" id="page-sources" role="tabpanel" hidden>
+  <div class="pagewrap" style="padding-top:12px" id="sourcesPage"></div>
+</section>
+
+<div class="page-foot" id="pageFoot"></div>
+
+<script>
+/* ============================================================
+   DATA: written by build_dashboard.py from the S1, S2 and S3 outputs.
+   Do not hand-edit. Change the inputs and rebuild.
+   ============================================================ */
+const DATA = /*TDR_DATA_START*/{
+ "meta": {
+  "asOf": "2026-10-07",
+  "asOfLong": "7 October 2026",
+  "title": "UK Quick Service Restaurants (QSR) and Casual Dining: Food Inflation Screen",
+  "pageTitle": "UK QSR and casual dining screen",
+  "subtitle": "Prepared for TDR Capital. Nine UK chains. Moody's data only; news is third-party via Moody's NewsEdge. A demonstration, not an investment view.",
+  "pulled": "7 October 2026",
+  "tools": "Moody's research · Orbis · company filings · NewsEdge",
+  "monthWindow": "7 Sep to 7 Oct 2026",
+  "question": "UK food inflation is rising again, driven by energy costs. What does that mean for UK quick service restaurants (QSR) and casual dining chains?",
+  "glossary": "QSR (quick service restaurants): fast food, takeaway and food-to-go counters, such as Greggs or Domino's. Casual dining: sit-down, mid-priced restaurant chains, such as PizzaExpress or Wagamama.",
+  "selection": "Nine UK chains in the segment, chosen in Stage 1 to cover every ownership type (listed, sponsor-owned, credit-fund-owned, family-owned) and to have company data in Moody's Orbis. Two are rated by Moody's (PizzaExpress, Wagamama), so they also have credit opinions; the other seven are covered by Orbis accounts, filings for the three listed names, and news.",
+  "segment": "UK quick service restaurants (QSR) and casual dining",
+  "ticker": [
+   "PizzaExpress preparing a possible sale at up to £500m (Marketline citing the FT, 21 Sep)",
+   "Bridgepoint appoints Goldman Sachs to sell its Itsu stake (Grocer citing Sky News, 10 Sep)",
+   "Greggs Q3 sales +7.7%, outlook raised; four manufacturing sites proposed for closure (Proactive Investors, 30 Sep)",
+   "Greggs flags greater inflationary pressure in 2027 (Proactive Investors, 1 Oct)",
+   "Domino's plans to refinance £200m notes due Jul 2027 by end 2026 (H1 call, 4 Aug)",
+   "Moody's: UK food inflation to about 5% by early 2027 from 1.7% (6 Aug)",
+   "UK hospitality like-for-like sales +0.5%, 12 months to Jul (NIQ RSM, cited by Moody's, 2 Sep)"
+  ],
+  "kpi": {
+   "dealSignals": [
+    "PizzaExpress sale process",
+    "Itsu stake sale",
+    "TRG concessions disposal"
+   ],
+   "refinancing": [
+    "Domino's £200m notes due Jul 2027, refinancing planned by end 2026"
+   ],
+   "trigger": {
+    "label": "Food inflation (Moody's)",
+    "value": "1.7% to ~5%",
+    "sub": "12 months to June 2026 to early 2027 · 6 Aug 2026"
+   }
+  },
+  "trigger": {
+   "title": "Macro trigger: UK food inflation",
+   "badge": "Moody's research · news · company filings and statements",
+   "headline": "UK food inflation: **1.7%** in June, about **5%** by early 2027",
+   "verdict": "PARTLY CONFIRMED · forecast, mostly still ahead",
+   "current": "Shop price inflation eased to 1.4% in September (BRC via MarketLine, 4 Oct) and grocery prices only edged up (Worldpanel, 15 Sep), so the rise Moody's expects has not yet reached prices. Industry expects above 6% next year (9 Sep).",
+   "steps": [
+    {
+     "t": "Energy costs rise",
+     "s": "Closure of the Strait of Hormuz and a spike in crude; UK inflation 3.1%. Moody's State of the Consumer, 29 Sep 2026.",
+     "status": "SOURCED"
+    },
+    {
+     "t": "Food input costs follow, with a delay",
+     "s": "Food inflation to around 5% by early 2027 from 1.7% in the 12 months to June; it follows energy shocks with a significant delay. Moody's UK grocery sector in-depth, 6 Aug 2026.",
+     "status": "SOURCED"
+    },
+    {
+     "t": "Squeezed consumers trade down",
+     "s": "Moody's says consumers are scaling back out-of-home dining (UK grocery sector in-depth, 6 Aug 2026); UK food-to-go visits fell 1.9% in the 12 months to Jun 2026 (Circana, cited in Greggs interim results, 29 Jul 2026).",
+     "status": "PLAUSIBLE"
+    },
+    {
+     "t": "Lower-priced formats gain share; higher-priced and more indebted operators face cost and demand pressure at once",
+     "s": "Our hypothesis, not a Moody's view. The company screen below shows the metrics behind it for each name. Moody's cites discounting and quick-service competition for casual dining (credit opinion on Wagamama, 19 Jan 2026).",
+     "status": "INFERRED"
+    }
+   ],
+   "evidence": {
+    "research": [
+     {
+      "kind": "Sector research",
+      "title": "UK grocery sector in-depth",
+      "text": "Food inflation to rise to around 5% by early 2027 from 1.7% in the 12 months to June; well below the 17.5% peak of 2022.",
+      "src": "Moody's, 6 Aug 2026"
+     },
+     {
+      "kind": "Sector research",
+      "title": "Credit Conditions – UK",
+      "text": "Hospitality margins squeezed by rising labour and input costs; UK hospitality like-for-like sales +0.5% in the 12 months to Jul 2026 (NIQ RSM).",
+      "src": "Moody's, 2 Sep 2026"
+     },
+     {
+      "kind": "Credit opinion (rated issuer)",
+      "title": "Wagamama (Holdings) Limited credit opinion",
+      "text": "UK casual dining faces discounting and competition from quick-service chains; UK restaurants had negative sales growth in 10 of 11 months to Nov 2025 (NIQ).",
+      "src": "Moody's, 19 Jan 2026"
+     }
+    ],
+    "macro": [
+     {
+      "kind": "Macro research",
+      "title": "State of the Consumer, Europe",
+      "text": "UK inflation 3.1%; real consumer spending growth about 1.0% in 2026 and 0.7% in 2027.",
+      "src": "Moody's, 29 Sep 2026"
+     },
+     {
+      "kind": "Précis (macro)",
+      "title": "Précis: United Kingdom, December 2025 vintage",
+      "text": "Predates the 2026 energy shock, so it is not used for the current view.",
+      "src": "Moody's, 16 Jan 2026"
+     }
+    ],
+    "news": [
+     {
+      "text": "Shop price inflation eased to 1.4% in September; promotions held prices down.",
+      "src": "BRC via MarketLine, 4 Oct 2026",
+      "kind": "News"
+     },
+     {
+      "text": "Grocery prices edged up in the four weeks to 6 September.",
+      "src": "Worldpanel via Farmers Journal, 15 Sep 2026",
+      "kind": "News"
+     },
+     {
+      "text": "Industry expects UK food price inflation to rise above 6% next year.",
+      "src": "The Sacramento Bee, 9 Sep 2026",
+      "kind": "News"
+     }
+    ],
+    "filings": [
+     {
+      "kind": "Company statement",
+      "text": "Greggs: 2026 cost inflation guidance unchanged at about 2%; signs of greater inflationary pressure flagged for 2027.",
+      "src": "Q3 trading update, via Proactive Investors, 1 Oct 2026"
+     },
+     {
+      "kind": "Company filing",
+      "text": "Greggs: cost inflation 2.2% in H1; about 70% of H2 food and packaging bought forward; about 50% of 2027 energy covered.",
+      "src": "Interim results, 29 Jul 2026"
+     },
+     {
+      "kind": "Company filing",
+      "text": "Domino's: all major cost lines hedged for 2026 and into 2027.",
+      "src": "H1 2026 results, 4 Aug 2026"
+     }
+    ]
+   }
+  },
+  "market": {
+   "benchmark": {
+    "label": "UK hospitality like-for-like sales",
+    "value": 0.5,
+    "period": "12 months to Jul 2026",
+    "period_end": "2026-07-31",
+    "source": "NIQ RSM Hospitality Business Tracker, cited in Moody's Credit Conditions – UK (sector research), 2 Sep 2026",
+    "kind": "Sector research"
+   },
+   "context": [
+    {
+     "text": "UK pub like-for-like sales +1.9% over the same 12 months; growth driven by price rather than volume.",
+     "src": "NIQ RSM Hospitality Business Tracker, cited in Moody's Credit Conditions – UK, 2 Sep 2026",
+     "kind": "Sector research"
+    },
+    {
+     "text": "UK food-to-go visits −1.9% in the 12 months to Jun 2026.",
+     "src": "Circana, cited in Greggs interim results, 29 Jul 2026",
+     "kind": "Company filing"
+    },
+    {
+     "text": "UK restaurants recorded negative sales growth in 10 of the 11 months to Nov 2025.",
+     "src": "NIQ RSM Hospitality Tracker, cited in Moody's credit opinion on Wagamama, 19 Jan 2026",
+     "kind": "Credit opinion (rated issuer)"
+    }
+   ]
+  },
+  "lights": {
+   "rules": {
+    "growth": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+    "margin": "Green 15% or more · amber 5% to 15% · red below 5%",
+    "mchange": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+    "lev": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative"
+   },
+   "cfg": {
+    "revenue_growth": {
+     "band": 1.0
+    },
+    "margin": {
+     "green_min": 15.0,
+     "amber_min": 5.0
+    },
+    "margin_change": {
+     "band": 0.5
+    },
+    "leverage": {
+     "green_max": 3.0,
+     "amber_max": 5.0
+    }
+   },
+   "note": "Thresholds are set for this demonstration, not by Moody's. Change them in tdr-s3-synthesis.json and rebuild."
+  }
+ },
+ "companies": [
+  {
+   "id": "greggs",
+   "name": "Greggs",
+   "legal": "Greggs PLC",
+   "researchEntity": "Greggs PLC",
+   "type": "Listed",
+   "owner": "Listed. No shareholder above 25%.",
+   "ownerSrc": "Orbis ultimate owner and shareholders, 7 Oct 2026",
+   "ownerFlag": "",
+   "chain": [
+    [
+     "Greggs PLC",
+     "Listed on the London Stock Exchange (GRG); largest holders J.P. Morgan Securities 5.2% and Silchester 5.0% (Orbis shareholders, 7 Oct 2026)"
+    ]
+   ],
+   "hq": "Newcastle upon Tyne",
+   "web": "greggs.co.uk",
+   "emp": "39,863",
+   "empSrc": "Orbis profile",
+   "ceo": "Roisin Currie (Chief Executive); CFO Richard Hutton",
+   "ceoSrc": "Interim results, 29 Jul 2026 (Currie); Orbis directors (Hutton). Director data still lists Currie as CEO designate.",
+   "sites": "2,773 shops at 27 Jun 2026 (627 franchised)",
+   "sitesSrc": "Interim results, 29 Jul 2026",
+   "desc": "Food-to-go bakery chain selling sandwiches, savouries and bakery products, mainly to take away.",
+   "rev": 2151.2,
+   "revG": 6.8,
+   "ebitda": 346.1,
+   "margin": 16.1,
+   "lev": 1.19,
+   "fcf": 51.6,
+   "revTxt": "£2,151m",
+   "revSub": "",
+   "ebTxt": "£346m",
+   "ebSub": "16.1% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "1.19x",
+   "levSub": "Includes leases; company net cash £15.9m before leases (Jun 2026)",
+   "fcfTxt": "£51.6m",
+   "basisCode": "Moody's format",
+   "basisShort": "As reported",
+   "basisLong": "As reported, Moody's Ratings Format",
+   "period": "FY Dec-25",
+   "periodType": "FY",
+   "finSrc": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+   "date": "Dec 2025",
+   "age": 9,
+   "stale": false,
+   "cost": "H1 2026 cost inflation 2.2%; about 70% of H2 food and packaging bought forward; about 50% of 2027 energy covered (interim, 29 Jul 2026)",
+   "demand": "Q3 2026 company-managed like-for-like sales +3.4% (Q3 trading update, 30 Sep 2026); H1 2026 revenue +7.2% (interim, 29 Jul 2026)",
+   "financing": "Net cash £15.9m at 27 Jun 2026; £100m revolving credit facility extended to June 2029 (interim, 29 Jul 2026)",
+   "deal": "None found",
+   "changed": [
+    "Q3 update (30 Sep): total sales +7.7%, company-managed like-for-like +3.4%, 2026 outlook raised to modestly improved (Proactive Investors).",
+    "Same update: proposal to close four manufacturing sites, about 740 roles over two and a half years, subject to consultation; greater inflationary pressure flagged for 2027 (Proactive Investors, 30 Sep and 1 Oct).",
+    "H1 results (29 Jul): revenue +7.2%; 2026 capex cut to about £180m (interim results)."
+   ],
+   "rated": false,
+   "opinionDate": "",
+   "says": [
+    "Q3 2026 (13 weeks to 26 Sep): total sales +7.7%, company-managed like-for-like sales +3.4%; 2026 outlook now 'modestly improved'. (Q3 trading update, via Proactive Investors, 30 Sep 2026)",
+    "Proposal to consolidate manufacturing, closing four sites; about 740 roles could become redundant over two and a half years, subject to consultation. (Q3 trading update, via Proactive Investors and Alliance News on Morningstar, 30 Sep 2026)",
+    "2026 cost inflation guidance unchanged at about 2%; signs of greater inflationary pressure flagged for 2027. (Proactive Investors, 1 Oct 2026)",
+    "H1 2026 revenue £1,101.5m, up 7.2% on £1,027.7m. (Interim results, 29 Jul 2026)",
+    "2026 capex cut to about £180m from £200m (2025: £287.5m). (Interim results, 29 Jul 2026)"
+   ],
+   "moodys": [],
+   "gaps": [
+    "EBITDA in Moody's data (£346.1m, as reported) is not the company's own headline profit measure.",
+    "Debt in Moody's data is mostly lease liabilities; the company reports net cash before leases (inference from the interim results).",
+    "Kalkine Media (7 Oct 2026) reports a new CFO hired from Bakkavor; no primary source for this in the data yet."
+   ],
+   "priorities": [
+    "Open new shops in high-quality locations",
+    "Bring the Derby and Kettering distribution sites into use",
+    "Return on capital to stabilise in 2027 and recover from 2028"
+   ],
+   "prioritiesSrc": "Annual report 2025; interim results, 29 Jul 2026",
+   "proj": [
+    "2026 capex about £180m (company guidance, interim results 29 Jul 2026)",
+    "2026 result expected to be modestly improved (company Q3 update, via Proactive Investors, 30 Sep 2026)",
+    "2026 cost inflation about 2%; greater inflationary pressure flagged for 2027 (company Q3 update, via Proactive Investors, 1 Oct 2026)"
+   ],
+   "mgmtSrc": "Interim results, 29 Jul 2026 (Currie); Orbis directors (Hutton). Director data still lists Currie as CEO designate.",
+   "filings": [
+    {
+     "document": "Interim results",
+     "date": "2026-07-29",
+     "text": "H1 2026 cost inflation 2.2%; ~70% of H2 food and packaging bought forward; ~50% of 2027 energy covered"
+    },
+    {
+     "document": "Interim results",
+     "date": "2026-07-29",
+     "text": "Food-to-go visits -1.9%; Greggs share +0.3 pts to 8.7% (Circana, 12 months to June 2026)"
+    },
+    {
+     "document": "Interim results (FY2025 comparatives)",
+     "date": "2026-07-29",
+     "text": "FY2025 cost of sales £829.1m"
+    },
+    {
+     "document": "Interim results",
+     "date": "2026-07-29",
+     "text": "2026 capex about £180m, reduced from £200m"
+    },
+    {
+     "document": "Interim results",
+     "date": "2026-07-29",
+     "text": "Net cash £15.9m; £100m RCF extended to June 2029"
+    }
+   ],
+   "split": {
+    "items": [
+     {
+      "label": "Company-managed shops",
+      "share": 88.2
+     },
+     {
+      "label": "Business-to-business (franchise and wholesale)",
+      "share": 11.8
+     }
+    ],
+    "period": "FY Dec-25",
+    "source": "Moody's segment data, shares calculated from reported segment revenue"
+   },
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+6.8%",
+     "period": "FY Dec-25 vs FY Dec-24",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "green",
+     "v": "16.1%",
+     "period": "FY Dec-25",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green 15% or more · amber 5% to 15% · red below 5%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "down",
+     "v": "−1.6 pts",
+     "period": "FY Dec-25 vs FY Dec-24",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "16.1% against 17.7%."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "green",
+     "v": "1.19x",
+     "period": "FY Dec-25",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Total debt in Moody's data is £474.8m (net debt £341.5m). Greggs reports net cash of £15.9m excluding lease liabilities at 27 Jun 2026 (interim results), so the debt here is mostly leases (inference)."
+    }
+   ],
+   "latest": {
+    "text": "Q3 sales +7.7%, outlook raised; four manufacturing sites and about 740 roles proposed for closure; greater inflationary pressure flagged for 2027.",
+    "src": "Proactive Investors, 30 Sep and 1 Oct 2026"
+   },
+   "years": [
+    "2021",
+    "2022",
+    "2023",
+    "2024",
+    "2025"
+   ],
+   "revS": [
+    1229.7,
+    1512.8,
+    1809.6,
+    2014.4,
+    2151.2
+   ],
+   "ebS": [
+    null,
+    272.5,
+    323.6,
+    357.5,
+    346.1
+   ],
+   "marS": [
+    null,
+    18.0,
+    17.9,
+    17.7,
+    16.1
+   ],
+   "levS": [
+    null,
+    1.11,
+    0.99,
+    1.01,
+    1.19
+   ],
+   "icS": [
+    20.41,
+    20.77,
+    19.28,
+    15.99,
+    10.25
+   ],
+   "seriesNote": "2021 EBITDA in the data equals EBITA (£153.1m), so depreciation looks missing; 2021 EBITDA, margin and leverage are left out.",
+   "seriesBasis": "As reported, Moody's Ratings Format",
+   "cfoS": {
+    "years": [
+     "2024",
+     "2025"
+    ],
+    "cfo": [
+     318.6,
+     337.0
+    ],
+    "capex": [
+     240.9,
+     285.4
+    ],
+    "src": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026"
+   },
+   "capexGuide": {
+    "label": "2026 guide",
+    "v": 180,
+    "src": "Interim results, 29 Jul 2026"
+   }
+  },
+  {
+   "id": "dominos",
+   "name": "Domino's Pizza Group",
+   "legal": "Domino's Pizza Group PLC",
+   "researchEntity": "Domino's Pizza Group PLC",
+   "type": "Listed",
+   "owner": "Listed. No shareholder above 25%.",
+   "ownerSrc": "Orbis ultimate owner, 7 Oct 2026",
+   "ownerFlag": "",
+   "chain": [
+    [
+     "Domino's Pizza Group PLC",
+     "Listed on the London Stock Exchange (DOM) (Orbis, 7 Oct 2026)"
+    ]
+   ],
+   "hq": "Milton Keynes",
+   "web": "dominos.co.uk",
+   "emp": "2,592",
+   "empSrc": "Orbis profile (group staff; most stores are franchised)",
+   "ceo": "Nicola Frampton (CEO); CFO Andrew Andrea",
+   "ceoSrc": "H1 2026 results, 4 Aug 2026. Director data lists Elias Diaz Sese and Andrew Rennie with CEO roles and Matthew Shattock as chair; the results name Ian Bull as chair, so director data is out of date.",
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "Master franchisee of Domino's in the UK and Ireland, running the franchise system and its supply chain.",
+   "rev": 685.4,
+   "revG": 3.1,
+   "ebitda": 142.8,
+   "margin": 20.8,
+   "lev": 3.85,
+   "fcf": 79.8,
+   "revTxt": "£685m",
+   "revSub": "",
+   "ebTxt": "£143m",
+   "ebSub": "20.8% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "3.85x",
+   "levSub": "Company measure 2.3x at H1 2026",
+   "fcfTxt": "£79.8m",
+   "basisCode": "Moody's format",
+   "basisShort": "As reported",
+   "basisLong": "As reported, Moody's Ratings Format",
+   "period": "FY Dec-25",
+   "periodType": "FY",
+   "finSrc": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+   "date": "Dec 2025",
+   "age": 9,
+   "stale": false,
+   "cost": "All major cost lines hedged for 2026 and into 2027 (H1 results, 4 Aug 2026)",
+   "demand": "H1 2026 like-for-like sales +4.9%, orders +1.6% (H1 results, 4 Aug 2026)",
+   "financing": "£200m US private placement notes due July 2027, refinancing planned by end 2026; £300m RCF to July 2030 (H1 results and call, 4 Aug 2026)",
+   "deal": "None found",
+   "changed": [
+    "H1 results (4 Aug): like-for-like sales +4.9%, orders +1.6%, underlying EBITDA £66.2m (company measure).",
+    "Plan to refinance £200m of notes due July 2027 by the end of 2026 (H1 call, 4 Aug).",
+    "A non-executive director bought 4,850 shares at £2.045 (Tipranks, 18 Sep)."
+   ],
+   "rated": false,
+   "opinionDate": "",
+   "says": [
+    "H1 2026 like-for-like sales +4.9% and orders +1.6%; underlying EBITDA up £2.3m to £66.2m. (H1 results, 4 Aug 2026)",
+    "All major cost lines hedged for 2026 and into 2027; confident in full-year expectations. (H1 results, 4 Aug 2026)",
+    "£200m of notes mature in July 2027, to be refinanced by year end; £300m RCF to July 2030. (H1 call, 4 Aug 2026)",
+    "Leverage 2.3x at H1 on its own measure; target 1.5x to 2.5x, aiming for the lower end. (H1 call, 4 Aug 2026)"
+   ],
+   "moodys": [],
+   "gaps": [
+    "Moody's format leverage (3.85x) and the company's own measure (2.3x) use different bases.",
+    "Group staff count excludes franchised stores."
+   ],
+   "priorities": [
+    "Chicken (CHICK 'N' DIP) as a second growth engine",
+    "Loyalty",
+    "Aggregators",
+    "Supply chain productivity"
+   ],
+   "prioritiesSrc": "H1 results, 4 Aug 2026",
+   "proj": [
+    "Leverage target 1.5x to 2.5x (company, H1 call 4 Aug 2026)",
+    "Full-year expectations reaffirmed (company, H1 results 4 Aug 2026)"
+   ],
+   "mgmtSrc": "H1 2026 results, 4 Aug 2026. Director data lists Elias Diaz Sese and Andrew Rennie with CEO roles and Matthew Shattock as chair; the results name Ian Bull as chair, so director data is out of date.",
+   "filings": [
+    {
+     "document": "H1 results",
+     "date": "2026-08-04",
+     "text": "All major cost lines hedged for FY26 and into FY27"
+    },
+    {
+     "document": "H1 results",
+     "date": "2026-08-04",
+     "text": "H1 like-for-like sales +4.9%, orders +1.6%"
+    },
+    {
+     "document": "H1 call; annual report 2025",
+     "date": "2026-08-04",
+     "text": "£200m USPP notes due July 2027, refinance by end of year; £300m RCF to July 2030; £100m notes to June 2034"
+    },
+    {
+     "document": "H1 results (FY2025 comparatives)",
+     "date": "2026-08-04",
+     "text": "FY2025 cost of sales £370.7m"
+    }
+   ],
+   "split": {
+    "items": [
+     {
+      "label": "Supply chain",
+      "share": 62.2
+     },
+     {
+      "label": "Corporate stores",
+      "share": 13.6
+     },
+     {
+      "label": "Marketing fund and ecommerce",
+      "share": 12.5
+     },
+     {
+      "label": "Royalty, rental and other",
+      "share": 11.7
+     }
+    ],
+    "period": "FY Dec-25",
+    "source": "Moody's segment data, shares calculated from reported segment revenue"
+   },
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+3.1%",
+     "period": "FY Dec-25 vs FY Dec-24",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "green",
+     "v": "20.8%",
+     "period": "FY Dec-25",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green 15% or more · amber 5% to 15% · red below 5%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "down",
+     "v": "−6.0 pts",
+     "period": "FY Dec-25 vs FY Dec-24",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "20.8% against 26.8%."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "amber",
+     "v": "3.85x",
+     "period": "FY Dec-25",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "The company's own leverage measure was 2.3x at H1 2026, target 1.5x to 2.5x (H1 call, 4 Aug 2026). The two use different definitions."
+    }
+   ],
+   "latest": {
+    "text": "H1 like-for-like sales +4.9%; plans to refinance £200m notes due Jul 2027 by end 2026.",
+    "src": "H1 2026 results and call, 4 Aug 2026"
+   },
+   "years": [
+    "2021",
+    "2022",
+    "2023",
+    "2024",
+    "2025"
+   ],
+   "revS": [
+    560.8,
+    600.3,
+    679.8,
+    664.5,
+    685.4
+   ],
+   "ebS": [
+    null,
+    null,
+    192.4,
+    178.0,
+    142.8
+   ],
+   "marS": [
+    null,
+    null,
+    28.3,
+    26.8,
+    20.8
+   ],
+   "levS": [
+    null,
+    null,
+    2.71,
+    3.08,
+    3.85
+   ],
+   "icS": [
+    6.63,
+    5.12,
+    6.05,
+    4.98,
+    3.45
+   ],
+   "seriesNote": "2021 and 2022 EBITDA in the data equal EBITA, so depreciation looks missing; those years are left out of EBITDA, margin and leverage. 2025 EBITDA fell 20% on this basis; the company's underlying EBITDA fell 7% (annual report 2025).",
+   "seriesBasis": "As reported, Moody's Ratings Format",
+   "cfoS": {
+    "years": [
+     "2024",
+     "2025"
+    ],
+    "cfo": [
+     103.5,
+     103.9
+    ],
+    "capex": [
+     18.5,
+     24.1
+    ],
+    "src": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026"
+   }
+  },
+  {
+   "id": "tortilla",
+   "name": "Tortilla Mexican Grill",
+   "legal": "Tortilla Mexican Grill PLC",
+   "researchEntity": "Tortilla Mexican Grill PLC",
+   "type": "Listed",
+   "owner": "Listed (AIM). No shareholder above 25%.",
+   "ownerSrc": "Orbis ultimate owner and shareholders, 7 Oct 2026",
+   "ownerFlag": "",
+   "chain": [
+    [
+     "Tortilla Mexican Grill PLC",
+     "Listed on AIM (MEX); largest holders BC Private Equity 20.4% and Auctor UEP 20.4%; founder Brandon Stephens 8.3% (Orbis shareholders, 7 Oct 2026)"
+    ]
+   ],
+   "hq": "London",
+   "web": "tortilla.co.uk",
+   "emp": "1,095",
+   "empSrc": "Orbis profile",
+   "ceo": "Brandon Stephens (founder and group CEO); CFO Richard Haley",
+   "ceoSrc": "H1 2026 call, Aiera via NewsEdge, 1 Oct 2026. Director data lists Andrew Naylor as CEO and Maria Denny as CFO, so it is out of date; show both.",
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "Fast-casual Mexican restaurant chain in the UK, selling in restaurants and through delivery.",
+   "rev": 74.0,
+   "revG": 8.8,
+   "ebitda": -2.2,
+   "margin": -3.0,
+   "lev": null,
+   "fcf": 3.2,
+   "revTxt": "£74m",
+   "revSub": "",
+   "ebTxt": "−£2.2m",
+   "ebSub": "−3.0% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "n.m.",
+   "levSub": "EBITDA negative in FY Dec-25",
+   "fcfTxt": "£3.2m",
+   "basisCode": "Moody's format",
+   "basisShort": "As reported",
+   "basisLong": "As reported, Moody's Ratings Format",
+   "period": "FY Dec-25",
+   "periodType": "FY",
+   "finSrc": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+   "date": "Dec 2025",
+   "age": 9,
+   "stale": false,
+   "cost": "n.d.",
+   "demand": "H1 2026 like-for-like sales +13.9%, volume +4.8% (Investegate, 27 Jul 2026)",
+   "financing": "n.d.",
+   "deal": "None found",
+   "changed": [
+    "Shares suspended 1 to 27 Jul 2026 (Orbis); FY2025 results published 27 Jul (Investegate); CEO refers to 2025 accounting issues in France (The Independent, 27 Jul).",
+    "H1 2026 results (29 Sep): revenue £38.5m, system sales £100.9m, loss smaller than a year earlier (Kalkine Media; Morningstar).",
+    "Luke Johnson reduced his holding below 3% (Kalkine Media, 10 Sep)."
+   ],
+   "rated": false,
+   "opinionDate": "",
+   "says": [
+    "Annual report for the 52 weeks to 28 Dec 2025 published on 27 Jul 2026. (Investegate, 27 Jul 2026)",
+    "H1 2026 call given by founder and group CEO Brandon Stephens and group CFO Richard Haley. (Aiera via NewsEdge, 1 Oct 2026)",
+    "H1 2026 like-for-like sales up 13.9% on 4.8% volume growth. (Investegate, 27 Jul 2026)"
+   ],
+   "moodys": [],
+   "gaps": [
+    "No company filings for Tortilla in the filings tool; evidence comes from accounts data and news.",
+    "Shares were suspended from 1 to 27 Jul 2026 (Orbis company record); FY2025 results came out on 27 Jul and the CEO referred to 2025 accounting issues in France (The Independent, 27 Jul), which points to late accounts (inference)."
+   ],
+   "priorities": [],
+   "prioritiesSrc": "",
+   "proj": [],
+   "mgmtSrc": "H1 2026 call, Aiera via NewsEdge, 1 Oct 2026. Director data lists Andrew Naylor as CEO and Maria Denny as CFO, so it is out of date; show both.",
+   "filings": [],
+   "split": {
+    "items": [
+     {
+      "label": "UK",
+      "share": 92.0
+     },
+     {
+      "label": "France",
+      "share": 8.0
+     }
+    ],
+    "period": "FY Dec-25",
+    "source": "Moody's segment data, shares calculated from reported segment revenue"
+   },
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+8.8%",
+     "period": "FY Dec-25 vs FY Dec-24",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "red",
+     "v": "−3.0%",
+     "period": "FY Dec-25",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green 15% or more · amber 5% to 15% · red below 5%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "down",
+     "v": "−14.3 pts",
+     "period": "FY Dec-25 vs FY Dec-24",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "−3.0% against 11.3%. 2025 EBITDA includes the effect of a £9.9m impairment added back in the cash flow."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "red",
+     "v": "n.m.",
+     "period": "FY Dec-25",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "EBITDA is negative, so leverage is not meaningful. EBITDA negative in FY Dec-25"
+    }
+   ],
+   "latest": {
+    "text": "H1 2026 revenue £38.5m, loss smaller than a year earlier; shares were suspended 1 to 27 Jul 2026 before FY2025 results.",
+    "src": "Kalkine Media and Morningstar, 29 Sep 2026; Orbis"
+   },
+   "years": [
+    "2021",
+    "2023",
+    "2024",
+    "2025"
+   ],
+   "revS": [
+    48.1,
+    65.7,
+    68.0,
+    74.0
+   ],
+   "ebS": [
+    7.2,
+    8.9,
+    7.7,
+    -2.2
+   ],
+   "marS": [
+    15.0,
+    13.5,
+    11.3,
+    -3.0
+   ],
+   "levS": [
+    4.84,
+    4.3,
+    6.01,
+    null
+   ],
+   "icS": [
+    2.65,
+    0.4,
+    -0.5,
+    -4.53
+   ],
+   "seriesNote": "The 2021 column is the year to 3 January 2021; there is no 2022 year in the data. 2025 EBITDA swung to a loss; the 2025 cash flow adds back a £9.9m impairment. Leverage is not meaningful in 2025.",
+   "seriesBasis": "As reported, Moody's Ratings Format",
+   "cfoS": {
+    "years": [
+     "2024",
+     "2025"
+    ],
+    "cfo": [
+     10.6,
+     7.4
+    ],
+    "capex": [
+     5.0,
+     4.3
+    ],
+    "src": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026"
+   }
+  },
+  {
+   "id": "pizzaexpress",
+   "name": "PizzaExpress",
+   "legal": "Wheel Bidco Limited (research); Pizzaexpress (Restaurants) Limited (ownership)",
+   "researchEntity": "Wheel Bidco Limited",
+   "type": "Credit-fund owned",
+   "owner": "Bain Capital Credit, Cyrus Capital Partners and Glendon Opportunities own 61% together",
+   "ownerSrc": "Moody's research overview on Wheel Bidco Limited",
+   "ownerFlag": "Orbis stops at a Jersey holding company",
+   "chain": [
+    [
+     "Bain Capital Credit, Cyrus Capital Partners, Glendon Opportunities (61% together)",
+     "Moody's research overview on Wheel Bidco Limited"
+    ],
+    [
+     "Wheel Topco Limited (Jersey)",
+     "Orbis ultimate owner, Sep 2026"
+    ],
+    [
+     "Wheel Bidco Limited",
+     "Rated financing entity (Moody's)"
+    ],
+    [
+     "Pizzaexpress Limited (100% owner)",
+     "Orbis shareholders, 7 Oct 2026"
+    ],
+    [
+     "Pizzaexpress (Restaurants) Limited",
+     "Operating company"
+    ]
+   ],
+   "hq": "Uxbridge",
+   "web": "pizzaexpress.com",
+   "emp": "7,868",
+   "empSrc": "Orbis profile; Pizzaexpress Limited shows 8,376",
+   "ceo": "No CEO role in director data. Lists Colin Elliot, Paula MacKenzie and Mandeep Sandhu without a CEO role.",
+   "ceoSrc": "Orbis directors, 7 Oct 2026",
+   "sites": "360 UK and Ireland sites; 31 owned and 83 franchised international restaurants (29 Mar 2026)",
+   "sitesSrc": "Moody's research overview on Wheel Bidco",
+   "desc": "Casual dining pizza chain with 360 sites in the UK and Ireland plus international restaurants, and delivery and supermarket products.",
+   "rev": 444.4,
+   "revG": -0.5,
+   "ebitda": null,
+   "margin": 19.1,
+   "lev": 5.4,
+   "fcf": null,
+   "revTxt": "£444m",
+   "revSub": "LTM Mar-26 revenue; growth is FY 2025 on FY 2024",
+   "ebTxt": "£55m",
+   "ebSub": "Company, pre-IFRS 16; Moody's margin 19.1%",
+   "ebBasis": "Company, pre-IFRS 16",
+   "levTxt": "5.4x",
+   "levSub": "",
+   "fcfTxt": "n.d.",
+   "basisCode": "Moody's-adjusted",
+   "basisShort": "Moody's-adjusted",
+   "basisLong": "Moody's-adjusted, from the credit opinion",
+   "period": "LTM Mar-26",
+   "periodType": "LTM",
+   "finSrc": "Moody's credit opinion on Wheel Bidco (PizzaExpress), 2 Jul 2026",
+   "date": "Mar 2026",
+   "age": 6,
+   "stale": false,
+   "cost": "n.d.",
+   "demand": "Q1 2026 group like-for-like sales +3.8% (Moody's, 2 Jul 2026)",
+   "financing": "£280m notes at 9.875% due Sep 2029; £30m RCF to Mar 2029 with £7.5m drawn; Moody's expects EBIT/interest below 1.0x (Moody's, 2 Jul 2026)",
+   "deal": "Preparing a possible sale at up to £500m (Marketline citing the FT, 21 Sep 2026); approaches from industry players and investment firms (MCA, 23 Sep 2026)",
+   "changed": [
+    "Moody's update (2 Jul): Q1 2026 group like-for-like sales +3.8%; Moody's expects EBIT/interest below 1.0x.",
+    "Possible sale at up to £500m (Marketline citing the FT, 21 Sep).",
+    "Approaches from industry players and investment firms (MCA, 23 Sep)."
+   ],
+   "rated": true,
+   "opinionDate": "2026-07-02",
+   "says": [
+    "Q1 2026 group like-for-like sales +3.8%, ahead of the casual dining market. (Moody's, 2 Jul 2026)",
+    "LTM Mar 2026 revenue £444m and company EBITDA (pre-IFRS 16) £55m. (Moody's research overview)",
+    "Cash £13.5m and £22.5m undrawn on a £30m RCF at 29 Mar 2026; no maturities before September 2029. (Moody's, 2 Jul 2026)",
+    "The May 2025 refinancing raised the coupon to 9.875% from 6.75%, adding about £5m a year of interest. (Moody's, 2 Jul 2026)"
+   ],
+   "moodys": [
+    "Upgrade would need sustained like-for-like and EBITDA growth, EBIT/interest above 1.0x and sustained positive free cash flow.",
+    "Downgrade if EBITDA margins keep falling, like-for-like sales contract for long, EBIT/interest weakens or liquidity weakens significantly.",
+    "Stable outlook; Moody's expects mid-single-digit growth in Moody's-adjusted EBITDA over 12 to 18 months (periodic review, 3 Jun 2026; opinion, 2 Jul 2026)."
+   ],
+   "gaps": [
+    "No financials in the financials tool for Wheel Bidco; figures come from Moody's research.",
+    "CEO not named in director data."
+   ],
+   "priorities": [
+    "Dine-in, delivery and retail channels",
+    "Outperform the casual dining and Italian casual dining segments"
+   ],
+   "prioritiesSrc": "Moody's credit opinion, 2 Jul 2026",
+   "proj": [
+    "Revenue £458.1m in 2026 and £474.0m in 2027 (Moody's forecast, 2 Jul 2026)",
+    "Debt/EBITDA 5.4x in 2026 and 5.2x in 2027 (Moody's forecast, 2 Jul 2026)",
+    "EBIT/interest 0.9x in 2026 and 1.0x in 2027 (Moody's forecast, 2 Jul 2026)"
+   ],
+   "mgmtSrc": "Orbis directors, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "flat",
+     "v": "−0.5%",
+     "period": "FY 2025 vs FY 2024",
+     "basis": "Moody's-adjusted",
+     "src": "Moody's credit opinion on Wheel Bidco (PizzaExpress), 2 Jul 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "green",
+     "v": "19.1%",
+     "period": "LTM Mar-26",
+     "basis": "Moody's-adjusted",
+     "src": "Moody's credit opinion on Wheel Bidco (PizzaExpress), 2 Jul 2026",
+     "rule": "Green 15% or more · amber 5% to 15% · red below 5%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "down",
+     "v": "−1.0 pts",
+     "period": "FY 2025 vs FY 2024",
+     "basis": "Moody's-adjusted, calculated",
+     "src": "Moody's credit opinion on Wheel Bidco (PizzaExpress), 2 Jul 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "18.0% against 19.0%. Full years from the credit opinion; the margin light shows the newer LTM Mar-26 figure (19.1%)."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "red",
+     "v": "5.4x",
+     "period": "LTM Mar-26",
+     "basis": "Moody's-adjusted",
+     "src": "Moody's credit opinion on Wheel Bidco (PizzaExpress), 2 Jul 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": ""
+    }
+   ],
+   "latest": {
+    "text": "Preparing a possible sale at up to £500m; approaches from industry players and investment firms.",
+    "src": "Marketline citing the FT, 21 Sep 2026; MCA, 23 Sep 2026"
+   },
+   "years": [
+    "2022",
+    "2023",
+    "2024",
+    "2025",
+    "LTM",
+    "2026F",
+    "2027F"
+   ],
+   "revS": [
+    422.1,
+    454.6,
+    442.1,
+    439.9,
+    444.4,
+    458.1,
+    474.0
+   ],
+   "marS": [
+    20.7,
+    16.5,
+    19.0,
+    18.0,
+    19.1,
+    18.8,
+    18.8
+   ],
+   "levS": [
+    5.9,
+    6.8,
+    6.1,
+    5.8,
+    5.4,
+    5.4,
+    5.2
+   ],
+   "icS": [
+    1.2,
+    0.8,
+    1.1,
+    0.8,
+    0.9,
+    0.9,
+    1.0
+   ],
+   "fcfDebtS": [
+    0.7,
+    0.3,
+    2.5,
+    -3.8,
+    -1.9,
+    0.6,
+    0.6
+   ],
+   "unitsS": [
+    454,
+    460,
+    462,
+    475,
+    474,
+    482,
+    487
+   ],
+   "fc": [
+    false,
+    false,
+    false,
+    false,
+    false,
+    true,
+    true
+   ],
+   "seriesNote": "All series are Moody's-adjusted from the 2 Jul 2026 credit opinion. LTM is the 12 months to March 2026. 2026F and 2027F are Moody's forecasts. Wheel Bidco has no financials in the financials tool; the operating company's own accounts stop at Dec 2024.",
+   "seriesBasis": "Moody's-adjusted, from the credit opinion"
+  },
+  {
+   "id": "wagamama",
+   "name": "Wagamama",
+   "legal": "Wagamama (Holdings) Limited",
+   "researchEntity": "Wagamama (Holdings) Limited",
+   "type": "Sponsor-owned",
+   "owner": "Part of The Restaurant Group, owned by Apollo since Dec 2023 (Moody's). Orbis names a different top owner.",
+   "ownerSrc": "Moody's research; news 16 Jul 2026; Orbis Jun 2026",
+   "ownerFlag": "Sources disagree",
+   "chain": [
+    [
+     "Top owner per Moody's research: Apollo, via The Restaurant Group (since Dec 2023)",
+     "Moody's research overview; TRG described as Apollo-controlled in news on its concessions sale (CE Noticias Financieras, 16 Jul 2026)"
+    ],
+    [
+     "Top owner per Orbis: Unicorn Topco Limited, with Levine Leichtman Capital Partners Europe II SCSp named",
+     "Orbis ultimate owner, Jun 2026. The two sources disagree."
+    ],
+    [
+     "The Restaurant Group Limited (100% total)",
+     "Orbis shareholders"
+    ],
+    [
+     "Waga Midco Limited (100% direct)",
+     "Orbis shareholders"
+    ],
+    [
+     "Wagamama (Holdings) Limited",
+     "Rated holding company"
+    ]
+   ],
+   "hq": "London",
+   "web": "wagamama.com",
+   "emp": "8,169",
+   "empSrc": "Orbis profile",
+   "ceo": "No CEO role in director data. Lists Mark Chambers, Martin Henderson, Andrew Hornby and Alexander Van Hoek without a CEO role.",
+   "ceoSrc": "Orbis directors, 7 Oct 2026",
+   "sites": "165 UK sites, 52 international franchised, 7 in the US",
+   "sitesSrc": "Moody's research overview on Wagamama (Holdings) Limited",
+   "desc": "Largest pan-Asian restaurant chain in the UK, with 165 UK sites, international franchises and seven US sites.",
+   "rev": 480.5,
+   "revG": -4.2,
+   "ebitda": 75.9,
+   "margin": 15.8,
+   "lev": 7.19,
+   "fcf": null,
+   "revTxt": "£481m",
+   "revSub": "",
+   "ebTxt": "£75.9m",
+   "ebSub": "15.8% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "7.19x",
+   "levSub": "Moody's-adjusted 6.6x, LTM Sep-25",
+   "fcfTxt": "n.d.",
+   "basisCode": "filed",
+   "basisShort": "As reported",
+   "basisLong": "As reported, filed accounts (Orbis Standard Format)",
+   "period": "FY Dec-25",
+   "periodType": "FY",
+   "finSrc": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+   "date": "Dec 2025",
+   "age": 9,
+   "stale": false,
+   "cost": "£8m of cost savings expected from H2 2026 (Moody's, 19 Jan 2026)",
+   "demand": "Like-for-like -1.1% year to date to Sep 2025 (Moody's, 19 Jan 2026)",
+   "financing": "Outlook negative since 19 Jan 2026; £330m notes and a £55m RCF, no maturities until 2030 (Moody's, 19 Jan 2026)",
+   "deal": "Parent TRG agreed to sell its airport concessions business to Areas (Marketline - Deals, 16 Jul 2026)",
+   "changed": [
+    "TRG agreed to sell its concessions division, including airport Wagamama sites, to Areas (Marketline - Deals, 16 Jul).",
+    "First motorway services restaurant opened (Retail Times, 9 Sep).",
+    "India expansion: Delhi NCR (21 Sep) and Gurugram (1 Oct) with K Hospitality (Indian Retailer)."
+   ],
+   "rated": true,
+   "opinionDate": "2026-01-19",
+   "says": [
+    "Filed FY2025: revenue £480.5m, EBITDA £75.9m (2024: £33.1m), debt/EBITDA 7.19x, interest cover 1.02x. (Orbis Standard Format)",
+    "Parent TRG agreed to sell its airport concessions business (40+ units, including airport Wagamama sites) to Areas. (Marketline Deals, 16 Jul 2026)",
+    "Moody's forecast leverage of 5.9x and EBIT/interest of 1.3x in 2026, outside its guidance for the rating. (Moody's, 19 Jan 2026)"
+   ],
+   "moodys": [
+    "Outlook changed to negative on 19 Jan 2026 after weaker 2025 trading, heavy promotions and rising labour costs.",
+    "Downgrade if debt/EBITDA stays above 5.5x or EBIT/interest below 1.5x; upgrade if below 4.5x and above 2.0x.",
+    "No Moody's document on Wagamama since 19 Jan 2026 (searched 7 Oct 2026)."
+   ],
+   "gaps": [
+    "Moody's research and Orbis disagree on the top owner.",
+    "No Moody's document since 19 Jan 2026; no cash flow data.",
+    "Filed EBITDA swung from £71.8m (2023) to £33.1m (2024) and £75.9m (2025); no explanation in the data."
+   ],
+   "priorities": [
+    "Promotions and menu changes to win back volume",
+    "£8m of cost savings from H2 2026",
+    "5 to 6 new UK sites in 2026 and 8 to 12 franchise openings a year"
+   ],
+   "prioritiesSrc": "Moody's credit opinion, 19 Jan 2026",
+   "proj": [
+    "Revenue £496.9m in 2026 and £518.0m in 2027 (Moody's forecast, 19 Jan 2026)",
+    "Debt/EBITDA 5.9x in 2026 and 5.5x in 2027 (Moody's forecast, 19 Jan 2026)",
+    "EBIT/interest 1.3x in 2026 and 1.5x in 2027 (Moody's forecast, 19 Jan 2026)"
+   ],
+   "mgmtSrc": "Orbis directors, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "down",
+     "v": "−4.2%",
+     "period": "FY Dec-25 vs FY Dec-24",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "green",
+     "v": "15.8%",
+     "period": "FY Dec-25",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+     "rule": "Green 15% or more · amber 5% to 15% · red below 5%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "up",
+     "v": "+9.2 pts",
+     "period": "FY Dec-25 vs FY Dec-24",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "15.8% against 6.6%. 2024 reported EBITDA (£33.1m) was unusually low against £71.8m in 2023; no explanation in the data. On Moody's-adjusted figures the margin fell from 21.5% (2024) to 16.8% (LTM Sep-25)."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "red",
+     "v": "7.19x",
+     "period": "FY Dec-25",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Moody's-adjusted debt/EBITDA was 6.6x for the 12 months to Sep 2025 (pro forma), credit opinion 19 Jan 2026."
+    }
+   ],
+   "latest": {
+    "text": "Parent TRG agreed to sell its airport concessions to Areas; first motorway services restaurant opened.",
+    "src": "Marketline, 16 Jul 2026; Retail Times, 9 Sep 2026"
+   },
+   "years": [
+    "2022",
+    "2023",
+    "2024",
+    "LTM",
+    "2025F",
+    "2026F",
+    "2027F"
+   ],
+   "revS": [
+    423.7,
+    463.5,
+    501.5,
+    490.0,
+    480.5,
+    496.9,
+    518.0
+   ],
+   "marS": [
+    23.1,
+    24.7,
+    21.5,
+    16.8,
+    17.8,
+    18.8,
+    19.3
+   ],
+   "levS": [
+    4.4,
+    3.8,
+    4.6,
+    6.6,
+    6.5,
+    5.9,
+    5.5
+   ],
+   "icS": [
+    2.0,
+    2.0,
+    1.6,
+    1.2,
+    1.3,
+    1.3,
+    1.5
+   ],
+   "fcfDebtS": [
+    -2.3,
+    1.0,
+    0.6,
+    null,
+    0.6,
+    0.9,
+    2.0
+   ],
+   "unitsS": [
+    222,
+    227,
+    229,
+    224,
+    227,
+    242,
+    244
+   ],
+   "fc": [
+    false,
+    false,
+    false,
+    false,
+    true,
+    true,
+    true
+   ],
+   "seriesNote": "Revenue, margin, leverage, interest cover and restaurant counts are Moody's-adjusted from the 19 Jan 2026 credit opinion. LTM is the 12 months to September 2025 (pro forma); 2025F to 2027F are Moody's forecasts. Filed EBITDA fell to £33.1m in 2024 and recovered to £75.9m in 2025; no explanation in the data.",
+   "seriesBasis": "Moody's-adjusted, from the credit opinion",
+   "ebFiled": {
+    "years": [
+     "2023",
+     "2024",
+     "2025"
+    ],
+    "v": [
+     71.8,
+     33.1,
+     75.9
+    ]
+   }
+  },
+  {
+   "id": "gails",
+   "name": "Gail's",
+   "legal": "Grain Topco Limited (group parent of Gail's)",
+   "researchEntity": "Grain Topco Limited (group parent of Gail's)",
+   "type": "Credit-fund owned",
+   "owner": "Grain Topco Limited, with a Bain Capital Credit fund named",
+   "ownerSrc": "Orbis ultimate owner, Sep 2026",
+   "ownerFlag": "Orbis only",
+   "chain": [
+    [
+     "Bain Capital Credit JJJ Fund (named)",
+     "Orbis, Sep 2026"
+    ],
+    [
+     "Grain Topco Limited",
+     "Orbis ultimate owner"
+    ],
+    [
+     "Bread Factory Limited (wholly owns)",
+     "Orbis shareholders"
+    ],
+    [
+     "Gail's Limited",
+     "Operating company"
+    ]
+   ],
+   "hq": "London",
+   "web": "gailsbread.co.uk",
+   "emp": "4,022",
+   "empSrc": "Orbis profile, group; Gail's Limited alone 2,816",
+   "ceo": "No CEO role in director data. Lists Nicholas Ayerst, Thomas Molnar and Andrew Trigwell without a CEO role.",
+   "ceoSrc": "Orbis directors, 7 Oct 2026",
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "Bakery and cafe chain selling bread, pastries and coffee; the group also runs a wholesale bakery (the Bread Factory).",
+   "rev": 278.1,
+   "revG": 20.0,
+   "ebitda": 51.1,
+   "margin": 18.4,
+   "lev": 6.44,
+   "fcf": null,
+   "revTxt": "£278m",
+   "revSub": "",
+   "ebTxt": "£51.1m",
+   "ebSub": "18.4% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "6.44x",
+   "levSub": "Group debt £329.4m; interest cover 0.76x",
+   "fcfTxt": "n.d.",
+   "basisCode": "filed",
+   "basisShort": "As reported",
+   "basisLong": "As reported, filed accounts (Orbis Standard Format)",
+   "period": "FY Feb-25",
+   "periodType": "FY",
+   "finSrc": "Orbis Standard Format, as reported (filed group accounts of Grain Topco Limited), pulled 7 Oct 2026",
+   "date": "Feb 2025",
+   "age": 19,
+   "stale": true,
+   "cost": "n.d.",
+   "demand": "Group revenue +20.0% in the year to Feb 2025 (filed)",
+   "financing": "Group debt £329.4m at Feb 2025, 6.44x EBITDA; EBIT/interest 0.76x (Orbis Standard Format)",
+   "deal": "None found",
+   "changed": [
+    "No news kept and no newer accounts in the data (searched 7 Oct 2026)."
+   ],
+   "rated": false,
+   "opinionDate": "",
+   "says": [
+    "Group revenue £278.1m and EBITDA £51.1m in the year to Feb 2025; Gail's Limited alone £219.8m and £36.5m. (Orbis Standard Format)"
+   ],
+   "moodys": [],
+   "gaps": [
+    "Accounts 19 months old.",
+    "Owner from Orbis only; no cash flow data.",
+    "CEO not named in director data.",
+    "Group debt in 2024 looks understated against 2023 and 2025 (reclassification, inference)."
+   ],
+   "priorities": [],
+   "prioritiesSrc": "",
+   "proj": [],
+   "mgmtSrc": "Orbis directors, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+20.0%",
+     "period": "FY Feb-25 vs FY Feb-24",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (filed group accounts of Grain Topco Limited), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "green",
+     "v": "18.4%",
+     "period": "FY Feb-25",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (filed group accounts of Grain Topco Limited), pulled 7 Oct 2026",
+     "rule": "Green 15% or more · amber 5% to 15% · red below 5%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "flat",
+     "v": "−0.2 pts",
+     "period": "FY Feb-25 vs FY Feb-24",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (filed group accounts of Grain Topco Limited), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "18.4% against 18.6%."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "red",
+     "v": "6.44x",
+     "period": "FY Feb-25",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (filed group accounts of Grain Topco Limited), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Grain Topco group debt £329.4m at Feb 2025, 6.44x EBITDA; EBIT/interest 0.76x (Orbis Standard Format). Gail's Limited alone shows £18.5m of debt, 0.51x."
+    }
+   ],
+   "latest": {
+    "text": "No news kept and no newer accounts in the data.",
+    "src": "searched 7 Oct 2026"
+   },
+   "years": [
+    "2023",
+    "2024",
+    "2025"
+   ],
+   "revS": [
+    181.8,
+    231.8,
+    278.1
+   ],
+   "ebS": [
+    29.8,
+    43.1,
+    51.1
+   ],
+   "marS": [
+    16.4,
+    18.6,
+    18.4
+   ],
+   "levS": [
+    9.56,
+    3.98,
+    6.44
+   ],
+   "icS": [
+    0.45,
+    0.73,
+    0.76
+   ],
+   "seriesNote": "Group accounts of Grain Topco Limited, parent of Gail's and the Bread Factory wholesale bakery; Orbis Standard Format, filed. Financial years end in February. The 2024 debt figure (£171.7m) is low against 2023 (£285.2m) and 2025 (£329.4m): in 2024 £150.2m sat in other non-current liabilities, so 2024 leverage is not comparable (inference). No EBITA line, so the EBITDA check cannot be applied. Gail's Limited alone: revenue £219.8m, EBITDA £36.5m, debt 0.51x EBITDA in the year to Feb 2025.",
+   "seriesBasis": "As reported, filed accounts (Orbis Standard Format)"
+  },
+  {
+   "id": "itsu",
+   "name": "Itsu",
+   "legal": "Itsu Limited",
+   "researchEntity": "Itsu Limited",
+   "type": "Sponsor-owned",
+   "owner": "Bridgepoint",
+   "ownerSrc": "Orbis ultimate owner, Jul 2026",
+   "ownerFlag": "News says minority stake",
+   "chain": [
+    [
+     "Bridgepoint Group plc",
+     "Orbis ultimate owner, Jul 2026"
+    ],
+    [
+     "Bridgepoint Advisers Limited",
+     "Orbis shareholders"
+    ],
+    [
+     "Butterfly 21 Bidco Limited (100% direct)",
+     "Orbis shareholders"
+    ],
+    [
+     "Itsu Limited",
+     "Operating company"
+    ]
+   ],
+   "hq": "London",
+   "web": "itsu.co.uk",
+   "emp": "1,195",
+   "empSrc": "Orbis, FY Jan-26 accounts",
+   "ceo": "No CEO role in director data. Lists Julian Metcalfe, Celeste Metcalfe and Clive Schlee without a CEO role.",
+   "ceoSrc": "Orbis directors, 7 Oct 2026",
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "Asian-inspired food-to-go chain of restaurants and shops.",
+   "rev": 123.7,
+   "revG": 2.8,
+   "ebitda": 2.59,
+   "margin": 2.1,
+   "lev": 14.0,
+   "fcf": null,
+   "revTxt": "£124m",
+   "revSub": "",
+   "ebTxt": "£2.6m",
+   "ebSub": "2.1% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "14.0x",
+   "levSub": "Calculated from detailed financials",
+   "fcfTxt": "n.d.",
+   "basisCode": "filed",
+   "basisShort": "As reported",
+   "basisLong": "As reported, filed accounts (Orbis Standard Format)",
+   "period": "FY Jan-26",
+   "periodType": "FY",
+   "finSrc": "Orbis Standard Format, as reported (detailed financials of Itsu Limited; debt calculated), pulled 7 Oct 2026",
+   "date": "Jan 2026",
+   "age": 9,
+   "stale": false,
+   "cost": "n.d.",
+   "demand": "Revenue +2.8% in the year to Jan 2026 (filed)",
+   "financing": "Debt £36.4m at Jan 2026, about 14x EBITDA (calculated); EBIT negative",
+   "deal": "Bridgepoint appoints Goldman Sachs to sell its stake (Grocer citing Sky News, 10 Sep 2026)",
+   "changed": [
+    "Bridgepoint intends to sell its minority stake (Marketline - Deals, 9 Sep).",
+    "Goldman Sachs appointed to run the sale; process expected within months (Grocer citing Sky News, 10 Sep).",
+    "FY Jan-26 accounts now in Orbis: revenue £123.7m, EBITDA £2.6m, net loss £5.8m; news reported it as a third consecutive annual loss (MSN UK, 9 Sep)."
+   ],
+   "rated": false,
+   "opinionDate": "",
+   "says": [
+    "FY Jan-26: revenue £123.7m, EBITDA £2.6m, net loss £5.8m (FY Jan-25: £6.8m). (Orbis Standard Format)"
+   ],
+   "moodys": [],
+   "gaps": [
+    "Orbis shows Bridgepoint controlling through a bidco (100% direct); the news describes a minority stake.",
+    "No cash flow data.",
+    "Leverage rebuilt from detailed financials (calculated).",
+    "Restaurant company only; the grocery business (Itsu [Grocery] Ltd, revenue £75.8m) files separately and Moody's holds no combined accounts."
+   ],
+   "priorities": [],
+   "prioritiesSrc": "",
+   "proj": [],
+   "mgmtSrc": "Orbis directors, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+2.8%",
+     "period": "FY Jan-26 vs FY Jan-25",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (detailed financials of Itsu Limited; debt calculated), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "red",
+     "v": "2.1%",
+     "period": "FY Jan-26",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (detailed financials of Itsu Limited; debt calculated), pulled 7 Oct 2026",
+     "rule": "Green 15% or more · amber 5% to 15% · red below 5%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "up",
+     "v": "+1.5 pts",
+     "period": "FY Jan-26 vs FY Jan-25",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (detailed financials of Itsu Limited; debt calculated), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "2.1% against 0.6%."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "red",
+     "v": "14.0x",
+     "period": "FY Jan-26",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (detailed financials of Itsu Limited; debt calculated), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Debt = loans £3.5m plus long-term debt £32.9m, £36.4m in all, against EBITDA £2.6m (calculated). EBIT/interest −1.1x."
+    }
+   ],
+   "latest": {
+    "text": "Bridgepoint appoints Goldman Sachs to sell its stake; FY Jan-26 accounts show a £5.8m net loss.",
+    "src": "Grocer citing Sky News, 10 Sep 2026; Orbis Standard Format"
+   },
+   "years": [
+    "2021",
+    "2022",
+    "2023",
+    "2025",
+    "2026"
+   ],
+   "revS": [
+    58.7,
+    101.2,
+    116.1,
+    120.3,
+    123.7
+   ],
+   "ebS": [
+    -1.75,
+    6.72,
+    3.48,
+    0.69,
+    2.59
+   ],
+   "marS": [
+    -3.0,
+    6.6,
+    3.0,
+    0.6,
+    2.1
+   ],
+   "levS": [
+    null,
+    2.69,
+    5.78,
+    40.4,
+    14.0
+   ],
+   "icS": [
+    -26.23,
+    2.21,
+    -2.16,
+    -2.56,
+    -1.08
+   ],
+   "seriesNote": "Filed accounts of Itsu Limited, the restaurant company, Orbis Standard Format. Key indicators come back without EBITDA or debt, so figures come from Detailed Financials; debt = loans plus long-term debt (calculated). Columns are labelled by the year the period ends: 2025 is the year to 2 January 2025 and 2026 the year to 1 January 2026; no 2024 column. The grocery business files separately as Itsu [Grocery] Ltd (revenue £75.8m, operating profit £12.5m, FY Jan-26); Moody's holds no combined accounts.",
+   "seriesBasis": "As reported, filed accounts (Orbis Standard Format)"
+  },
+  {
+   "id": "nandos",
+   "name": "Nando's",
+   "legal": "Nando's Group Holdings Limited",
+   "researchEntity": "Nando's Group Holdings Limited",
+   "type": "Family-owned",
+   "owner": "L. Perlman SECS (family), via Nando's Group Holdings",
+   "ownerSrc": "Orbis ultimate owner, Nov 2025",
+   "ownerFlag": "Orbis only; name to check",
+   "chain": [
+    [
+     "L. Perlman SECS (named individuals or family)",
+     "Orbis ultimate owner, Nov 2025"
+    ],
+    [
+     "Nando's Group Holdings Limited",
+     "Orbis"
+    ],
+    [
+     "Nando's Finance Limited (99.83% direct)",
+     "Orbis shareholders"
+    ],
+    [
+     "Nando's Chickenland Limited",
+     "Operating company"
+    ]
+   ],
+   "hq": "London",
+   "web": "nandos.co.uk",
+   "emp": "25,473",
+   "empSrc": "Orbis profile, group; the UK operating company alone 20,331",
+   "ceo": "No CEO role in director data. Lists Michael Gardner, David Niven, David Sefton and Mark Standish without a CEO role.",
+   "ceoSrc": "Orbis directors, 7 Oct 2026",
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "Peri-peri chicken casual dining chain.",
+   "rev": 1476.3,
+   "revG": 8.0,
+   "ebitda": 286.9,
+   "margin": 19.4,
+   "lev": 4.55,
+   "fcf": null,
+   "revTxt": "£1,476m",
+   "revSub": "",
+   "ebTxt": "£287m",
+   "ebSub": "19.4% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "4.55x",
+   "levSub": "Group debt £1,305m; interest cover 1.35x",
+   "fcfTxt": "n.d.",
+   "basisCode": "Moody's format",
+   "basisShort": "As reported",
+   "basisLong": "As reported, Moody's Ratings Format",
+   "period": "FY Feb-25",
+   "periodType": "FY",
+   "finSrc": "Moody's Ratings Format, as reported (key indicators of Nando's Group Holdings Limited), pulled 7 Oct 2026",
+   "date": "Feb 2025",
+   "age": 19,
+   "stale": true,
+   "cost": "n.d.",
+   "demand": "Group revenue +8.0% in the year to Feb 2025",
+   "financing": "Group debt £1,305m at Feb 2025, 4.55x EBITDA; EBIT/interest 1.35x (Moody's Ratings Format)",
+   "deal": "None found",
+   "changed": [
+    "Planning application for a Prestwich site (Bury Times, 20 Sep).",
+    "Chorley restaurant opened with 35 jobs (Lancashire Telegraph, 24 Jul)."
+   ],
+   "rated": false,
+   "opinionDate": "",
+   "says": [
+    "Group revenue £1,476.3m and EBITDA £286.9m in the year to Feb 2025; the UK operating company £1,128.2m and £275.1m. (Moody's Ratings Format)"
+   ],
+   "moodys": [],
+   "gaps": [
+    "Accounts 19 months old; no cash flow data.",
+    "Top owner name from Orbis only and needs checking.",
+    "CEO not named in director data.",
+    "Group debt of £1,305m is not itemised in the data."
+   ],
+   "priorities": [],
+   "prioritiesSrc": "",
+   "proj": [],
+   "mgmtSrc": "Orbis directors, 7 Oct 2026",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "up",
+     "v": "+8.0%",
+     "period": "FY Feb-25 vs FY Feb-24",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators of Nando's Group Holdings Limited), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "green",
+     "v": "19.4%",
+     "period": "FY Feb-25",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators of Nando's Group Holdings Limited), pulled 7 Oct 2026",
+     "rule": "Green 15% or more · amber 5% to 15% · red below 5%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "up",
+     "v": "+4.5 pts",
+     "period": "FY Feb-25 vs FY Feb-24",
+     "basis": "As reported, calculated",
+     "src": "Moody's Ratings Format, as reported (key indicators of Nando's Group Holdings Limited), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "19.4% against 14.9%."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "amber",
+     "v": "4.55x",
+     "period": "FY Feb-25",
+     "basis": "As reported",
+     "src": "Moody's Ratings Format, as reported (key indicators of Nando's Group Holdings Limited), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Nando's Group Holdings total debt £1,305m at Feb 2025, 4.55x EBITDA; EBIT/interest 1.35x. The UK operating company alone shows £295.9m, 1.08x."
+    }
+   ],
+   "latest": {
+    "text": "Planning application for a site in Prestwich; Chorley restaurant opened.",
+    "src": "Bury Times, 20 Sep 2026; Lancashire Telegraph, 24 Jul 2026"
+   },
+   "years": [
+    "2022",
+    "2023",
+    "2024",
+    "2025"
+   ],
+   "revS": [
+    1066.2,
+    1270.7,
+    1366.8,
+    1476.3
+   ],
+   "ebS": [
+    149.5,
+    168.2,
+    204.3,
+    286.9
+   ],
+   "marS": [
+    14.0,
+    13.2,
+    14.9,
+    19.4
+   ],
+   "levS": [
+    8.38,
+    8.96,
+    6.7,
+    4.55
+   ],
+   "icS": [
+    -0.01,
+    0.18,
+    0.55,
+    1.35
+   ],
+   "seriesNote": "Group accounts of Nando's Group Holdings Limited, Moody's Ratings Format, as reported. Financial years end in February. Group debt (£1,305m) is far above the UK operating company's (£295.9m) and is not itemised in the data (leases and shareholder loans are likely, inference). Nando's Chickenland Limited, the UK operating company, shows revenue £1,128.2m and EBITDA £275.1m for the same year.",
+   "seriesBasis": "As reported, Moody's Ratings Format"
+  },
+  {
+   "id": "pret",
+   "name": "Pret A Manger",
+   "legal": "Pret A Manger (Europe) Limited",
+   "researchEntity": "Pret A Manger (Europe) Limited",
+   "type": "Family-owned",
+   "owner": "Reimann family via Agnaten SE (Luxembourg) and JAB",
+   "ownerSrc": "Orbis ultimate owner and shareholders, Aug 2026",
+   "ownerFlag": "",
+   "chain": [
+    [
+     "Wolfgang Reimann, Mathias Reimann-Andersen, Stefan Reimann-Andersen, Renate Reimann-Hass",
+     "Orbis ultimate owner, Aug 2026"
+    ],
+    [
+     "Agnaten SE (Luxembourg)",
+     "Orbis"
+    ],
+    [
+     "JAB Holding Company S.a r.l. (majority owner)",
+     "Orbis shareholders"
+    ],
+    [
+     "Pret A Manger Limited (100%)",
+     "Orbis shareholders"
+    ],
+    [
+     "Pret A Manger (Europe) Limited",
+     "Trading company"
+    ]
+   ],
+   "hq": "London",
+   "web": "pret.com",
+   "emp": "6,455",
+   "empSrc": "Orbis profile (FY Jan-26); the parent shows 7,901",
+   "ceo": "Pano Christou (CEO)",
+   "ceoSrc": "MCA., 18 Sep 2026; Orbis lists Panayioti Christou as a director",
+   "sites": "n.d.",
+   "sitesSrc": "",
+   "desc": "Sandwich and coffee shop chain; this is the UK trading company.",
+   "rev": 704.5,
+   "revG": -4.1,
+   "ebitda": 42.5,
+   "margin": 6.0,
+   "lev": 6.69,
+   "fcf": null,
+   "revTxt": "£705m",
+   "revSub": "",
+   "ebTxt": "£42.5m",
+   "ebSub": "6.0% margin, calculated",
+   "ebBasis": "",
+   "levTxt": "6.69x",
+   "levSub": "Parent debt £599.8m (Jan 2026)",
+   "fcfTxt": "n.d.",
+   "basisCode": "filed",
+   "basisShort": "As reported",
+   "basisLong": "As reported, filed accounts (Orbis Standard Format)",
+   "period": "FY Jan-26",
+   "periodType": "FY",
+   "finSrc": "Orbis Standard Format, as reported (filed accounts of Pret A Manger (Europe) Limited), pulled 7 Oct 2026",
+   "date": "Jan 2026",
+   "age": 9,
+   "stale": false,
+   "cost": "n.d.",
+   "demand": "Revenue −4.1% in the year to Jan 2026 (filed)",
+   "financing": "Company debt £284.6m at Jan 2026, 6.69x EBITDA, EBIT/interest 1.63x; parent debt £599.8m (Orbis Standard Format)",
+   "deal": "None found",
+   "changed": [
+    "FY Jan-26 accounts now in Orbis: revenue −4.1%, EBITDA £42.5m after a £47.9m loss (Orbis Standard Format).",
+    "Seventh Leeds-area shop opened, at the designer outlet (Yorkshire Evening Post, 6 Oct).",
+    "Parent debt £599.8m at Jan 2026, up from £531.0m (Orbis)."
+   ],
+   "rated": false,
+   "opinionDate": "",
+   "says": [
+    "FY Jan-26: revenue £704.5m, EBITDA £42.5m, after a £47.9m EBITDA loss in FY Jan-25. (Orbis Standard Format)",
+    "Parent company debt rose to £599.8m at 1 Jan 2026 from £531.0m a year earlier. (Orbis Standard Format)"
+   ],
+   "moodys": [],
+   "gaps": [
+    "UK trading company; the parent's accounts show only debt and assets, no revenue.",
+    "No cash flow data.",
+    "The FY Jan-25 EBITDA loss and the FY Jan-26 recovery are not explained in the data."
+   ],
+   "priorities": [],
+   "prioritiesSrc": "",
+   "proj": [],
+   "mgmtSrc": "MCA., 18 Sep 2026; Orbis lists Panayioti Christou as a director",
+   "filings": [],
+   "split": null,
+   "lights": [
+    {
+     "k": "growth",
+     "label": "Revenue growth",
+     "c": "down",
+     "v": "−4.1%",
+     "period": "FY Jan-26 vs FY Jan-25",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (filed accounts of Pret A Manger (Europe) Limited), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if revenue rose 1% or more · flat if within 1% either way · down if it fell 1% or more",
+     "note": ""
+    },
+    {
+     "k": "margin",
+     "label": "EBITDA margin",
+     "c": "amber",
+     "v": "6.0%",
+     "period": "FY Jan-26",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (filed accounts of Pret A Manger (Europe) Limited), pulled 7 Oct 2026",
+     "rule": "Green 15% or more · amber 5% to 15% · red below 5%",
+     "note": ""
+    },
+    {
+     "k": "mchange",
+     "label": "Margin change",
+     "c": "up",
+     "v": "+12.5 pts",
+     "period": "FY Jan-26 vs FY Jan-25",
+     "basis": "As reported, calculated",
+     "src": "Orbis Standard Format, as reported (filed accounts of Pret A Manger (Europe) Limited), pulled 7 Oct 2026",
+     "rule": "Arrow, no colour: up if the margin rose 0.5 pts or more · flat if within 0.5 pts either way · down if it fell 0.5 pts or more",
+     "note": "6.0% against −6.5%. EBITDA swung from a £47.9m loss to £42.5m. Other operating expenses were £117m higher in FY Jan-25 (£432.6m against £315.6m); the data does not say why (a one-off charge, inference)."
+    },
+    {
+     "k": "lev",
+     "label": "Leverage (debt / EBITDA)",
+     "c": "red",
+     "v": "6.69x",
+     "period": "FY Jan-26",
+     "basis": "As reported",
+     "src": "Orbis Standard Format, as reported (filed accounts of Pret A Manger (Europe) Limited), pulled 7 Oct 2026",
+     "rule": "Green below 3.0x · amber 3.0x to 5.0x · red above 5.0x or EBITDA negative",
+     "note": "Pret A Manger (Europe) debt £284.6m at Jan 2026, 6.69x EBITDA, EBIT/interest 1.63x; the parent, Pret A Manger Limited, carries £599.8m of debt (Orbis Standard Format)."
+    }
+   ],
+   "latest": {
+    "text": "FY Jan-26 accounts: revenue £704.5m, EBITDA £42.5m after a £47.9m loss the year before; seventh Leeds-area shop opened.",
+    "src": "Orbis Standard Format; Yorkshire Evening Post, 6 Oct 2026"
+   },
+   "years": [
+    "2021",
+    "2022",
+    "2023",
+    "2025",
+    "2026"
+   ],
+   "revS": [
+    372.3,
+    648.4,
+    730.0,
+    734.8,
+    704.5
+   ],
+   "ebS": [
+    -142.0,
+    92.4,
+    72.9,
+    -47.9,
+    42.5
+   ],
+   "marS": [
+    -38.1,
+    14.3,
+    10.0,
+    -6.5,
+    6.0
+   ],
+   "levS": [
+    null,
+    3.89,
+    4.42,
+    null,
+    6.69
+   ],
+   "icS": [
+    -10.5,
+    2.67,
+    -0.3,
+    -4.93,
+    1.63
+   ],
+   "seriesNote": "Filed accounts of the UK trading company, Orbis Standard Format. Columns are labelled by the year the period ends: 2025 is the year to 2 January 2025 and 2026 the year to 1 January 2026; there is no 2024 column. EBITDA swung from £72.9m (2023) to a £47.9m loss (FY Jan-25) and back to £42.5m (FY Jan-26); the data does not explain the FY Jan-25 loss.",
+   "seriesBasis": "As reported, filed accounts (Orbis Standard Format)"
+  }
+ ],
+ "month": [
+  {
+   "co": "PizzaExpress",
+   "t": "Preparing a possible sale at up to £500m; approaches received from industry players and investment firms.",
+   "s": "Marketline citing the FT, 21 Sep; MCA, 23 Sep"
+  },
+  {
+   "co": "Itsu",
+   "t": "Bridgepoint appoints Goldman Sachs to sell its stake; process expected within months.",
+   "s": "Grocer citing Sky News, 10 Sep"
+  },
+  {
+   "co": "Greggs",
+   "t": "Q3 sales +7.7%, like-for-like +3.4%, outlook raised; four manufacturing sites and about 740 roles proposed for closure; greater inflation flagged for 2027.",
+   "s": "Proactive Investors, 30 Sep and 1 Oct"
+  },
+  {
+   "co": "Tortilla",
+   "t": "H1 2026 revenue £38.5m; H1 loss smaller than a year earlier.",
+   "s": "Kalkine Media and Morningstar, 29 Sep"
+  },
+  {
+   "co": "Sector",
+   "t": "Shop price inflation 1.4% in September.",
+   "s": "BRC via MarketLine, 4 Oct"
+  }
+ ],
+ "feed": [
+  {
+   "d": "2026-10-06",
+   "p": "Yorkshire Evening Post",
+   "co": "pret",
+   "h": "Pret opens its seventh Leeds-area shop, at the designer outlet.",
+   "tag": "Sites",
+   "m": "Sites",
+   "n": ""
+  },
+  {
+   "d": "2026-10-04",
+   "p": "MarketLine",
+   "co": "macro",
+   "h": "UK shop price inflation eased to 1.4% in September as food promotions held prices down.",
+   "tag": "Costs",
+   "m": "Food prices",
+   "n": "1.4%"
+  },
+  {
+   "d": "2026-10-02",
+   "p": "Derby Telegraph",
+   "co": "greggs",
+   "h": "Greggs submits plans for a shop in a former bank on King Street, Belper.",
+   "tag": "Sites",
+   "m": "Sites",
+   "n": ""
+  },
+  {
+   "d": "2026-10-02",
+   "p": "Bridport and Lyme Regis News",
+   "co": "pret",
+   "h": "Pret sets an opening date for a shop in Bridport.",
+   "tag": "Sites",
+   "m": "Sites",
+   "n": ""
+  },
+  {
+   "d": "2026-10-01",
+   "p": "Proactive Investors United Kingdom",
+   "co": "macro",
+   "h": "Greggs flags signs of greater inflationary pressure in 2027; 2026 cost inflation guidance unchanged at about 2%.",
+   "tag": "Costs",
+   "m": "Cost inflation",
+   "n": "about 2%"
+  },
+  {
+   "d": "2026-10-01",
+   "p": "Proactive Investors United Kingdom",
+   "co": "greggs",
+   "h": "Greggs keeps 2026 cost inflation guidance at about 2% and flags signs of greater inflationary pressure in 2027.",
+   "tag": "Costs",
+   "m": "Cost inflation",
+   "n": "about 2%"
+  },
+  {
+   "d": "2026-10-01",
+   "p": "Aiera Earnings Call Transcripts",
+   "co": "tortilla",
+   "h": "Tortilla H1 2026 results call given by founder and group CEO Brandon Stephens and group CFO Richard Haley.",
+   "tag": "Other",
+   "m": "Management",
+   "n": ""
+  },
+  {
+   "d": "2026-10-01",
+   "p": "Indian Retailer",
+   "co": "wagamama",
+   "h": "Wagamama opens a second India restaurant, at DLF CyberHub, Gurugram.",
+   "tag": "Sites",
+   "m": "International franchise",
+   "n": ""
+  },
+  {
+   "d": "2026-09-30",
+   "p": "Proactive Investors United Kingdom",
+   "co": "greggs",
+   "h": "Greggs Q3: total sales +7.7%, company-managed like-for-like +3.4%, 2026 outlook raised to modestly improved. Separately proposes closing four manufacturing sites, affecting about 740 roles over two and a half years, subject to consultation.",
+   "tag": "Results",
+   "m": "Sales, outlook, manufacturing",
+   "n": "+7.7% sales; 740 roles"
+  },
+  {
+   "d": "2026-09-30",
+   "p": "Morningstar (Alliance News)",
+   "co": "greggs",
+   "h": "Greggs says its new Derby and Kettering sites will add costs in 2027 before contributing to growth.",
+   "tag": "Costs",
+   "m": "Manufacturing costs",
+   "n": ""
+  },
+  {
+   "d": "2026-09-29",
+   "p": "Moody's (macro research)",
+   "co": "macro",
+   "h": "State of the Consumer: UK inflation at 3.1%; real consumer spending growth about 1.0% in 2026 and 0.7% in 2027 as energy costs rise.",
+   "tag": "Demand",
+   "m": "Consumer demand",
+   "n": "1.0% / 0.7%"
+  },
+  {
+   "d": "2026-09-29",
+   "p": "ADVFN",
+   "co": "tortilla",
+   "h": "Tortilla publishes its half-year financial report.",
+   "tag": "Results",
+   "m": "Results",
+   "n": ""
+  },
+  {
+   "d": "2026-09-29",
+   "p": "Kalkine Media",
+   "co": "tortilla",
+   "h": "Tortilla H1 2026 revenue £38.5m; system sales £100.9m.",
+   "tag": "Results",
+   "m": "Revenue",
+   "n": "£38.5m"
+  },
+  {
+   "d": "2026-09-29",
+   "p": "Morningstar",
+   "co": "tortilla",
+   "h": "Tortilla reports a smaller H1 2026 loss than a year earlier.",
+   "tag": "Results",
+   "m": "Profit",
+   "n": ""
+  },
+  {
+   "d": "2026-09-23",
+   "p": "MSN UK",
+   "co": "greggs",
+   "h": "Greggs applies to open a shop on Chepstow Road, Newport.",
+   "tag": "Sites",
+   "m": "Sites",
+   "n": ""
+  },
+  {
+   "d": "2026-09-23",
+   "p": "MCA.",
+   "co": "pizzaexpress",
+   "h": "PizzaExpress has received approaches from industry players and investment firms as it prepares a possible sale.",
+   "tag": "Deal",
+   "m": "Ownership",
+   "n": "up to £500m"
+  },
+  {
+   "d": "2026-09-21",
+   "p": "Marketline - Deals",
+   "co": "pizzaexpress",
+   "h": "PizzaExpress is preparing a possible sale at a valuation of up to £500m, according to the FT; owners include Cyrus Capital Partners and a Bain Capital fund.",
+   "tag": "Deal",
+   "m": "Ownership",
+   "n": "up to £500m"
+  },
+  {
+   "d": "2026-09-21",
+   "p": "Indian Retailer",
+   "co": "wagamama",
+   "h": "Wagamama opens its first Delhi NCR restaurant with franchise partner K Hospitality.",
+   "tag": "Sites",
+   "m": "International franchise",
+   "n": ""
+  },
+  {
+   "d": "2026-09-20",
+   "p": "Bury Times",
+   "co": "nandos",
+   "h": "Nando's applies to convert a former TGI Fridays in Prestwich into a restaurant.",
+   "tag": "Sites",
+   "m": "Sites",
+   "n": ""
+  },
+  {
+   "d": "2026-09-18",
+   "p": "Tipranks",
+   "co": "dominos",
+   "h": "A Domino's non-executive director bought 4,850 shares at £2.045 on 17 September.",
+   "tag": "Other",
+   "m": "Director dealing",
+   "n": "4,850 shares"
+  },
+  {
+   "d": "2026-09-17",
+   "p": "Echo",
+   "co": "greggs",
+   "h": "Greggs plans a third shop on Brentwood High Street.",
+   "tag": "Sites",
+   "m": "Sites",
+   "n": ""
+  },
+  {
+   "d": "2026-09-15",
+   "p": "Worldpanel, via Farmers Journal",
+   "co": "macro",
+   "h": "UK grocery prices edged up in the four weeks to 6 September.",
+   "tag": "Costs",
+   "m": "Food prices",
+   "n": ""
+  },
+  {
+   "d": "2026-09-15",
+   "p": "3FM",
+   "co": "macro",
+   "h": "Grocery price inflation ticked up from 2024 lows, with energy prices and poor harvests expected to add pressure this winter.",
+   "tag": "Costs",
+   "m": "Food prices",
+   "n": ""
+  },
+  {
+   "d": "2026-09-15",
+   "p": "Bucks Free Press",
+   "co": "wagamama",
+   "h": "Wagamama and PizzaExpress among hospitality businesses calling for a lower VAT rate for the sector.",
+   "tag": "Other",
+   "m": "Regulation",
+   "n": ""
+  },
+  {
+   "d": "2026-09-10",
+   "p": "Kalkine Media",
+   "co": "tortilla",
+   "h": "Luke Johnson reduces his Tortilla holding below the 3% disclosure threshold.",
+   "tag": "Deal",
+   "m": "Ownership",
+   "n": ""
+  },
+  {
+   "d": "2026-09-10",
+   "p": "Grocer",
+   "co": "itsu",
+   "h": "Bridgepoint appoints Goldman Sachs to run a sale of its Itsu stake; a process is expected within months (citing Sky News).",
+   "tag": "Deal",
+   "m": "Ownership",
+   "n": ""
+  },
+  {
+   "d": "2026-09-09",
+   "p": "The Sacramento Bee",
+   "co": "macro",
+   "h": "Industry expects UK food price inflation to rise above 6% next year.",
+   "tag": "Costs",
+   "m": "Food prices",
+   "n": "above 6%"
+  },
+  {
+   "d": "2026-09-09",
+   "p": "Retail Times",
+   "co": "wagamama",
+   "h": "Wagamama opens its first motorway services restaurant, at Extra MSA Beaconsfield.",
+   "tag": "Sites",
+   "m": "Sites",
+   "n": ""
+  },
+  {
+   "d": "2026-09-09",
+   "p": "MSN UK",
+   "co": "itsu",
+   "h": "Itsu reports a third consecutive annual loss and cites inflation and higher employment taxes.",
+   "tag": "Results",
+   "m": "Profit",
+   "n": ""
+  },
+  {
+   "d": "2026-09-09",
+   "p": "Marketline - Deals",
+   "co": "itsu",
+   "h": "Bridgepoint intends to sell its minority stake in Itsu.",
+   "tag": "Deal",
+   "m": "Ownership",
+   "n": ""
+  },
+  {
+   "d": "2026-09-02",
+   "p": "Moody's (sector research)",
+   "co": "macro",
+   "h": "Credit Conditions – UK: hospitality like-for-like sales +0.5% and pubs +1.9% in the 12 months to July (NIQ RSM); growth driven by price rather than volume.",
+   "tag": "Demand",
+   "m": "Sector sales",
+   "n": "+0.5%"
+  },
+  {
+   "d": "2026-08-04",
+   "p": "Aiera Earnings Call Transcripts",
+   "co": "dominos",
+   "h": "Domino's H1 2026 results call: like-for-like sales +4.9%, orders +1.6%, plan to refinance £200m notes due July 2027 by end 2026.",
+   "tag": "Results",
+   "m": "Sales, orders",
+   "n": ""
+  },
+  {
+   "d": "2026-08-03",
+   "p": "Ticker Report",
+   "co": "tortilla",
+   "h": "Tortilla director Duncan Garrood bought 10,000 shares at 72p on 29 July.",
+   "tag": "Other",
+   "m": "Director dealing",
+   "n": "10,000 shares"
+  },
+  {
+   "d": "2026-07-29",
+   "p": "Proactive Investors United Kingdom",
+   "co": "greggs",
+   "h": "Greggs H1 2026 profit up about 20%; full-year expectations unchanged.",
+   "tag": "Results",
+   "m": "Profit",
+   "n": "+20% profit"
+  },
+  {
+   "d": "2026-07-27",
+   "p": "Investegate",
+   "co": "tortilla",
+   "h": "Tortilla publishes FY2025 results; H1 2026 like-for-like sales +13.9%, volumes +4.8%.",
+   "tag": "Results",
+   "m": "Sales",
+   "n": "+13.9% like-for-like"
+  },
+  {
+   "d": "2026-07-27",
+   "p": "The Independent (Online)",
+   "co": "tortilla",
+   "h": "Tortilla CEO refers to 2025 accounting issues in France as FY2025 results are published.",
+   "tag": "Other",
+   "m": "Accounts",
+   "n": ""
+  },
+  {
+   "d": "2026-07-24",
+   "p": "Lancashire Telegraph",
+   "co": "nandos",
+   "h": "Nando's opens in Chorley with 35 jobs.",
+   "tag": "Sites",
+   "m": "Sites",
+   "n": "35 jobs"
+  },
+  {
+   "d": "2026-07-16",
+   "p": "Marketline - Deals",
+   "co": "wagamama",
+   "h": "Wagamama's parent TRG agrees to sell its airport concessions business (40+ units, including airport Wagamama sites) to Areas.",
+   "tag": "Deal",
+   "m": "Ownership",
+   "n": ""
+  }
+ ],
+ "kept": [
+  [
+   "Greggs",
+   7,
+   104,
+   "Most items were share-price bots (Stockpulse, Ad Hoc News, MarketBeat) or commentary (Kalkine, Motley Fool). A second pull on 7 Oct (40 items, 28 Sep to 7 Oct) added the 1 Oct inflation item and the Alliance News item."
+  ],
+  [
+   "Domino's Pizza Group",
+   2,
+   44,
+   "Mostly share-price bots and items about the US and Australian Domino's companies."
+  ],
+  [
+   "Tortilla Mexican Grill",
+   8,
+   47,
+   "Most items were Stockpulse price reports, many for unrelated AIM companies tagged to Tortilla."
+  ],
+  [
+   "PizzaExpress",
+   2,
+   5,
+   "Trademark notices dropped; one deal item came from the Wagamama pull."
+  ],
+  [
+   "Wagamama",
+   5,
+   58,
+   "Many items were general hospitality or mis-tagged (easyJet and Apollo, Sphera, Saga). The TRG concessions sale came from the 365-day ownership search."
+  ],
+  [
+   "Gail's",
+   0,
+   11,
+   "All items were about other companies with similar names (GAIL India) or trademark notices."
+  ],
+  [
+   "Itsu",
+   3,
+   5,
+   "Three of the four kept items were tagged to the Pret parent entity and moved here."
+  ],
+  [
+   "Nando's",
+   2,
+   2,
+   ""
+  ],
+  [
+   "Pret A Manger",
+   2,
+   41,
+   "The trading entity returns no news, so the parent was used. Most items were unrelated (a grocer's management change, airline and fashion stories); four Itsu items and one Greggs item were moved to those companies."
+  ]
+ ],
+ "upcoming": [
+  {
+   "when": "By end 2026",
+   "what": "Domino's plans to refinance the £200m of US private placement notes due July 2027.",
+   "src": "H1 2026 call, 4 Aug 2026"
+  },
+  {
+   "when": "2026",
+   "what": "Greggs brings its Derby and Kettering sites into use; the company says they add costs in 2027. 2026 capex about £180m.",
+   "src": "Greggs interim results, 29 Jul 2026; Alliance News via Morningstar, 30 Sep 2026"
+  },
+  {
+   "when": "H2 2026",
+   "what": "Wagamama expects £8m of annual cost savings to start.",
+   "src": "Moody's credit opinion, 19 Jan 2026"
+  },
+  {
+   "when": "Within months",
+   "what": "Sale process for Bridgepoint's Itsu stake expected to begin, advised by Goldman Sachs.",
+   "src": "Grocer citing Sky News, 10 Sep 2026"
+  },
+  {
+   "when": "Jul 2027",
+   "what": "Domino's £200m notes mature.",
+   "src": "H1 2026 call, 4 Aug 2026"
+  },
+  {
+   "when": "Mar 2029",
+   "what": "PizzaExpress £30m super senior revolving facility matures (£7.5m drawn).",
+   "src": "Moody's credit opinion, 2 Jul 2026"
+  },
+  {
+   "when": "Jun 2029",
+   "what": "Greggs £100m revolving credit facility matures (extended in H1 2026).",
+   "src": "Greggs interim results, 29 Jul 2026"
+  },
+  {
+   "when": "Sep 2029",
+   "what": "PizzaExpress £280m notes at 9.875% mature.",
+   "src": "Moody's credit opinion, 2 Jul 2026"
+  },
+  {
+   "when": "2030",
+   "what": "Wagamama £55m revolving facility matures; no earlier debt maturities.",
+   "src": "Moody's credit opinion, 19 Jan 2026"
+  },
+  {
+   "when": "Jul 2030",
+   "what": "Domino's £300m revolving credit facility matures.",
+   "src": "Domino's annual report 2025"
+  },
+  {
+   "when": "Jun 2034",
+   "what": "Domino's £100m notes mature.",
+   "src": "Domino's annual report 2025"
+  }
+ ],
+ "sources": {
+  "research": [
+   {
+    "kind": "Sector research",
+    "title": "UK grocery sector in-depth",
+    "text": "Food inflation to rise to around 5% by early 2027 from 1.7% in the 12 months to June; well below the 17.5% peak of 2022.",
+    "src": "Moody's, 6 Aug 2026"
+   },
+   {
+    "kind": "Sector research",
+    "title": "Credit Conditions – UK",
+    "text": "Hospitality margins squeezed by rising labour and input costs; UK hospitality like-for-like sales +0.5% in the 12 months to Jul 2026 (NIQ RSM).",
+    "src": "Moody's, 2 Sep 2026"
+   },
+   {
+    "kind": "Credit opinion (rated issuer)",
+    "title": "Wagamama (Holdings) Limited credit opinion",
+    "text": "UK casual dining faces discounting and competition from quick-service chains; UK restaurants had negative sales growth in 10 of 11 months to Nov 2025 (NIQ). Also used on the company page for moody's-adjusted figures, Moody's forecasts and the factors Moody's says could lead to an upgrade or downgrade.",
+    "src": "Moody's, 19 Jan 2026"
+   },
+   {
+    "kind": "Macro research",
+    "title": "State of the Consumer, Europe",
+    "text": "UK inflation 3.1%; real consumer spending growth about 1.0% in 2026 and 0.7% in 2027.",
+    "src": "Moody's, 29 Sep 2026"
+   },
+   {
+    "kind": "Précis (macro)",
+    "title": "Précis: United Kingdom, December 2025 vintage",
+    "text": "Predates the 2026 energy shock, so it is not used for the current view.",
+    "src": "Moody's, 16 Jan 2026"
+   },
+   {
+    "kind": "Credit opinion (rated issuer)",
+    "title": "Wheel Bidco Limited (PizzaExpress) credit opinion",
+    "text": "Moody's-adjusted figures, Moody's forecasts and the factors Moody's says could lead to an upgrade or downgrade.",
+    "src": "Moody's, 2 Jul 2026"
+   }
+  ],
+  "company": [
+   {
+    "name": "Greggs",
+    "fin": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+    "period": "FY Dec-25",
+    "basis": "As reported, Moody's Ratings Format",
+    "own": "Orbis ultimate owner and shareholders, 7 Oct 2026",
+    "mgmt": "Interim results, 29 Jul 2026 (Currie); Orbis directors (Hutton). Director data still lists Currie as CEO designate.",
+    "cash": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026",
+    "split": "Moody's segment data, shares calculated from reported segment revenue"
+   },
+   {
+    "name": "Domino's Pizza Group",
+    "fin": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+    "period": "FY Dec-25",
+    "basis": "As reported, Moody's Ratings Format",
+    "own": "Orbis ultimate owner, 7 Oct 2026",
+    "mgmt": "H1 2026 results, 4 Aug 2026. Director data lists Elias Diaz Sese and Andrew Rennie with CEO roles and Matthew Shattock as chair; the results name Ian Bull as chair, so director data is out of date.",
+    "cash": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026",
+    "split": "Moody's segment data, shares calculated from reported segment revenue"
+   },
+   {
+    "name": "Tortilla Mexican Grill",
+    "fin": "Moody's Ratings Format, as reported (key indicators), pulled 7 Oct 2026",
+    "period": "FY Dec-25",
+    "basis": "As reported, Moody's Ratings Format",
+    "own": "Orbis ultimate owner and shareholders, 7 Oct 2026",
+    "mgmt": "H1 2026 call, Aiera via NewsEdge, 1 Oct 2026. Director data lists Andrew Naylor as CEO and Maria Denny as CFO, so it is out of date; show both.",
+    "cash": "Moody's Ratings Format cash flow, as reported, pulled 7 Oct 2026",
+    "split": "Moody's segment data, shares calculated from reported segment revenue"
+   },
+   {
+    "name": "PizzaExpress",
+    "fin": "Moody's credit opinion on Wheel Bidco (PizzaExpress), 2 Jul 2026",
+    "period": "LTM Mar-26",
+    "basis": "Moody's-adjusted, from the credit opinion",
+    "own": "Moody's research overview on Wheel Bidco Limited",
+    "mgmt": "Orbis directors, 7 Oct 2026",
+    "cash": "",
+    "split": ""
+   },
+   {
+    "name": "Wagamama",
+    "fin": "Orbis Standard Format, as reported (filed accounts), pulled 7 Oct 2026",
+    "period": "FY Dec-25",
+    "basis": "As reported, filed accounts (Orbis Standard Format)",
+    "own": "Moody's research; news 16 Jul 2026; Orbis Jun 2026",
+    "mgmt": "Orbis directors, 7 Oct 2026",
+    "cash": "",
+    "split": ""
+   },
+   {
+    "name": "Gail's",
+    "fin": "Orbis Standard Format, as reported (filed group accounts of Grain Topco Limited), pulled 7 Oct 2026",
+    "period": "FY Feb-25",
+    "basis": "As reported, filed accounts (Orbis Standard Format)",
+    "own": "Orbis ultimate owner, Sep 2026",
+    "mgmt": "Orbis directors, 7 Oct 2026",
+    "cash": "",
+    "split": ""
+   },
+   {
+    "name": "Itsu",
+    "fin": "Orbis Standard Format, as reported (detailed financials of Itsu Limited; debt calculated), pulled 7 Oct 2026",
+    "period": "FY Jan-26",
+    "basis": "As reported, filed accounts (Orbis Standard Format)",
+    "own": "Orbis ultimate owner, Jul 2026",
+    "mgmt": "Orbis directors, 7 Oct 2026",
+    "cash": "",
+    "split": ""
+   },
+   {
+    "name": "Nando's",
+    "fin": "Moody's Ratings Format, as reported (key indicators of Nando's Group Holdings Limited), pulled 7 Oct 2026",
+    "period": "FY Feb-25",
+    "basis": "As reported, Moody's Ratings Format",
+    "own": "Orbis ultimate owner, Nov 2025",
+    "mgmt": "Orbis directors, 7 Oct 2026",
+    "cash": "",
+    "split": ""
+   },
+   {
+    "name": "Pret A Manger",
+    "fin": "Orbis Standard Format, as reported (filed accounts of Pret A Manger (Europe) Limited), pulled 7 Oct 2026",
+    "period": "FY Jan-26",
+    "basis": "As reported, filed accounts (Orbis Standard Format)",
+    "own": "Orbis ultimate owner and shareholders, Aug 2026",
+    "mgmt": "MCA., 18 Sep 2026; Orbis lists Panayioti Christou as a director",
+    "cash": "",
+    "split": ""
+   }
+  ],
+  "filings": [
+   {
+    "co": "Macro trigger",
+    "kind": "Company statement",
+    "text": "Greggs: 2026 cost inflation guidance unchanged at about 2%; signs of greater inflationary pressure flagged for 2027.",
+    "src": "Q3 trading update, via Proactive Investors, 1 Oct 2026"
+   },
+   {
+    "co": "Macro trigger",
+    "kind": "Company filing",
+    "text": "Greggs: cost inflation 2.2% in H1; about 70% of H2 food and packaging bought forward; about 50% of 2027 energy covered.",
+    "src": "Interim results, 29 Jul 2026"
+   },
+   {
+    "co": "Macro trigger",
+    "kind": "Company filing",
+    "text": "Domino's: all major cost lines hedged for 2026 and into 2027.",
+    "src": "H1 2026 results, 4 Aug 2026"
+   },
+   {
+    "co": "Greggs",
+    "kind": "Company filing",
+    "text": "H1 2026 cost inflation 2.2%; ~70% of H2 food and packaging bought forward; ~50% of 2027 energy covered",
+    "src": "Interim results, 29 Jul 2026"
+   },
+   {
+    "co": "Greggs",
+    "kind": "Company filing",
+    "text": "Food-to-go visits -1.9%; Greggs share +0.3 pts to 8.7% (Circana, 12 months to June 2026)",
+    "src": "Interim results, 29 Jul 2026"
+   },
+   {
+    "co": "Greggs",
+    "kind": "Company filing",
+    "text": "FY2025 cost of sales £829.1m",
+    "src": "Interim results (FY2025 comparatives), 29 Jul 2026"
+   },
+   {
+    "co": "Greggs",
+    "kind": "Company filing",
+    "text": "2026 capex about £180m, reduced from £200m",
+    "src": "Interim results, 29 Jul 2026"
+   },
+   {
+    "co": "Greggs",
+    "kind": "Company filing",
+    "text": "Net cash £15.9m; £100m RCF extended to June 2029",
+    "src": "Interim results, 29 Jul 2026"
+   },
+   {
+    "co": "Domino's Pizza Group",
+    "kind": "Company filing",
+    "text": "All major cost lines hedged for FY26 and into FY27",
+    "src": "H1 results, 4 Aug 2026"
+   },
+   {
+    "co": "Domino's Pizza Group",
+    "kind": "Company filing",
+    "text": "H1 like-for-like sales +4.9%, orders +1.6%",
+    "src": "H1 results, 4 Aug 2026"
+   },
+   {
+    "co": "Domino's Pizza Group",
+    "kind": "Company filing",
+    "text": "£200m USPP notes due July 2027, refinance by end of year; £300m RCF to July 2030; £100m notes to June 2034",
+    "src": "H1 call; annual report 2025, 4 Aug 2026"
+   },
+   {
+    "co": "Domino's Pizza Group",
+    "kind": "Company filing",
+    "text": "FY2025 cost of sales £370.7m",
+    "src": "H1 results (FY2025 comparatives), 4 Aug 2026"
+   }
+  ],
+  "kept": [
+   [
+    "Greggs",
+    7,
+    104,
+    "Most items were share-price bots (Stockpulse, Ad Hoc News, MarketBeat) or commentary (Kalkine, Motley Fool). A second pull on 7 Oct (40 items, 28 Sep to 7 Oct) added the 1 Oct inflation item and the Alliance News item."
+   ],
+   [
+    "Domino's Pizza Group",
+    2,
+    44,
+    "Mostly share-price bots and items about the US and Australian Domino's companies."
+   ],
+   [
+    "Tortilla Mexican Grill",
+    8,
+    47,
+    "Most items were Stockpulse price reports, many for unrelated AIM companies tagged to Tortilla."
+   ],
+   [
+    "PizzaExpress",
+    2,
+    5,
+    "Trademark notices dropped; one deal item came from the Wagamama pull."
+   ],
+   [
+    "Wagamama",
+    5,
+    58,
+    "Many items were general hospitality or mis-tagged (easyJet and Apollo, Sphera, Saga). The TRG concessions sale came from the 365-day ownership search."
+   ],
+   [
+    "Gail's",
+    0,
+    11,
+    "All items were about other companies with similar names (GAIL India) or trademark notices."
+   ],
+   [
+    "Itsu",
+    3,
+    5,
+    "Three of the four kept items were tagged to the Pret parent entity and moved here."
+   ],
+   [
+    "Nando's",
+    2,
+    2,
+    ""
+   ],
+   [
+    "Pret A Manger",
+    2,
+    41,
+    "The trading entity returns no news, so the parent was used. Most items were unrelated (a grocer's management change, airline and fashion stories); four Itsu items and one Greggs item were moved to those companies."
+   ]
+  ],
+  "s1kept": {
+   "kept": 5,
+   "fetched": 30,
+   "note": "UK stories only; ShareCast's 29 Sep BRC story duplicates the MarketLine item and is not repeated; a supermarket price-cut story was dropped (excluded subject). The macro feed also repeats the Greggs 2027 inflation item from the Greggs news pull, and two Moody's research items."
+  }
+ }
+}/*TDR_DATA_END*/;
+const META=DATA.meta||{}, CO=DATA.companies||[], MONTH=DATA.month||[], FEED=DATA.feed||[], KEPT=DATA.kept||[], UPCOMING=DATA.upcoming||[], SRC=DATA.sources||{};
+
+/* ---------- helpers ---------- */
+const $=(s,r=document)=>r.querySelector(s);
+const esc=s=>String(s??"").replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const by=id=>CO.find(c=>c.id===id);
+const cssv=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+const fmtM=v=>v==null?"n.d.":(Math.abs(v)>=1000?"£"+(v/1000).toFixed(2).replace(/\.?0+$/,"")+"bn":"£"+(Math.abs(v)>=100?Math.round(v):v.toFixed(1))+"m");
+const fmtP=v=>v==null?"n.d.":v.toFixed(1)+"%";
+const OWN_GROUP=c=>c.type==="Listed"?"Listed":(c.type==="Family-owned"?"Family-owned":"Sponsor");
+const OWN_CLS={"Listed":"own-listed","Sponsor":"own-sponsor","Family-owned":"own-family"};
+const KIND_CLS=k=>/Macro|Précis/.test(k)?"k-macro":(/Sector/.test(k)?"k-sector":(/opinion/.test(k)?"k-opinion":""));
+const kindChip=k=>k?`<span class="kind ${KIND_CLS(k)}">${esc(k)}</span>`:"";
+const ARROW={up:"\u2191",down:"\u2193",flat:"\u2192"};
+const light=c=>ARROW[c]?`<span class="arr" role="img" aria-label="${esc(c)}">${ARROW[c]}</span>`:`<span class="lt ${esc(c)}" role="img" aria-label="${esc(c)}"></span>`;
+const md=s=>esc(s).replace(/\*\*(.+?)\*\*/g,"<b>$1</b>");
+const andList=a=>a.length<2?a.join(""):a.slice(0,-1).join(", ")+" and "+a[a.length-1];
+function fmtDate(d){const [y,m,dd]=d.split("-");return `${+dd} ${["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m-1]} ${y}`;}
+let state={own:"all",q:"",tag:"all"};
+
+/* ---------- header, question, ticker ---------- */
+function renderHeader(){
+  if(META.pageTitle) document.title=META.pageTitle;
+  $("#hdrTitle").textContent=META.title||"";
+  $("#hdrSub").textContent=META.subtitle||"";
+  $("#hdrMeta").innerHTML=`As of ${esc(META.asOfLong)}<br>${esc(META.tools||"")}`;
+  $("#monthBadge").textContent=META.monthWindow||"";
+  $("#qbar").innerHTML=META.question?`<div class="q-label">Starting question</div><div class="q-text">${esc(META.question)}</div>
+    ${META.glossary?`<div></div><div class="q-sub">${esc(META.glossary)}</div>`:""}
+    ${META.selection?`<div></div><div class="q-sub"><b>How the names were chosen:</b> ${esc(META.selection)}</div>`:""}`:"";
+  if(!META.question) $("#qbar").style.display="none";
+  const items=META.ticker||[];
+  if(!items.length){$(".ticker-wrap").style.display="none";return;}
+  $("#ticker").innerHTML=items.concat(items).map(s=>`<span>${esc(s)}</span><span class="sep">•</span>`).join("");
+}
+
+/* ---------- KPI ---------- */
+function renderKPIs(){
+  const listed=CO.filter(c=>c.type==="Listed").length, fam=CO.filter(c=>c.type==="Family-owned").length, spon=CO.length-listed-fam;
+  const stale=CO.filter(c=>c.stale), rated=CO.filter(c=>c.rated), K=META.kpi||{};
+  const deals=K.dealSignals||[], refis=K.refinancing||[];
+  const cards=[
+    {c:"",l:"Names in screen",v:CO.length,s:`${listed} listed · ${spon} sponsor or credit-fund owned · ${fam} family-owned`},
+    {c:"",l:"Deal signals in the news",v:deals.length,s:deals.length?deals.join(" · "):"None found in the sources"},
+    {c:"",l:"Refinancing inside 12 months",v:refis.length,s:refis.length?refis.join(" · "):"None found in the sources"},
+    K.trigger?{c:"",l:K.trigger.label,v:K.trigger.value,s:K.trigger.sub}:null,
+    {c:"t",l:"Rated by Moody's",v:rated.length,s:rated.length?rated.map(c=>c.name).join(", ")+": credit opinions with Moody's-adjusted figures":"None of the names is rated"},
+    {c:"p",l:"Accounts older than 12 months",v:stale.length,s:stale.length?stale.map(c=>`${c.name} (${c.age} mo)`).join(", "):"None"}
+  ].filter(Boolean);
+  $("#kpiRow").innerHTML=cards.map(k=>`<div class="kpi-card ${k.c}"><div class="kpi-label">${esc(k.l)}</div><div class="kpi-value">${esc(k.v)}</div><div class="kpi-sub">${esc(k.s)}</div></div>`).join("");
+}
+
+/* ---------- macro trigger ---------- */
+function renderTrigger(){
+  const T=META.trigger;
+  if(!T){$("#triggerWrap").style.display="none";return;}
+  $("#trigTitle").textContent=T.title||"";
+  $("#trigBadge").textContent=T.badge||"";
+  const steps=T.steps||[], ev=T.evidence||{};
+  const tag=s=>s==="SOURCED"?'<span class="tag stab">SOURCED</span>':`<span class="tag inf">${esc(s||"INFERRED")}</span>`;
+  const box=(h,arr)=>arr&&arr.length?`<div><div class="ev-h">${esc(h)}</div><ul class="blist neu">${arr.map(x=>`<li>${kindChip(x.kind)}${x.title?`<b>${esc(x.title)}.</b> `:""}${esc(x.text)} <span class="src">${esc(x.src)}</span></li>`).join("")}</ul></div>`:"";
+  $("#triggerPanel").innerHTML=`<div class="trig-grid"><div>
+    <div class="trig-head">${md(T.headline)}</div>
+    <span class="verdict">${esc(T.verdict)}</span>
+    <div style="font-size:10px;color:var(--txt-dim);margin-top:6px">${esc(T.current)}</div>
+    <div class="chain">${steps.map((x,i)=>`<div class="cstep ${x.status!=="SOURCED"?'inf':''}"><div class="cnum">${i+1}</div><div><div class="ct">${esc(x.t)} ${tag(x.status)}</div><div class="cs">${esc(x.s)}</div></div></div>`).join("")}</div>
+    </div><div class="ev-grid">${box("Moody's research",ev.research)}${box("Macro",ev.macro)}${box("News",ev.news)}${box("Company filings and statements",ev.filings)}</div></div>`;
+}
+
+/* ---------- company screen ---------- */
+function benchHTML(){
+  const M=META.market||{}, b=M.benchmark;
+  if(!b){$("#bench").style.display="none";return "";}
+  const v=(b.value>=0?"+":"−")+Math.abs(b.value).toFixed(1)+"%";
+  return `<div class="bench-main">Market context: ${esc(b.label)} <b>${v}</b>, ${esc(b.period)}</div>
+    <div class="src">${kindChip(b.kind)}${esc(b.source)}</div>
+    ${(M.context||[]).length?`<div class="bench-ctx">Other market signals: ${(M.context||[]).map(x=>`${esc(x.text)} <span class="src">(${esc(x.src)})</span>`).join(" · ")}</div>`:""}`;
+}
+function lcell(L){
+  const title=`${L.label}: ${L.v}. ${L.period?L.period+". ":""}${L.basis?L.basis+". ":""}${L.note?L.note+" ":""}Rule: ${L.rule}.${L.src?" Source: "+L.src+".":""}`;
+  return `<td class="lcell" title="${esc(title)}">${light(L.c)}<span class="num">${esc(L.v)}</span><span class="sub">${esc([L.period,L.basis].filter(Boolean).join(" · "))}</span></td>`;
+}
+function visible(){const q=state.q.trim().toLowerCase();return CO.filter(c=>(state.own==="all"||OWN_GROUP(c)===state.own)&&(!q||[c.name,c.owner,c.desc,c.type].join(" ").toLowerCase().includes(q)));}
+function renderScreen(){
+  $("#bench").innerHTML=benchHTML();
+  const rows=visible();
+  $("#tblBadge").textContent=`${rows.length} of ${CO.length} names · as of ${META.asOfLong||""}`;
+  $("#tblBody").innerHTML=rows.map(c=>{
+    const L=Object.fromEntries(c.lights.map(x=>[x.k,x]));
+    const lt=c.latest||{};
+    return `<tr class="row" data-open="${c.id}" tabindex="0">
+      <td><div class="co-name">${esc(c.name)}${c.stale?`<span class="age">accounts ${c.age} mo old</span>`:""}</div>
+        <div class="co-meta"><span class="sec-pill ${OWN_CLS[OWN_GROUP(c)]}">${esc(c.type)}</span> ${esc(c.owner)}</div></td>
+      <td class="num">${esc(c.revTxt)}<span class="sub">${esc(c.period)} · ${esc(c.basisShort)}</span></td>
+      ${lcell(L.growth)}${lcell(L.margin)}${lcell(L.mchange)}${lcell(L.lev)}
+      <td style="font-size:10.5px;min-width:200px">${esc(lt.text||"")}<span class="sub">${esc(lt.src||"")}</span></td></tr>`;}).join("")||`<tr><td colspan="7" class="empty" style="padding:18px">No names match the current filters.</td></tr>`;
+  $("#tblBody").querySelectorAll("tr.row").forEach(tr=>{tr.addEventListener("click",()=>openCompany(tr.dataset.open));tr.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();openCompany(tr.dataset.open);}});});
+  const R=(META.lights||{}).rules||{};
+  $("#legend").innerHTML=`<tr><td>${light("up")}${light("down")}${light("flat")}</td><td>Arrows show direction against the prior year, with no colour: up, down, or flat within the band stated below. Direction is a fact; it needs no threshold beyond the flat band.</td></tr>
+    <tr><td>${light("green")}${light("amber")}${light("red")}${light("grey")}</td><td>Lights apply a fixed threshold to one published level. Grey means no figure. Hover over any indicator for the figure, period, basis, rule and source.</td></tr>
+    <tr><td>Revenue growth</td><td>${esc(R.growth)}</td></tr><tr><td>EBITDA margin</td><td>${esc(R.margin)}</td></tr>
+    <tr><td>Margin change</td><td>${esc(R.mchange)}</td></tr><tr><td>Leverage</td><td>Debt divided by EBITDA: roughly how many years of EBITDA the debt represents. ${esc(R.lev)}</td></tr>`;
+  $("#screenNote").innerHTML=`${esc((META.lights||{}).note||"")} Arrows and lights describe published numbers; they are not a rating, a Moody's view or an investment view. "As reported" figures follow each company's own accounts: listed groups report under IFRS 16, with leases in debt and EBITDA, while private companies' filed accounts may follow UK GAAP, with rent in costs. "Moody's-adjusted" figures come from Moody's credit opinions on rated issuers. Periods differ by name and are shown on every figure.`;
+}
+
+/* ---------- ownership and this month ---------- */
+function renderOwn(){
+  const groups=[{k:"Listed",l:"Listed",route:"Take-private",col:"--blue"},{k:"Sponsor",l:"Sponsor or credit-fund owned",route:"Secondary sale or refinancing",col:"--teal"},{k:"Family-owned",l:"Family-owned",route:"Succession or primary deal",col:"--purple"}];
+  const rows=groups.map(g=>{const co=CO.filter(c=>OWN_GROUP(c)===g.k);return {...g,n:co.length,rev:co.reduce((a,c)=>a+(c.rev||0),0),names:co.map(c=>c.name).join(", ")};}).filter(r=>r.n>0);
+  const max=Math.max(1,...rows.map(r=>r.rev));
+  $("#ownPanel").innerHTML=rows.map(r=>`<div class="bar-row">
+    <div class="bar-label"><span>${esc(r.l)} <span style="color:var(--txt-dim);font-weight:400">· ${r.n} names · ${fmtM(r.rev)} revenue</span></span><span class="tag stab">${esc(r.route.toUpperCase())}</span></div>
+    <div class="bar-wrap"><div class="bar-fill" style="width:${Math.round(r.rev/max*100)}%;background:var(${r.col})"></div></div>
+    <div style="font-size:9.5px;color:var(--txt-dim);margin-top:4px">${esc(r.names)}</div></div>`).join("")+
+    `<div style="font-size:9px;color:var(--txt-dim);margin-top:8px">Revenue is each name's latest period, so periods differ (see the screen). The route is the usual deal type for that owner type, not a view on any company.</div>`;
+}
+function renderMonth(){
+  $("#monthPanel").innerHTML=MONTH.map(m=>`<div class="news-item"><div class="news-hl"><b>${esc(m.co)}</b> ${esc(m.t)}</div><div class="news-meta">${esc(m.s)}</div></div>`).join("")||`<div class="empty">Nothing dated this month in the sources.</div>`;
+}
+
+/* ---------- company page ---------- */
+function finChart(c){
+  const idx=c.revS.map((v,i)=>v!=null?i:null).filter(i=>i!==null);
+  if(idx.length<2) return "";
+  const W=440,H=160,pad={l:40,r:40,t:14,b:24};
+  const years=idx.map(i=>c.years[i]), rev=idx.map(i=>c.revS[i]), fc=idx.map(i=>c.fc?c.fc[i]:false);
+  const eb=c.ebS?idx.map(i=>c.ebS[i]):null, mar=idx.map(i=>c.marS?c.marS[i]:null);
+  const ebVals=eb?eb.filter(v=>v!=null):[];
+  const vMax=Math.max(...rev)*1.1, vMin=Math.min(0,...ebVals), bw=(W-pad.l-pad.r)/years.length;
+  const xC=i=>pad.l+bw*i+bw/2, yRev=v=>pad.t+(1-(v-vMin)/(vMax-vMin))*(H-pad.t-pad.b);
+  const marVals=mar.filter(v=>v!=null); const mMax=marVals.length?Math.max(...marVals,1)*1.25:1; const mMin=marVals.length?Math.min(0,...marVals):0;
+  const yMar=v=>pad.t+(1-(v-mMin)/(mMax-mMin))*(H-pad.t-pad.b);
+  let svg=`<svg viewBox="0 0 ${W} ${H}" style="width:100%;height:auto" role="img" aria-label="Revenue, EBITDA and margin by year">`;
+  if(vMin<0) svg+=`<line x1="${pad.l}" y1="${yRev(0)}" x2="${W-pad.r}" y2="${yRev(0)}" stroke="#9AA5B8" stroke-width="1"/>`;
+  years.forEach((y,i)=>{const cx=xC(i),w=bw*(eb?0.3:0.45);
+    const dash=fc[i]?`fill-opacity="0.25" stroke="${cssv('--blue')}" stroke-dasharray="3 2"`:"";
+    const xr=eb?cx-w-1:cx-w/2;
+    svg+=`<rect x="${xr}" y="${yRev(rev[i])}" width="${w}" height="${yRev(0)-yRev(rev[i])}" fill="${cssv('--blue-line')}" ${dash}><title>${esc(y)} revenue ${fmtM(rev[i])}${fc[i]?' (Moody\'s forecast)':''}</title></rect>`;
+    if(eb&&eb[i]!=null){const h=Math.abs(yRev(0)-yRev(eb[i]));const yy=eb[i]>=0?yRev(eb[i]):yRev(0);
+      svg+=`<rect x="${cx+1}" y="${yy}" width="${w}" height="${h}" fill="${eb[i]>=0?cssv('--blue'):cssv('--red')}"><title>${esc(y)} EBITDA ${fmtM(eb[i])}</title></rect>`;}
+    svg+=`<text x="${cx}" y="${H-pad.b+12}" font-size="8" fill="#566B8A" text-anchor="middle">${esc(y)}</text>`;});
+  if(marVals.length>=2){
+    const pts=mar.map((v,i)=>v!=null?{x:xC(i),y:yMar(v),f:fc[i]}:null).filter(Boolean);
+    for(let k=1;k<pts.length;k++){svg+=`<line x1="${pts[k-1].x}" y1="${pts[k-1].y}" x2="${pts[k].x}" y2="${pts[k].y}" stroke="${cssv('--green')}" stroke-width="2" ${pts[k].f?'stroke-dasharray="5 3"':''}/>`;}
+    mar.forEach((v,i)=>{if(v==null)return;svg+=`<circle cx="${xC(i)}" cy="${yMar(v)}" r="2.6" fill="${fc[i]?'#fff':cssv('--green')}" stroke="${cssv('--green')}" stroke-width="1.5"><title>${esc(years[i])} EBITDA margin ${fmtP(v)}${fc[i]?' (Moody\'s forecast)':''}</title></circle>`;});
+    svg+=`<text x="${W-pad.r+6}" y="${yMar(marVals[marVals.length-1])+3}" font-size="8" fill="${cssv('--green')}">${fmtP(marVals[marVals.length-1])}</text>`;
+  }
+  svg+=`</svg>`;
+  const legend=`<div class="legend"><span><i style="background:var(--blue-line)"></i> Revenue</span>${eb?`<span><i style="background:var(--blue)"></i> EBITDA</span>`:""}${marVals.length>=2?`<span><i style="width:14px;height:2px;background:var(--green);border-radius:0;vertical-align:3px"></i> EBITDA margin</span>`:""}${c.fc?`<span><i style="background:#fff;border:1px dashed var(--blue)"></i> Moody's forecast</span>`:""}</div>`;
+  return `<div class="chartbox">${svg}${legend}</div>`;
+}
+function finTable(c){
+  const idx=c.revS.map((v,i)=>v!=null?i:null).filter(i=>i!==null);
+  const fcls=i=>(c.fc&&c.fc[i])?' class="f"':'';
+  const cell=(v,f)=>v==null?"n.d.":f(v);
+  let html=`<table class="fin-tbl"><thead><tr><th>£m · ${esc(c.seriesBasis)}</th>${idx.map(i=>`<th${fcls(i)}>${esc(c.years[i])}</th>`).join("")}</tr></thead><tbody>`;
+  const row=(label,arr,f,hl)=>{ if(!arr||arr.every(v=>v==null)) return ""; return `<tr${hl?' class="hl"':''}><td>${esc(label)}</td>${idx.map(i=>`<td${fcls(i)}>${cell(arr[i],f)}</td>`).join("")}</tr>`; };
+  html+=row("Revenue",c.revS,v=>Math.abs(v)>=100?Math.round(v):v.toFixed(1),true);
+  if(c.ebS) html+=row("EBITDA",c.ebS,v=>Math.abs(v)>=100?Math.round(v):v.toFixed(1));
+  html+=row("EBITDA margin",c.marS,v=>v.toFixed(1)+"%");
+  html+=row("Debt / EBITDA",c.levS,v=>v.toFixed(2)+"x");
+  html+=row("EBIT / interest",c.icS,v=>v.toFixed(1)+"x");
+  if(c.fcfDebtS) html+=row("FCF / debt",c.fcfDebtS,v=>v.toFixed(1)+"%");
+  if(c.unitsS) html+=row("Restaurants, systemwide",c.unitsS,v=>String(v));
+  const g=idx.map((i,k)=>k===0?null:(c.revS[i]/c.revS[idx[k-1]]-1)*100);
+  html+=`<tr><td>Revenue change, calculated</td>${g.map((v,k)=>{const f=(c.fc&&c.fc[idx[k]])?' f':'';return v===null?`<td class="trend-fl${f}">n/a</td>`:`<td class="${v>=0?'trend-up':'trend-dn'}${f}">${v>=0?'+':''}${v.toFixed(1)}%</td>`;}).join("")}</tr>`;
+  html+=`</tbody></table>`;
+  if(c.ebFiled) html+=`<table class="fin-tbl" style="margin-top:8px"><thead><tr><th>£m · As reported, filed accounts</th>${c.ebFiled.years.map(y=>`<th>${esc(y)}</th>`).join("")}</tr></thead><tbody><tr><td>EBITDA</td>${c.ebFiled.v.map(v=>`<td>${v.toFixed(1)}</td>`).join("")}</tr></tbody></table>`;
+  if(c.seriesNote) html+=`<div style="font-size:9.5px;color:var(--txt-dim);margin-top:7px">${esc(c.seriesNote)}</div>`;
+  return html;
+}
+function cashTable(c){
+  if(!c.cfoS) return "";
+  let html=`<table class="fin-tbl"><thead><tr><th>£m · As reported</th>${c.cfoS.years.map(y=>`<th>FY ${esc(y)}</th>`).join("")}${c.capexGuide?`<th class="f">${esc(c.capexGuide.label)}</th>`:""}</tr></thead><tbody>`;
+  html+=`<tr><td>Cash from operations</td>${c.cfoS.cfo.map(v=>`<td>${v.toFixed(1)}</td>`).join("")}${c.capexGuide?'<td class="f">n/a</td>':""}</tr>`;
+  html+=`<tr><td>Capex (PP&amp;E and intangibles)</td>${c.cfoS.capex.map(v=>`<td>${v.toFixed(1)}</td>`).join("")}${c.capexGuide?`<td class="f">~${c.capexGuide.v}</td>`:""}</tr>`;
+  html+=`<tr class="hl"><td>Free cash flow, calculated</td>${c.cfoS.cfo.map((v,i)=>`<td>${(v-c.cfoS.capex[i]).toFixed(1)}</td>`).join("")}${c.capexGuide?'<td class="f">n/a</td>':""}</tr>`;
+  html+=`</tbody></table><div style="font-size:9.5px;color:var(--txt-dim);margin-top:7px">Source: ${esc(c.cfoS.src)}. Free cash flow is cash from operations less capex, calculated here.${c.capexGuide?` The ${esc(c.capexGuide.label)} column is company guidance (${esc(c.capexGuide.src)}), not a Moody's figure.`:""}</div>`;
+  return html;
+}
+const NT=l=>/listed/i.test(l)?"nt-listed":(/family|reimann|perlman|individual/i.test(l)?"nt-person":(/fund|capital|partners|apollo|bridgepoint|glendon|cyrus|bain/i.test(l)?"nt-fund":"nt-company"));
+function ownershipSection(c){
+  let html=`<div class="own-legend"><span><i style="background:var(--purple)"></i>Person or family</span><span><i style="background:var(--teal)"></i>Fund or sponsor</span><span><i style="background:var(--blue)"></i>Company</span><span><i style="background:#455A64"></i>Listed</span></div><div class="tree">`;
+  c.chain.forEach((o,i)=>{const last=i===c.chain.length-1;const cls=last?"":NT(o[0]);
+    html+=`<div class="tnode ${last?'entity':''}"><div class="nt-ico ${cls}">${last?"C":(cls==="nt-person"?"P":cls==="nt-fund"?"F":cls==="nt-listed"?"L":"C")}</div><div><div class="nt-name">${esc(o[0])}</div><div class="nt-sub">${esc(o[1])}</div></div></div>`;
+    if(!last) html+=`<div class="tconn"></div>`;});
+  html+=`</div><div class="src" style="margin-top:6px">${esc(c.ownerSrc)}</div>`;
+  if(c.ownerFlag) html+=`<div class="note-box" style="margin-top:10px"><b>${esc(c.ownerFlag)}.</b> ${esc(c.gaps.find(g=>/owner|Orbis|SPV|stake|bidco/i.test(g))||"")}</div>`;
+  return html;
+}
+function lightCards(c){
+  return `<div class="lgrid">${c.lights.map(L=>`<div class="lcard ${esc(L.c)}">
+    <div class="lcard-l">${light(L.c)}${esc(L.label)}</div>
+    <div class="lcard-v">${esc(L.v)}</div>
+    <div class="lcard-p">${esc([L.period,L.basis].filter(Boolean).join(" · "))}</div>
+    ${L.note?`<div class="lcard-n">${esc(L.note)}</div>`:""}
+    ${L.src?`<div class="lcard-n src">${esc(L.src)}</div>`:""}
+    <div class="lcard-r">Rule: ${esc(L.rule)}</div></div>`).join("")}</div>`;
+}
+function newsFor(c){return FEED.filter(f=>f.co===c.id).sort((a,b)=>b.d.localeCompare(a.d));}
+function buildCompany(c){
+  const g=OWN_GROUP(c);
+  const per=`${c.period} · ${c.basisShort}`;
+  const snaps=[
+    {l:"Revenue",v:c.revTxt,s:c.revSub||per},
+    {l:"EBITDA",v:c.ebTxt,s:c.ebBasis?`${c.ebBasis}`:`${per}`},
+    {l:"Debt / EBITDA",v:c.levTxt,s:c.levSub||per},
+    c.fcf!=null?{l:"Free cash flow",v:c.fcfTxt,s:`FY ${c.cfoS?c.cfoS.years[c.cfoS.years.length-1]:""} · calculated`}:null,
+    c.emp&&c.emp!=="n.d."?{l:"Employees",v:c.emp,s:(c.empSrc||"").split(";")[0]}:null
+  ].filter(Boolean);
+  const news=newsFor(c);
+  const split=c.split&&c.split.items?`<tr><td>Revenue split</td><td>${c.split.items.map(x=>`${esc(x.label)} ${x.share.toFixed(1)}%`).join(" · ")} <span class="src">${esc(c.split.period)}; ${esc(c.split.source)}</span></td></tr>`:"";
+  const proj=(c.proj||[]).map(p=>`<li>${esc(p)}</li>`).join("");
+  return `<div class="co-head"><div class="co-head-name">${esc(c.name)}</div><div class="co-head-loc">${esc(c.legal)} · ${esc(c.hq)}</div>
+      <div class="co-badges"><span class="co-badge">${esc(c.type.toUpperCase())}</span><span class="co-badge">${c.rated?"RATED BY MOODY'S":"NOT RATED BY MOODY'S"}</span><span class="co-badge">LATEST: ${esc(c.period.toUpperCase())}</span><span class="co-badge">${esc(c.basisShort.toUpperCase())}</span>${c.stale?`<span class="co-badge">ACCOUNTS ${c.age} MONTHS OLD</span>`:""}</div></div>
+
+    ${lightCards(c)}
+    <div class="snap">${snaps.map(s=>`<div class="snap-c"><div class="snap-l">${esc(s.l)}</div><div class="snap-v">${esc(s.v)}</div><div class="snap-sub">${esc(s.s)}</div></div>`).join("")}</div>
+
+    <div class="two">
+      <div class="sec-card"><div class="sec-card-h">What Changed in the Last 90 Days <span class="hint">sourced facts</span></div><div class="sec-card-b"><ul class="blist">${c.changed.map(x=>`<li>${esc(x)}</li>`).join("")||"<li>Nothing found in the sources.</li>"}</ul></div></div>
+      <div class="sec-card"><div class="sec-card-h">Deal and Financing Facts <span class="hint">sourced facts</span></div><div class="sec-card-b"><ul class="blist neu">
+        <li><b>Deal signal:</b> ${esc(c.deal)}</li><li><b>Financing:</b> ${esc(c.financing)}</li>${c.cost!=="n.d."?`<li><b>Cost protection:</b> ${esc(c.cost)}</li>`:""}${c.demand!=="n.d."?`<li><b>Demand:</b> ${esc(c.demand)}</li>`:""}</ul></div></div>
+    </div>
+
+    <div class="sec-card"><div class="sec-card-h">Company Profile <span class="hint">Moody's Orbis · filings</span></div><div class="sec-card-b">
+      <table class="fin-tbl prof"><tbody>
+        <tr><td>Description</td><td>${esc(c.desc)}</td></tr>
+        <tr><td>Ownership</td><td><span class="sec-pill ${OWN_CLS[g]}">${esc(c.type)}</span> &nbsp;${esc(c.owner)} <span class="src">${esc(c.ownerSrc)}</span></td></tr>
+        ${c.web?`<tr><td>Website</td><td>${esc(c.web)}</td></tr>`:""}
+        ${c.emp&&c.emp!=="n.d."?`<tr><td>Employees</td><td>${esc(c.emp)} <span class="src">${esc(c.empSrc)}</span></td></tr>`:""}
+        ${c.ceo&&c.ceo!=="n.d."?`<tr><td>Management</td><td>${esc(c.ceo)} <span class="src">${esc(c.ceoSrc)}</span></td></tr>`:""}
+        ${c.sites&&c.sites!=="n.d."?`<tr><td>Sites</td><td>${esc(c.sites)} <span class="src">${esc(c.sitesSrc)}</span></td></tr>`:""}
+        ${split}
+      </tbody></table></div></div>
+
+    ${(c.revS||[]).some(v=>v!=null)?`<div class="sec-card"><div class="sec-card-h">Historic Financials <span class="hint">${esc(c.seriesBasis)}${c.fc?" · Moody's forecasts shaded":""}</span></div><div class="sec-card-b">${finChart(c)}<div style="margin-top:10px">${finTable(c)}</div></div></div>`:""}
+    ${c.cfoS?`<div class="sec-card"><div class="sec-card-h">Cash Flow <span class="hint">listed names</span></div><div class="sec-card-b">${cashTable(c)}</div></div>`:""}
+
+    <div class="sec-card"><div class="sec-card-h">Ownership Chain <span class="hint">Moody's Orbis · Moody's research where it names owners</span></div><div class="sec-card-b">${ownershipSection(c)}</div></div>
+
+    ${c.rated?`<div class="sec-card"><div class="sec-card-h">Moody's Credit Opinion <span class="hint">${kindChip("Credit opinion (rated issuer)")} ${esc(c.researchEntity)}, ${esc(c.opinionDate?fmtDate(c.opinionDate):"")}</span></div><div class="sec-card-b">
+      <ul class="blist neu">${(c.moodys||[]).map(m=>`<li>${esc(m)}</li>`).join("")}</ul>
+      ${proj?`<div class="own-head">Forecasts and guidance, as published</div><ul class="blist">${proj}</ul>`:""}</div></div>`:""}
+
+    <div class="sec-card"><div class="sec-card-h">Company Statements and Data Gaps <span class="hint">from the sources above</span></div><div class="sec-card-b"><div class="two">
+      <div><div class="own-head" style="margin-top:0">What the company and sources say</div><ul class="blist">${c.says.map(s=>`<li>${esc(s)}</li>`).join("")||"<li>Nothing beyond the accounts.</li>"}</ul>
+        ${!c.rated&&proj?`<div class="own-head">Guidance, as published</div><ul class="blist">${proj}</ul>`:""}
+        ${c.priorities.length?`<div class="own-head">Stated priorities</div><ul class="blist">${c.priorities.map(s=>`<li>${esc(s)}</li>`).join("")}</ul><div class="src">${esc(c.prioritiesSrc||"")}</div>`:""}</div>
+      <div><div class="own-head" style="margin-top:0">Data gaps to check</div><ul class="blist gap">${c.gaps.map(s=>`<li>${esc(s)}</li>`).join("")}</ul>${!c.rated?`<div class="src" style="margin-top:6px">Not rated by Moody's, so there is no credit opinion. Figures come from Orbis${c.type==="Listed"?", filings":""} and news.</div>`:""}</div>
+    </div></div></div>
+
+    ${news.length?`<div class="sec-card"><div class="sec-card-h">Recent News <span class="hint">Moody's NewsEdge, third-party, filtered</span></div><div class="sec-card-b">${news.map(n=>`<div class="news-item"><div class="news-hl">${esc(n.h)}</div><div class="news-meta">${fmtDate(n.d)} · ${esc(n.p)} · ${esc(n.tag)}${n.n?" · figure in source: "+esc(n.n):""}</div></div>`).join("")}</div></div>`:""}
+
+    <div class="src-foot">Financials: ${esc(c.finSrc)}. Ownership: ${esc(c.ownerSrc)}. Pulled ${esc(META.pulled)}. "n.d." means no data returned. Items marked inference are our reasoning, not Moody's.</div>`;
+}
+function renderCompany(){ const c=by($("#coSel").value)||CO[0]; if(!c) return; $("#coPage").innerHTML=buildCompany(c); }
+function openCompany(id){ $("#coSel").value=id; renderCompany(); showTab("company"); window.scrollTo(0,0); }
+function stepCompany(d){ const i=CO.findIndex(c=>c.id===$("#coSel").value); const n=CO[(i+d+CO.length)%CO.length]; openCompany(n.id); }
+
+/* ---------- news and events ---------- */
+const TAGS=["all","Results","Deal","Costs","Demand","Sites","Other"];
+function renderChips(){
+  $("#tagChips").innerHTML=TAGS.map(t=>`<button class="chip ${state.tag===t?'on':''}" data-tag="${t}">${t==="all"?"All topics":t}</button>`).join("");
+  $("#tagChips").querySelectorAll("button").forEach(b=>b.onclick=()=>{state.tag=b.dataset.tag;renderChips();renderFeed();});
+}
+function renderFeed(){
+  const v=$("#feedSel").value;
+  const items=FEED.filter(f=>(!v||f.co===v)&&(state.tag==="all"||f.tag===state.tag)).sort((a,b)=>b.d.localeCompare(a.d));
+  const nameOf=id=>id==="macro"?"Macro and sector":((by(id)||{}).name||id);
+  $("#feedBadge").textContent=`${items.length} items`;
+  $("#feed").innerHTML=items.length?items.map(f=>`<div class="news-item"><div class="news-hl"><b>${esc(nameOf(f.co))}</b> · ${esc(f.h)}</div><div class="news-meta">${fmtDate(f.d)} · ${esc(f.p)} · ${esc(f.tag)}${f.m?" · "+esc(f.m):""}${f.n?" · figure in source: "+esc(f.n):""}</div></div>`).join(""):`<div class="empty">No items match these filters.</div>`;
+}
+function renderUpcoming(){ $("#upcoming").innerHTML=UPCOMING.map(u=>`<li><span class="when">${esc(u.when)}</span><span>${esc(u.what)} <span class="src">${esc(u.src)}</span></span></li>`).join(""); }
+
+/* ---------- sources ---------- */
+function renderSources(){
+  const r=SRC.research||[], co=SRC.company||[], fl=SRC.filings||[], k=SRC.kept||[];
+  const card=(t,h,b)=>`<div class="sec-card"><div class="sec-card-h">${t} <span class="hint">${h}</span></div><div class="sec-card-b">${b}</div></div>`;
+  let html=card("The Question and the Names","set in Stage 1",`<div class="note-box"><b>${esc(META.question||"")}</b><br>${esc(META.glossary||"")}<br><br><b>How the names were chosen:</b> ${esc(META.selection||"")}</div>`);
+  html+=card("Moody's Research Used","macro research · sector research · credit opinions on rated issuers",`<table class="src-tbl"><thead><tr><th>Type</th><th>Document</th><th>What it is used for</th><th>Date</th></tr></thead><tbody>${r.map(x=>`<tr><td>${kindChip(x.kind)}</td><td>${esc(x.title||"")}</td><td>${esc(x.text)}</td><td class="src">${esc(x.src)}</td></tr>`).join("")}</tbody></table>`);
+  html+=card("Moody's Company Data","Orbis and Moody's Ratings Format, one line per company",`<table class="src-tbl"><thead><tr><th>Company</th><th>Financials</th><th>Latest period · basis</th><th>Ownership</th><th>Management</th></tr></thead><tbody>${co.map(x=>`<tr><td><b>${esc(x.name)}</b></td><td>${esc(x.fin)}${x.cash?`<span class="sub">Cash flow: ${esc(x.cash)}</span>`:""}${x.split?`<span class="sub">Revenue split: ${esc(x.split)}</span>`:""}</td><td>${esc(x.period)}<span class="sub">${esc(x.basis)}</span></td><td style="font-size:9.5px">${esc(x.own)}</td><td style="font-size:9.5px">${esc(x.mgmt)}</td></tr>`).join("")}</tbody></table>`);
+  html+=card("Company Filings and Statements","annual and interim reports, results calls, trading updates",`<table class="src-tbl"><thead><tr><th>Company</th><th>What it says</th><th>Document</th></tr></thead><tbody>${fl.map(x=>`<tr><td><b>${esc(x.co)}</b></td><td>${esc(x.text)}</td><td class="src">${esc(x.src)}</td></tr>`).join("")}</tbody></table>`);
+  const s1=SRC.s1kept;
+  html+=card("News: Kept out of Fetched","Moody's NewsEdge, third-party, filtered by hand",`<table class="src-tbl"><thead><tr><th>Pull</th><th style="text-align:right">Kept</th><th style="text-align:right">Fetched</th><th>Note</th></tr></thead><tbody>${s1?`<tr><td><b>Macro and sector</b></td><td class="n">${s1.kept}</td><td class="n">${s1.fetched}</td><td style="font-size:9.5px;color:var(--txt-dim)">${esc(s1.note||"")}</td></tr>`:""}${k.map(x=>`<tr><td><b>${esc(x[0])}</b></td><td class="n">${x[1]}</td><td class="n">${x[2]}</td><td style="font-size:9.5px;color:var(--txt-dim)">${esc(x[3])}</td></tr>`).join("")}</tbody></table><div class="foot-note">Dropped: share-price bots, commentary-only pieces, stories about other companies with similar names, and stories whose subject is outside the screen.</div>`);
+  $("#sourcesPage").innerHTML=html;
+}
+
+/* ---------- footer, tabs, init ---------- */
+function renderFoot(){
+  $("#pageFoot").innerHTML=`<b>Moody's data only.</b> Moody's research (macro and sector research, and credit opinions on the two rated names), Moody's Orbis company data (profiles, ownership, directors, filed accounts), Moody's Ratings Format financials, company filings and results calls via Moody's, and third-party news via Moody's NewsEdge. No web search. Snapshot pulled ${esc(META.pulled)}; the same workflow can be rerun at any time to refresh it. <b>Labels:</b> "As reported" means the company's own accounts; "Moody's-adjusted" means Moody's analytical adjustments in a credit opinion; "calculated" means worked out here from the figures shown; "inference" means our reasoning. The traffic lights apply stated thresholds to published figures and are not a rating or a view. A demonstration of the data, not investment advice.`;
+}
+function showTab(name){document.querySelectorAll('[role="tab"]').forEach(b=>b.setAttribute("aria-selected",b.dataset.tab===name));["overview","company","news","sources"].forEach(t=>{$("#page-"+t).hidden=t!==name;});}
+document.querySelectorAll('[role="tab"]').forEach(b=>b.addEventListener("click",()=>showTab(b.dataset.tab)));
+document.querySelectorAll("#ownSeg button").forEach(b=>b.onclick=()=>{state.own=b.dataset.own;document.querySelectorAll("#ownSeg button").forEach(x=>x.classList.toggle("on",x===b));renderScreen();});
+$("#search").addEventListener("input",e=>{state.q=e.target.value;renderScreen();});
+$("#coSel").innerHTML=CO.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join("");
+$("#coSel").addEventListener("change",renderCompany);
+$("#coPrev").addEventListener("click",()=>stepCompany(-1)); $("#coNext").addEventListener("click",()=>stepCompany(1));
+$("#feedSel").innerHTML+=CO.map(c=>`<option value="${c.id}">${esc(c.name)}</option>`).join(""); $("#feedSel").addEventListener("change",renderFeed);
+
+renderHeader();renderKPIs();renderTrigger();renderScreen();renderOwn();renderMonth();renderCompany();renderChips();renderFeed();renderUpcoming();renderSources();renderFoot();
+</script>
+</body>
+</html>
